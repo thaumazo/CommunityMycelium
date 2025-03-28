@@ -1,12 +1,11 @@
 # Makefile for initializing and managing Django project with Podman (no podman-compose)
 
-PROJECT_NAME = mycelium
-POD_NAME = $(PROJECT_NAME)-pod
+POD_NAME = mycelium
 
 # --- Project Bootstrap Commands ---
 init:
 	mkdir -p apps/users apps/orgs apps/tasks
-	echo "DEBUG=True\nSECRET_KEY=supersecretkey\nALLOWED_HOSTS=*\nDATABASE_URL=postgres://postgres:postgres@$(PROJECT_NAME)-db:5432/$(PROJECT_NAME)" > .env
+	echo "DEBUG=True\nSECRET_KEY=supersecretkey\nALLOWED_HOSTS=*\nDATABASE_URL=postgres://postgres:postgres@localhost:5432/$(POD_NAME)" > .env
 
 	@if ! podman pod exists $(POD_NAME); then \
 		echo "Creating pod $(POD_NAME)..."; \
@@ -14,57 +13,61 @@ init:
 	else \
 		echo "Pod $(POD_NAME) already exists."; \
 	fi
-	@if ! podman container exists $(PROJECT_NAME)-db; then \
+
+	@if ! podman container exists $(POD_NAME)-db; then \
 		echo "Starting DB container..."; \
-		podman run -d --name $(PROJECT_NAME)-db --pod $(POD_NAME) -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=$(PROJECT_NAME) -v pgdata:/var/lib/postgresql/data postgres:15; \
+		podman run -d --name $(POD_NAME)-db --pod $(POD_NAME) \
+			-e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=$(POD_NAME) \
+			-v pgdata:/var/lib/postgresql/data postgres:15; \
 	else \
 		echo "Database container already exists."; \
 	fi
 
 # Build and run Django container in the pod
 up:
-	@if ! podman container exists $(PROJECT_NAME)-db; then \
+	@if ! podman container exists $(POD_NAME)-db; then \
 		echo "Starting DB container..."; \
-		podman run -d --name $(PROJECT_NAME)-db --pod $(POD_NAME) -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=$(PROJECT_NAME) -v pgdata:/var/lib/postgresql/data postgres:15; \
+		podman run -d --name $(POD_NAME)-db --pod $(POD_NAME) \
+			-e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=$(POD_NAME) \
+			-v pgdata:/var/lib/postgresql/data postgres:15; \
 	else \
 		echo "Database container already running."; \
 	fi
 
-	@if podman container exists $(PROJECT_NAME)-web; then \
+	@if podman container exists $(POD_NAME)-web; then \
 		echo "Removing old web container..."; \
-		podman rm -f $(PROJECT_NAME)-web; \
+		podman rm -f $(POD_NAME)-web; \
 	fi
 
-	podman build -t $(PROJECT_NAME)-web .
-	podman run -dt --name $(PROJECT_NAME)-web --pod $(POD_NAME) -v .:/app --env-file .env $(PROJECT_NAME)-web
-
+	podman build -t $(POD_NAME)-web .
+	podman run -dt --name $(POD_NAME)-web --pod $(POD_NAME) -v .:/app --env-file .env $(POD_NAME)-web
 
 stop:
-	podman stop $(PROJECT_NAME)-web $(PROJECT_NAME)-db
+	podman stop $(POD_NAME)-web $(POD_NAME)-db || true
 
 rm:
-	podman rm $(PROJECT_NAME)-web $(PROJECT_NAME)-db
+	podman rm $(POD_NAME)-web $(POD_NAME)-db || true
 
 rmpod:
-	podman pod rm $(POD_NAME)
+	podman pod rm $(POD_NAME) || true
 
 clean: stop rm rmpod
-	podman volume rm pgdata
+	podman volume rm pgdata || true
 
 # Django management
 migrate:
-	podman exec $(PROJECT_NAME)-web python manage.py makemigrations users
-	podman exec $(PROJECT_NAME)-web python manage.py makemigrations
-	podman exec $(PROJECT_NAME)-web python manage.py migrate
+	podman exec $(POD_NAME)-web python manage.py makemigrations users
+	podman exec $(POD_NAME)-web python manage.py makemigrations
+	podman exec $(POD_NAME)-web python manage.py migrate
 
 createsuperuser:
-	podman exec -it $(PROJECT_NAME)-web python manage.py createsuperuser
+	podman exec -it $(POD_NAME)-web python manage.py createsuperuser
 
 shell:
-	podman exec -it $(PROJECT_NAME)-web python manage.py shell
+	podman exec -it $(POD_NAME)-web python manage.py shell
 
 pytest:
-	podman exec $(PROJECT_NAME)-web pytest
+	podman exec $(POD_NAME)-web pytest
 
 test: pytest
 
