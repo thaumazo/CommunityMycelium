@@ -5,6 +5,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
+from django.shortcuts import render
+from django.contrib.auth import login
+from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
 
 User = get_user_model()
 
@@ -56,13 +60,28 @@ class RegisterView(APIView):
         )
 
 
-# from rest_framework import viewsets
-# from .serializers import UserSerializer
-# from django.contrib.auth import get_user_model
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect("/")
+        else:
+            return render(request, "users/login.html", {"error": "Invalid credentials"})
+    return render(request, "users/login.html")
 
-# User = get_user_model()
 
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
+def register_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        email = request.POST.get("email")
+        if User.objects.filter(username=username).exists():
+            return render(
+                request, "users/register.html", {"error": "Username already exists"}
+            )
+        User.objects.create_user(username=username, password=password, email=email)
+        return HttpResponseRedirect("/login/")
+    return render(request, "users/register.html")
