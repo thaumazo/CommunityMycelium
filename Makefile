@@ -63,6 +63,9 @@ createsuperuser:
 shell:
 	podman exec -it $(POD_NAME)-web python manage.py shell
 
+ssh:
+	podman exec -ti $(POD_NAME)-web /bin/bash
+
 pytest:
 	podman exec $(POD_NAME)-web pytest
 
