@@ -4,9 +4,6 @@ POD_NAME = mycelium
 
 # --- Project Bootstrap Commands ---
 init:
-	mkdir -p apps/users apps/orgs apps/tasks
-	echo "DEBUG=True\nSECRET_KEY=supersecretkey\nALLOWED_HOSTS=*\nDATABASE_URL=postgres://postgres:postgres@localhost:5432/$(POD_NAME)" > .env
-
 	@if ! podman pod exists $(POD_NAME); then \
 		echo "Creating pod $(POD_NAME)..."; \
 		podman pod create --name $(POD_NAME) -p 8000:8000 -p 5432:5432; \
@@ -40,7 +37,7 @@ up:
 	fi
 
 	podman build -t $(POD_NAME)-web .
-	podman run -dt --name $(POD_NAME)-web --pod $(POD_NAME) -v .:/app --env-file .env $(POD_NAME)-web
+	podman run -dt --name $(POD_NAME)-web --pod $(POD_NAME) -v ./app:/app --env-file app/.env $(POD_NAME)-web
 
 stop:
 	podman stop $(POD_NAME)-web $(POD_NAME)-db || true
