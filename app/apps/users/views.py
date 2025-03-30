@@ -6,9 +6,10 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -85,3 +86,19 @@ def register_view(request):
         User.objects.create_user(username=username, password=password, email=email)
         return HttpResponseRedirect("/login/")
     return render(request, "users/register.html")
+
+
+@login_required
+def home_view(request):
+    return render(request, "users/home.html")
+
+
+@login_required
+def user_list_view(request):
+    users = User.objects.all()
+    return render(request, "users/user_list.html", {"users": users})
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect("/login/")
