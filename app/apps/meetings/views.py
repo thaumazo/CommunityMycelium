@@ -1,13 +1,6 @@
-from rest_framework import viewsets
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Meeting
-from .serializers import MeetingSerializer
-
-
-class MeetingViewSet(viewsets.ModelViewSet):
-    queryset = Meeting.objects.all()
-    serializer_class = MeetingSerializer
 
 
 @login_required

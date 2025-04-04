@@ -1,11 +1,6 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import MeetingViewSet, meeting_list_view
-
-router = DefaultRouter()
-router.register(r"", MeetingViewSet)
+from django.urls import path
+from .views import meeting_list_view
 
 urlpatterns = [
-    path("", include(router.urls)),
-    path("list/", meeting_list_view, name="meeting_list"),
+    path("", meeting_list_view, name="meeting_list"),
 ]
