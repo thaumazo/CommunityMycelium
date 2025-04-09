@@ -1,20 +1,91 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Login
+{% endblock %}
 
 {% block content %}
-<h1>Login</h1>
-{% if error %}
-<p style="color: red;">{{ error }}</p>
-{% endif %}
-<form method="post">
-    {% csrf_token %}
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
-    <br>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    <br>
-    <button type="submit">Login</button>
-</form>
+	<div
+		class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
+		<div
+			class="relative py-3 sm:max-w-xl sm:mx-auto">
+			<div
+				class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+				<div
+					class="max-w-md mx-auto">
+					<div
+						class="divide-y divide-gray-200">
+						<div
+							class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+							<h1
+								class="text-3xl font-bold text-gray-900 mb-8">Login</h1>
+							{% if error %}
+								<div
+									class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+									<div
+										class="flex">
+										<div
+											class="ml-3">
+											<p
+												class="text-sm text-red-700">{{ error }}</p>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+							<form
+								method="post"
+								class="space-y-6">
+								{% csrf_token %}
+								<div>
+									<label
+										for="username"
+										class="block text-sm font-medium text-gray-700">Username</label>
+									<div
+										class="mt-1">
+										<input
+											type="text"
+											id="username"
+											name="username"
+											required
+											class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+									</div>
+								</div>
+								<div>
+									<label
+										for="password"
+										class="block text-sm font-medium text-gray-700">Password</label>
+									<div
+										class="mt-1">
+										<input
+											type="password"
+											id="password"
+											name="password"
+											required
+											class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+									</div>
+								</div>
+								<div>
+									<button
+										type="submit"
+										class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+										Sign in
+									</button>
+								</div>
+							</form>
+							<div
+								class="text-center mt-4">
+								<p
+									class="text-sm text-gray-600">
+									Don't have an account?
+									<a
+										href="{% url 'register' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+										Register here
+									</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
