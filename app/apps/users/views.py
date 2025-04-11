@@ -1,7 +1,9 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from .models import UserProfile
+from .forms import UserForm, UserProfileForm
 
 User = get_user_model()
 
@@ -38,9 +40,87 @@ def register_view(request):
 
 
 @login_required
+# @permission_required("users.can_manage_users", raise_exception=True)
 def user_list_view(request):
-    users = User.objects.all()
+    users = User.objects.all().order_by("username")
     return render(request, "users/user_list.html", {"users": users})
+
+
+@login_required
+# @permission_required("users.can_manage_users", raise_exception=True)
+def user_detail_view(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    profile = user.profile
+    return render(request, "users/user_detail.html", {"user": user, "profile": profile})
+
+
+@login_required
+# @permission_required("users.can_manage_users", raise_exception=True)
+def user_create_view(request):
+    if request.method == "POST":
+        user_form = UserForm(request.POST)
+        profile_form = UserProfileForm(request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            messages.success(request, "User created successfully!")
+            return redirect("user_list")
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
+
+    return render(
+        request,
+        "users/user_form.html",
+        {"user_form": user_form, "profile_form": profile_form, "title": "Create User"},
+    )
+
+
+@login_required
+# @permission_required("users.can_manage_users", raise_exception=True)
+def user_edit_view(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    profile = user.profile
+
+    if request.method == "POST":
+        user_form = UserForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "User updated successfully!")
+            return redirect("user_list")
+    else:
+        user_form = UserForm(instance=user)
+        profile_form = UserProfileForm(instance=profile)
+
+    return render(
+        request,
+        "users/user_form.html",
+        {
+            "user_form": user_form,
+            "profile_form": profile_form,
+            "title": "Edit User",
+            "user": user,
+        },
+    )
+
+
+@login_required
+# @permission_required("users.can_manage_users", raise_exception=True)
+def user_delete_view(request, pk):
+    user = get_object_or_404(User, pk=pk)
+
+    if request.method == "POST":
+        user.delete()
+        messages.success(request, "User deleted successfully!")
+        return redirect("user_list")
+
+    return render(request, "users/user_confirm_delete.html", {"user": user})
 
 
 def logout_view(request):
