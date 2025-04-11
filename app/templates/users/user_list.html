@@ -1,51 +1,75 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-    <div class="relative py-3 sm:max-w-xl sm:mx-auto">
-        <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-            <div class="max-w-md mx-auto">
-                <div class="divide-y divide-gray-200">
-                    <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                        <h1 class="text-3xl font-bold text-gray-900 mb-8">Users</h1>
-                        {% if users %}
-                        <div class="space-y-4">
-                            {% for user in users %}
-                            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                                <div class="px-4 py-5 sm:px-6">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0">
-                                            {% include "svgs/user.html" %}
-                                        </div>
-                                        <div class="ml-4">
-                                            <h3 class="text-lg leading-6 font-medium text-gray-900">
-                                                {{ user.username }}
-                                            </h3>
-                                            <p class="text-sm text-gray-500">
-                                                {{ user.email }}
-                                            </p>
-                                        </div>
-                                    </div>
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-semibold text-gray-900">Users</h1>
+        </div>
+
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div
+                class="p-4 {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} rounded">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul class="divide-y divide-gray-200">
+                {% for user in users %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    {% include "svgs/user.html" %}
                                 </div>
-                                <div class="border-t border-gray-200">
-                                    <dl>
-                                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                            <dt class="text-sm font-medium text-gray-500">Joined</dt>
-                                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                                {{ user.date_joined|date:"F j, Y" }}
-                                            </dd>
-                                        </div>
-                                    </dl>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-medium text-indigo-600">
+                                        {{ user.username }}
+                                    </h3>
+                                    <p class="text-sm text-gray-500">
+                                        {{ user.email }}
+                                    </p>
                                 </div>
                             </div>
-                            {% endfor %}
+                            <div class="ml-2 flex items-center space-x-2">
+                                <span
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    Joined {{ user.date_joined|date:"F j, Y" }}
+                                </span>
+                            </div>
                         </div>
-                        {% else %}
-                        <p class="text-gray-500">No users found.</p>
-                        {% endif %}
+                        <div class="mt-2 sm:flex sm:justify-between">
+                            <div class="sm:flex">
+                                <p class="flex items-center text-sm text-gray-500">
+                                    {% if user.is_staff %}
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                        Staff Member
+                                    </span>
+                                    {% endif %}
+                                    {% if user.is_superuser %}
+                                    <span
+                                        class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                        Administrator
+                                    </span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </li>
+                {% empty %}
+                <li class="px-4 py-4 sm:px-6 text-center text-gray-500">
+                    No users found.
+                </li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </div>
