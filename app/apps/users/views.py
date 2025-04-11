@@ -40,14 +40,14 @@ def register_view(request):
 
 
 @login_required
-# @permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.can_manage_users", raise_exception=True)
 def user_list_view(request):
     users = User.objects.all().order_by("username")
     return render(request, "users/user_list.html", {"users": users})
 
 
 @login_required
-# @permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.can_manage_users", raise_exception=True)
 def user_detail_view(request, pk):
     user = get_object_or_404(User, pk=pk)
     profile = user.profile
@@ -55,7 +55,7 @@ def user_detail_view(request, pk):
 
 
 @login_required
-# @permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.can_manage_users", raise_exception=True)
 def user_create_view(request):
     if request.method == "POST":
         user_form = UserForm(request.POST)
@@ -84,7 +84,7 @@ def user_create_view(request):
 
 
 @login_required
-# @permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.can_manage_users", raise_exception=True)
 def user_edit_view(request, pk):
     user = get_object_or_404(User, pk=pk)
     profile = user.profile
@@ -115,7 +115,7 @@ def user_edit_view(request, pk):
 
 
 @login_required
-# @permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.can_manage_users", raise_exception=True)
 def user_delete_view(request, pk):
     user = get_object_or_404(User, pk=pk)
 
