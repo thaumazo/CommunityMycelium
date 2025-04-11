@@ -69,6 +69,9 @@ ssh:
 pytest:
 	podman exec $(POD_NAME)-web pytest
 
+setup-groups:
+	podman exec $(POD_NAME)-web python manage.py setup_groups
+
 test: pytest
 
-.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test
+.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups
