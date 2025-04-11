@@ -24,27 +24,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Local apps
+    "apps.core",
     "apps.users",
-    "apps.orgs",
-    "apps.tasks",
-    "apps.teams",
-    "apps.projects",
     "apps.meetings",
-    "rest_framework",
-    "rest_framework_simplejwt",
 ]
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
-
+# Custom user model
 AUTH_USER_MODEL = "users.User"
 
 # Middleware
@@ -97,6 +82,13 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Authentication settings
+LOGIN_URL = "login"
