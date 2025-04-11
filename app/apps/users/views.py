@@ -63,8 +63,12 @@ def user_create_view(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
+            # Get the profile that was automatically created by the signal
+            profile = user.profile
+            # Update the profile with the form data
+            profile.is_viewer = profile_form.cleaned_data["is_viewer"]
+            profile.is_editor = profile_form.cleaned_data["is_editor"]
+            profile.is_admin = profile_form.cleaned_data["is_admin"]
             profile.save()
             messages.success(request, "User created successfully!")
             return redirect("user_list")
