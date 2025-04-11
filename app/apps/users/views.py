@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from .models import UserProfile
 from .forms import UserForm, UserProfileForm
+from django.core.exceptions import PermissionDenied
 
 User = get_user_model()
 
@@ -31,7 +32,11 @@ def register_view(request):
             return render(
                 request, "users/register.html", {"error": "Username already exists"}
             )
-        User.objects.create_user(username=username, password=password, email=email)
+        user = User.objects.create_user(
+            username=username, password=password, email=email
+        )
+        # Create profile with viewer role
+        UserProfile.objects.create(user=user, is_viewer=True)
         messages.success(
             request, "Registration successful! Please log in with your new account."
         )
@@ -40,14 +45,14 @@ def register_view(request):
 
 
 @login_required
-@permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.view_user", raise_exception=True)
 def user_list_view(request):
     users = User.objects.all().order_by("username")
     return render(request, "users/user_list.html", {"users": users})
 
 
 @login_required
-@permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.view_user", raise_exception=True)
 def user_detail_view(request, pk):
     user = get_object_or_404(User, pk=pk)
     profile = user.profile
@@ -55,7 +60,7 @@ def user_detail_view(request, pk):
 
 
 @login_required
-@permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.add_user", raise_exception=True)
 def user_create_view(request):
     if request.method == "POST":
         user_form = UserForm(request.POST)
@@ -63,13 +68,13 @@ def user_create_view(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
-            # Get the profile that was automatically created by the signal
-            profile = user.profile
-            # Update the profile with the form data
-            profile.is_viewer = profile_form.cleaned_data["is_viewer"]
-            profile.is_editor = profile_form.cleaned_data["is_editor"]
-            profile.is_admin = profile_form.cleaned_data["is_admin"]
-            profile.save()
+            # Create the profile with the form data
+            profile = UserProfile.objects.create(
+                user=user,
+                is_viewer=profile_form.cleaned_data["is_viewer"],
+                is_editor=profile_form.cleaned_data["is_editor"],
+                is_admin=profile_form.cleaned_data["is_admin"],
+            )
             messages.success(request, "User created successfully!")
             return redirect("user_list")
     else:
@@ -84,10 +89,13 @@ def user_create_view(request):
 
 
 @login_required
-@permission_required("users.can_manage_users", raise_exception=True)
 def user_edit_view(request, pk):
     user = get_object_or_404(User, pk=pk)
     profile = user.profile
+
+    # Allow users to edit their own profile or admins to edit any profile
+    if not (request.user.pk == user.pk or request.user.profile.is_admin):
+        raise PermissionDenied("You don't have permission to edit this user's profile.")
 
     if request.method == "POST":
         user_form = UserForm(request.POST, instance=user)
@@ -95,6 +103,11 @@ def user_edit_view(request, pk):
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
+            # Only allow admins to change role permissions
+            if not request.user.profile.is_admin:
+                profile_form.instance.is_viewer = profile.is_viewer
+                profile_form.instance.is_editor = profile.is_editor
+                profile_form.instance.is_admin = profile.is_admin
             profile_form.save()
             messages.success(request, "User updated successfully!")
             return redirect("user_list")
@@ -115,7 +128,7 @@ def user_edit_view(request, pk):
 
 
 @login_required
-@permission_required("users.can_manage_users", raise_exception=True)
+@permission_required("users.delete_user", raise_exception=True)
 def user_delete_view(request, pk):
     user = get_object_or_404(User, pk=pk)
 

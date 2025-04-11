@@ -4,11 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
-    class Meta:
-        permissions = [
-            ("can_manage_users", "Can manage users"),
-            ("can_manage_meetings", "Can manage meetings"),
-        ]
+    pass
 
 
 class UserProfile(models.Model):
@@ -20,12 +16,24 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
+    def clean(self):
+        """Enforce role hierarchy"""
+        if self.is_admin:
+            self.is_editor = True
+            self.is_viewer = True
+        elif self.is_editor:
+            self.is_viewer = True
+
     def save(self, *args, **kwargs):
-        # Ensure user is in appropriate groups based on their role flags
+        # Ensure role hierarchy
+        self.clean()
+
+        # Get or create groups
         viewer_group, _ = Group.objects.get_or_create(name="viewer")
         editor_group, _ = Group.objects.get_or_create(name="editor")
         admin_group, _ = Group.objects.get_or_create(name="admin")
 
+        # Update group membership based on role flags
         if self.is_viewer:
             self.user.groups.add(viewer_group)
         else:

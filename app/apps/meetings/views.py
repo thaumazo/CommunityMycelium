@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Meeting
 from .forms import MeetingForm
+from apps.core.permissions import PermissionService
 
 
 @login_required
 def meeting_list_view(request):
-    meetings = Meeting.objects.all().order_by("-start_time")
+    meetings = Meeting.objects.all()
     return render(request, "meetings/meeting_list.html", {"meetings": meetings})
 
 
@@ -19,6 +20,10 @@ def meeting_detail_view(request, pk):
 
 @login_required
 def meeting_create_view(request):
+    if not PermissionService.can_manage_meetings(request.user):
+        messages.error(request, "You don't have permission to create meetings.")
+        return redirect("meeting_list")
+
     if request.method == "POST":
         form = MeetingForm(request.POST)
         if form.is_valid():
@@ -31,7 +36,9 @@ def meeting_create_view(request):
         form = MeetingForm()
 
     return render(
-        request, "meetings/meeting_form.html", {"form": form, "title": "Create Meeting"}
+        request,
+        "meetings/meeting_form.html",
+        {"form": form, "title": "Create Meeting"},
     )
 
 
@@ -39,8 +46,7 @@ def meeting_create_view(request):
 def meeting_edit_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
 
-    # Only allow creator to edit
-    if meeting.created_by != request.user:
+    if not meeting.can_edit(request.user):
         messages.error(request, "You don't have permission to edit this meeting.")
         return redirect("meeting_list")
 
@@ -64,8 +70,7 @@ def meeting_edit_view(request, pk):
 def meeting_delete_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
 
-    # Only allow creator to delete
-    if meeting.created_by != request.user:
+    if not meeting.can_delete(request.user):
         messages.error(request, "You don't have permission to delete this meeting.")
         return redirect("meeting_list")
 
