@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 User = get_user_model()
 
@@ -29,6 +30,9 @@ def register_view(request):
                 request, "users/register.html", {"error": "Username already exists"}
             )
         User.objects.create_user(username=username, password=password, email=email)
+        messages.success(
+            request, "Registration successful! Please log in with your new account."
+        )
         return redirect("login")
     return render(request, "users/register.html")
 
