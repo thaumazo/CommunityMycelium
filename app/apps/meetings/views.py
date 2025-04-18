@@ -3,11 +3,13 @@ from django.contrib import messages
 from .models import Meeting
 from .forms import MeetingForm
 from django.contrib.auth.decorators import login_required
+from apps.acl.utils import get_objects_with_permission
 
 
 @login_required
 def meeting_list_view(request):
-    meetings = Meeting.objects.all()
+    # Get all meetings that the user has permission to read
+    meetings = get_objects_with_permission(request.user, "read", Meeting)
     return render(request, "meetings/meeting_list.html", {"meetings": meetings})
 
 

@@ -1,11 +1,17 @@
 {% if messages %}
   <div class="mb-6">
     {% for message in messages %}
-      <div class="rounded-md p-4 mb-4">
+      <div class="rounded-md p-4 mb-4 border border-gray-200">
         <div class="flex">
-          <div class="flex-shrink-0">
-            {% include 'svgs/check-circle.html' %}
-          </div>
+          {% if message.tags == 'success' %}
+            <div class="flex-shrink-0">
+              {% include 'svgs/check-circle.html' %}
+            </div>
+          {% elif message.tags == 'error' %}
+            <div class="flex-shrink-0">
+              {% include 'svgs/x-circle.html' %}
+            </div>
+          {% endif %}
           <div class="ml-3">
             <p class="text-sm font-medium">{{ message }}</p>
           </div>
