@@ -1,0 +1,16 @@
+{% if messages %}
+  <div class="mb-6">
+    {% for message in messages %}
+      <div class="rounded-md p-4 mb-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            {% include 'svgs/check-circle.html' %}
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium">{{ message }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

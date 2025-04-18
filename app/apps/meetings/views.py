@@ -2,18 +2,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Meeting
 from .forms import MeetingForm
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def meeting_list_view(request):
     meetings = Meeting.objects.all()
     return render(request, "meetings/meeting_list.html", {"meetings": meetings})
 
 
+@login_required
 def meeting_detail_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
     return render(request, "meetings/meeting_detail.html", {"meeting": meeting})
 
 
+@login_required
 def meeting_create_view(request):
     if request.method == "POST":
         form = MeetingForm(request.POST)
@@ -33,6 +37,7 @@ def meeting_create_view(request):
     )
 
 
+@login_required
 def meeting_edit_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
 
@@ -52,6 +57,7 @@ def meeting_edit_view(request, pk):
     )
 
 
+@login_required
 def meeting_delete_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
 
