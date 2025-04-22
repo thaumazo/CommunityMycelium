@@ -1,77 +1,55 @@
 <!DOCTYPE html>
-<html lang="en"
-	class="h-full">
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mycelium</title>
+    {% load static %}
+    <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport"
-		content="width=device-width, initial-scale=1.0">
-	<title>Mycelium</title>
-	{% load static %}
-	<link href="{% static 'css/output.css' %}"
-		rel="stylesheet">
-</head>
+  <body class="h-full flex flex-col justify-between">
+    <nav class="bg-white shadow-lg">
+      <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex">
+            <div class="flex-shrink-0 flex items-center">
+              <a href="{% url 'home' %}" class="text-xl font-bold text-indigo-600">Mycelium</a>
+            </div>
+            {% if user.is_authenticated %}
+              <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <a href="{% url 'home' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Home</a>
+                <a href="{% url 'meeting_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Meetings</a>
+                <a href="{% url 'user_list' %}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Users</a>
+              </div>
+            {% endif %}
+          </div>
+          <div class="flex items-center">
+            {% if user.is_authenticated %}
+              <span class="text-gray-700 mr-4">
+                Welcome,
+                {{ user.username }}
+              </span>
+              <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</a>
+            {% else %}
+              <a href="{% url 'login' %}" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">Login</a>
+              <a href="{% url 'register' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Register</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<body class="h-full flex flex-col justify-between">
-	<nav class="bg-white shadow-lg">
-		<div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-			<div class="flex justify-between h-16">
-				<div class="flex">
-					<div class="flex-shrink-0 flex items-center">
-						<a href="{% url 'home' %}"
-							class="text-xl font-bold text-indigo-600">Mycelium</a>
-					</div>
-					{% if user.is_authenticated %}
-					<div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-						<a href="{% url 'home' %}"
-							class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-							Home
-						</a>
-						<a href="{% url 'meeting_list' %}"
-							class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-							Meetings
-						</a>
-						<a href="{% url 'user_list' %}"
-							class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-							Users
-						</a>
-					</div>
-					{% endif %}
-				</div>
-				<div class="flex items-center">
-					{% if user.is_authenticated %}
-					<span class="text-gray-700 mr-4">Welcome,
-						{{ user.username }}</span>
-					<a href="{% url 'logout' %}"
-						class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-						Logout
-					</a>
-					{% else %}
-					<a href="{% url 'login' %}"
-						class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
-						Login
-					</a>
-					<a href="{% url 'register' %}"
-						class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-						Register
-					</a>
-					{% endif %}
-				</div>
-			</div>
-		</div>
-	</nav>
+    <main class="flex-grow">
+      {% block content %}
 
-	<main class="flex-grow">
-		{% block content %}{% endblock %}
-	</main>
+      {% endblock %}
+    </main>
 
-	<footer class="bg-white shadow-lg mt-8">
-		<div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-			<p class="text-center text-gray-500 text-sm">
-				© 2024 Mycelium. All rights reserved.
-			</p>
-		</div>
-	</footer>
-</body>
-
+    <footer class="bg-white shadow-lg mt-8">
+      <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <p class="text-center text-gray-500 text-sm">© 2024 Mycelium. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
 </html>

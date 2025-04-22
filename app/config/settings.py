@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.users",
     "apps.meetings",
+    "apps.acl",
 ]
 
 # Custom user model

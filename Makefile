@@ -71,4 +71,4 @@ pytest:
 
 test: pytest
 
-.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test
+.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups

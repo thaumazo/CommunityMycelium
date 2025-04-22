@@ -1,19 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Meeting
 from .forms import MeetingForm
+from django.contrib.auth.decorators import login_required
+from apps.acl.utils import get_objects_with_permission, can
 
 
 @login_required
 def meeting_list_view(request):
-    meetings = Meeting.objects.all().order_by("-start_time")
+    # Get all meetings that the user has permission to read
+    meetings = get_objects_with_permission(request.user, "read", Meeting)
     return render(request, "meetings/meeting_list.html", {"meetings": meetings})
 
 
 @login_required
 def meeting_detail_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
+    if not can(request.user, "read", meeting):
+        messages.error(request, "You do not have permission to view this meeting.")
+        return redirect("meeting_list")
     return render(request, "meetings/meeting_detail.html", {"meeting": meeting})
 
 
@@ -31,17 +36,17 @@ def meeting_create_view(request):
         form = MeetingForm()
 
     return render(
-        request, "meetings/meeting_form.html", {"form": form, "title": "Create Meeting"}
+        request,
+        "meetings/meeting_form.html",
+        {"form": form, "title": "Create Meeting"},
     )
 
 
 @login_required
 def meeting_edit_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
-
-    # Only allow creator to edit
-    if meeting.created_by != request.user:
-        messages.error(request, "You don't have permission to edit this meeting.")
+    if not can(request.user, "write", meeting):
+        messages.error(request, "You do not have permission to edit this meeting.")
         return redirect("meeting_list")
 
     if request.method == "POST":
@@ -63,10 +68,8 @@ def meeting_edit_view(request, pk):
 @login_required
 def meeting_delete_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
-
-    # Only allow creator to delete
-    if meeting.created_by != request.user:
-        messages.error(request, "You don't have permission to delete this meeting.")
+    if not can(request.user, "write", meeting):
+        messages.error(request, "You do not have permission to delete this meeting.")
         return redirect("meeting_list")
 
     if request.method == "POST":
