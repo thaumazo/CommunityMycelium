@@ -14,7 +14,7 @@
               <div>
                 <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.title.label }}</label>
                 <div class="mt-1">
-                  <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                  <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="w-full" />
                 </div>
                 {% if form.title.errors %}
                   <div class="mt-1 text-sm text-red-600">{{ form.title.errors|join:', ' }}</div>
@@ -24,7 +24,7 @@
               <div>
                 <label for="{{ form.start_time.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.start_time.label }}</label>
                 <div class="mt-1">
-                  <input type="datetime-local" name="{{ form.start_time.html_name }}" id="{{ form.start_time.id_for_label }}" value="{{ form.start_time.value|date:'Y-m-d\TH:i'|default:'' }}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                  <input type="datetime-local" name="{{ form.start_time.html_name }}" id="{{ form.start_time.id_for_label }}" value="{{ form.start_time.value|date:'Y-m-d\TH:i'|default:'' }}" class="w-full" />
                 </div>
                 {% if form.start_time.errors %}
                   <div class="mt-1 text-sm text-red-600">{{ form.start_time.errors|join:', ' }}</div>
@@ -34,7 +34,7 @@
               <div>
                 <label for="{{ form.end_time.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.end_time.label }}</label>
                 <div class="mt-1">
-                  <input type="datetime-local" name="{{ form.end_time.html_name }}" id="{{ form.end_time.id_for_label }}" value="{{ form.end_time.value|date:'Y-m-d\TH:i'|default:'' }}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                  <input type="datetime-local" name="{{ form.end_time.html_name }}" id="{{ form.end_time.id_for_label }}" value="{{ form.end_time.value|date:'Y-m-d\TH:i'|default:'' }}" class="w-full" />
                 </div>
                 {% if form.end_time.errors %}
                   <div class="mt-1 text-sm text-red-600">{{ form.end_time.errors|join:', ' }}</div>
@@ -44,7 +44,7 @@
               <div>
                 <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.description.label }}</label>
                 <div class="mt-1">
-                  <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="4" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">{{ form.description.value|default:'' }}</textarea>
+                  <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="4" class="w-full">{{ form.description.value|default:'' }}</textarea>
                 </div>
                 {% if form.description.errors %}
                   <div class="mt-1 text-sm text-red-600">{{ form.description.errors|join:', ' }}</div>

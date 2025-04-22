@@ -14,7 +14,7 @@
                 <div>
                   <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.username.label }}</label>
                   <div class="mt-1">
-                    <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                    <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}" class="w-full" />
                   </div>
                   {% if form.username.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.username.errors|join:', ' }}</div>
@@ -24,7 +24,7 @@
                 <div>
                   <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.email.label }}</label>
                   <div class="mt-1">
-                    <input type="email" name="{{ form.email.html_name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default:'' }}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                    <input type="email" name="{{ form.email.html_name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default:'' }}" class="w-full" />
                   </div>
                   {% if form.email.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.email.errors|join:', ' }}</div>
@@ -34,7 +34,7 @@
                 <div>
                   <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.password.label }}</label>
                   <div class="mt-1">
-                    <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                    <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" class="w-full" />
                   </div>
                   {% if form.password.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.password.errors|join:', ' }}</div>

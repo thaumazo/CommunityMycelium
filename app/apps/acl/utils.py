@@ -24,6 +24,7 @@ def revoke_permission(user, obj, action):
     ).delete()
 
 
+# Get all objects with permission
 def get_objects_with_permission(user, action, model_class):
     """Get all objects of a given model that a user has permission to perform an action on."""
     content_type = ContentType.objects.get_for_model(model_class)

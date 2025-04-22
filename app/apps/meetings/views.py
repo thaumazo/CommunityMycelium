@@ -3,7 +3,7 @@ from django.contrib import messages
 from .models import Meeting
 from .forms import MeetingForm
 from django.contrib.auth.decorators import login_required
-from apps.acl.utils import get_objects_with_permission
+from apps.acl.utils import get_objects_with_permission, can
 
 
 @login_required
@@ -16,6 +16,9 @@ def meeting_list_view(request):
 @login_required
 def meeting_detail_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
+    if not can(request.user, "read", meeting):
+        messages.error(request, "You do not have permission to view this meeting.")
+        return redirect("meeting_list")
     return render(request, "meetings/meeting_detail.html", {"meeting": meeting})
 
 
@@ -42,6 +45,9 @@ def meeting_create_view(request):
 @login_required
 def meeting_edit_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
+    if not can(request.user, "write", meeting):
+        messages.error(request, "You do not have permission to edit this meeting.")
+        return redirect("meeting_list")
 
     if request.method == "POST":
         form = MeetingForm(request.POST, instance=meeting)
@@ -62,6 +68,9 @@ def meeting_edit_view(request, pk):
 @login_required
 def meeting_delete_view(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
+    if not can(request.user, "write", meeting):
+        messages.error(request, "You do not have permission to delete this meeting.")
+        return redirect("meeting_list")
 
     if request.method == "POST":
         meeting.delete()
