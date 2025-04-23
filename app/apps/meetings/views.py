@@ -1,24 +1,20 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from apps.acl.utils import get_permitted_objects, get_permitted_object
 from .models import Meeting
 from .forms import MeetingForm
-from django.contrib.auth.decorators import login_required
-from apps.acl.utils import get_objects_with_permission, can
 
 
 @login_required
 def meeting_list_view(request):
-    # Get all meetings that the user has permission to read
-    meetings = get_objects_with_permission(request.user, "read", Meeting)
+    meetings = get_permitted_objects(request.user, "read", Meeting)
     return render(request, "meetings/meeting_list.html", {"meetings": meetings})
 
 
 @login_required
 def meeting_detail_view(request, pk):
-    meeting = get_object_or_404(Meeting, pk=pk)
-    if not can(request.user, "read", meeting):
-        messages.error(request, "You do not have permission to view this meeting.")
-        return redirect("meeting_list")
+    meeting = get_permitted_object(request.user, "read", Meeting, pk)
     return render(request, "meetings/meeting_detail.html", {"meeting": meeting})
 
 
@@ -44,10 +40,7 @@ def meeting_create_view(request):
 
 @login_required
 def meeting_edit_view(request, pk):
-    meeting = get_object_or_404(Meeting, pk=pk)
-    if not can(request.user, "write", meeting):
-        messages.error(request, "You do not have permission to edit this meeting.")
-        return redirect("meeting_list")
+    meeting = get_permitted_object(request.user, "write", Meeting, pk)
 
     if request.method == "POST":
         form = MeetingForm(request.POST, instance=meeting)
@@ -67,10 +60,7 @@ def meeting_edit_view(request, pk):
 
 @login_required
 def meeting_delete_view(request, pk):
-    meeting = get_object_or_404(Meeting, pk=pk)
-    if not can(request.user, "write", meeting):
-        messages.error(request, "You do not have permission to delete this meeting.")
-        return redirect("meeting_list")
+    meeting = get_permitted_object(request.user, "write", Meeting, pk)
 
     if request.method == "POST":
         meeting.delete()
