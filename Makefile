@@ -73,4 +73,7 @@ pytest:
 
 test: pytest
 
+collectstatic:
+	podman exec $(POD_NAME)-web python manage.py collectstatic --noinput
+
 .PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups

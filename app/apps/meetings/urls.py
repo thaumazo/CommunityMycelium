@@ -1,10 +1,12 @@
 from django.urls import path
 from .views import (
+    # List
     meeting_list_view,
+    # CRUD
     meeting_create_view,
+    meeting_detail_view,
     meeting_edit_view,
     meeting_delete_view,
-    meeting_detail_view,
 )
 
 urlpatterns = [

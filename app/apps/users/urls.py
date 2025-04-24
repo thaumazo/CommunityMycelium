@@ -1,13 +1,16 @@
 from django.urls import path
 from .views import (
+    # List
     user_list_view,
+    # CRUD
     user_create_view,
-    logout_view,
-    login_view,
-    register_view,
     user_detail_view,
     user_edit_view,
     user_delete_view,
+    # Auth
+    logout_view,
+    login_view,
+    register_view,
 )
 
 urlpatterns = [
