@@ -8,6 +8,7 @@ urlpatterns = [
     path("", include("apps.core.urls")),  # Core app handles main website pages
     path("users/", include("apps.users.urls")),  # User management routes
     path("meetings/", include("apps.meetings.urls")),
+    path("acl/", include("apps.acl.urls")),  # Access Control List routes
 ]
 
 # Serve static files in development
