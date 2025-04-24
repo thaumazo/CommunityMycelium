@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
+from django.http import Http404
 from .models import ObjectPermission
 
 
@@ -47,9 +48,15 @@ def get_permitted_objects(user, action, model_class):
 def get_permitted_object(user, action, model_class, object_id):
     """Get an object of a given model that a user has permission to perform an action on."""
 
+    # Get the object or raise a 404 if it does not exist
+    try:
+        object = model_class.objects.get(id=object_id)
+    except model_class.DoesNotExist:
+        raise Http404
+
     # Check if the user has permission to perform the action on the object
-    if not can(user, action, model_class.objects.get(id=object_id)):
+    if not can(user, action, object):
         raise PermissionDenied
 
     # Return the object
-    return model_class.objects.get(id=object_id)
+    return object
