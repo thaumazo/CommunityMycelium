@@ -51,6 +51,8 @@ rmpod:
 clean: stop rm rmpod
 	podman volume rm pgdata || true
 
+scratch: clean init up migrate
+
 # Django management
 migrate:
 	podman exec $(POD_NAME)-web python manage.py makemigrations users
