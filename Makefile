@@ -77,10 +77,10 @@ collectstatic:
 	podman exec $(POD_NAME)-web python manage.py collectstatic --noinput
 
 seed-users:
-	podman exec $(POD_NAME)-web python manage.py shell -c "from apps.users.seeders import seed_users; seed_users()"
+	podman exec $(POD_NAME)-web python manage.py seed_users
 
 seed-meetings:
-	podman exec $(POD_NAME)-web python manage.py shell -c "from apps.meetings.seeders import seed_meetings; seed_meetings()"
+	podman exec $(POD_NAME)-web python manage.py seed_meetings
 
 seed-all: seed-users seed-meetings
 
