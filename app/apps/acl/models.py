@@ -8,8 +8,11 @@ User = get_user_model()
 
 class ObjectPermission(models.Model):
     ACTION_CHOICES = [
-        ("read", "Read"),
-        ("write", "Write"),
+        ("add", "Add"),
+        ("change", "Change"),
+        ("delete", "Delete"),
+        ("view", "View"),
+        ("delegate", "Delegate"),  # Ability to grant/revoke permissions
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -51,7 +51,7 @@ rmpod:
 clean: stop rm rmpod
 	podman volume rm pgdata || true
 
-scratch: clean init up migrate
+scratch: clean init up migrate setup-groups
 
 # Django management
 migrate:
@@ -72,6 +72,10 @@ pytest:
 	podman exec $(POD_NAME)-web pytest
 
 test: pytest
+
+# --- Django Management Commands ---
+setup-groups:
+	podman exec $(POD_NAME)-web python manage.py setup_groups
 
 collectstatic:
 	podman exec $(POD_NAME)-web python manage.py collectstatic --noinput
