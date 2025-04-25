@@ -76,4 +76,7 @@ test: pytest
 collectstatic:
 	podman exec $(POD_NAME)-web python manage.py collectstatic --noinput
 
-.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups
+seed-users:
+	podman exec $(POD_NAME)-web python manage.py shell -c "from apps.users.seeders import seed_users; seed_users()"
+
+.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups seed-users
