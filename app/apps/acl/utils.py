@@ -53,6 +53,25 @@ def revoke_group_permission(group, model_class, action):
     group.permissions.remove(permission)
 
 
+def get_permitted_content_types(user, action):
+    """Get all content types that a user has permission to perform an action on."""
+    content_types = ContentType.objects.all()
+
+    permitted_content_types = []
+    for content_type in content_types:
+        if user.has_perm(
+            f"{content_type.app_label}.{action}_{content_type._meta.model_name}"
+        ):
+            permitted_content_types.append(content_type)
+        else:
+            if ObjectPermission.objects.filter(
+                user=user, action=action, content_type=content_type
+            ).exists():
+                permitted_content_types.append(content_type)
+
+    return permitted_content_types
+
+
 def get_permitted_objects(user, action, model_class):
     """Get all objects of a given model that a user has permission to perform an action on."""
     # Get objects through model-level permissions

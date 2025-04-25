@@ -8,8 +8,10 @@ from apps.acl.utils import grant_object_permission, revoke_object_permission
 @receiver(post_save, sender=Meeting)
 def grant_meeting_creator_permissions(sender, instance, created, **kwargs):
     if created and instance.created_by:
-        grant_object_permission(instance.created_by, instance, "read")
-        grant_object_permission(instance.created_by, instance, "write")
+        grant_object_permission(instance.created_by, instance, "view")
+        grant_object_permission(instance.created_by, instance, "change")
+        grant_object_permission(instance.created_by, instance, "delete")
+        grant_object_permission(instance.created_by, instance, "delegate")
 
 
 @receiver(pre_delete, sender=Meeting)

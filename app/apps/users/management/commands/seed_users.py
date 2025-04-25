@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 User = get_user_model()
 
@@ -12,14 +13,16 @@ class Command(BaseCommand):
 
         # Create first user
         User.objects.create_user(
-            username="whitnelson", email="whitnelson@gmail.com", password="Asdfdsa1.."
+            username="whit",
+            email="whitnelson@gmail.com",
+            password="Asdfdsa1",
         )
 
         # Create second user
         User.objects.create_user(
-            username="willgarrison",
+            username="will",
             email="willgarrison@gmail.com",
-            password="Asdfdsa1..",
+            password="Asdfdsa1",
         )
 
         # Additional random users
@@ -33,7 +36,7 @@ class Command(BaseCommand):
             {"username": "robertwhite", "email": "robert.white@example.com"},
             {"username": "laura_davis", "email": "laura.davis@example.com"},
             {"username": "thomastaylor", "email": "thomas.taylor@example.com"},
-            {"username": "olivia_moore", "email": "olivia.moore@example.com"},
+            {"username": "no_group_john", "email": "no_group_john@example.com"},
         ]
 
         # Create additional users with the same password
@@ -44,4 +47,23 @@ class Command(BaseCommand):
                 password="Asdfdsa1..",
             )
 
+        # Get groups
+        admin_group = Group.objects.get(name="Admin")
+        editor_group = Group.objects.get(name="Editor")
+        viewer_group = Group.objects.get(name="Viewer")
+
+        # Add users to groups
+        admin_group.user_set.add(User.objects.get(username="whit"))
+        admin_group.user_set.add(User.objects.get(username="will"))
+        editor_group.user_set.add(User.objects.get(username="alexsmith"))
+        editor_group.user_set.add(User.objects.get(username="jennifer_lee"))
+        editor_group.user_set.add(User.objects.get(username="michaelbrown"))
+        editor_group.user_set.add(User.objects.get(username="sarah_wilson"))
+        viewer_group.user_set.add(User.objects.get(username="davidmiller"))
+        viewer_group.user_set.add(User.objects.get(username="emily_jones"))
+        viewer_group.user_set.add(User.objects.get(username="robertwhite"))
+        viewer_group.user_set.add(User.objects.get(username="laura_davis"))
+        viewer_group.user_set.add(User.objects.get(username="thomastaylor"))
+
+        # Output success message
         self.stdout.write(self.style.SUCCESS("Successfully seeded users"))
