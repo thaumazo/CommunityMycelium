@@ -8,13 +8,13 @@ from .forms import MeetingForm
 
 @login_required
 def meeting_list_view(request):
-    meetings = get_permitted_objects(request.user, "read", Meeting)
+    meetings = get_permitted_objects(request.user, "view", Meeting)
     return render(request, "meetings/meeting_list.html", {"meetings": meetings})
 
 
 @login_required
 def meeting_detail_view(request, pk):
-    meeting = get_permitted_object(request.user, "read", Meeting, pk)
+    meeting = get_permitted_object(request.user, "view", Meeting, pk)
     return render(request, "meetings/meeting_detail.html", {"meeting": meeting})
 
 
@@ -40,7 +40,7 @@ def meeting_create_view(request):
 
 @login_required
 def meeting_edit_view(request, pk):
-    meeting = get_permitted_object(request.user, "write", Meeting, pk)
+    meeting = get_permitted_object(request.user, "change", Meeting, pk)
 
     if request.method == "POST":
         form = MeetingForm(request.POST, instance=meeting)
@@ -60,7 +60,7 @@ def meeting_edit_view(request, pk):
 
 @login_required
 def meeting_delete_view(request, pk):
-    meeting = get_permitted_object(request.user, "write", Meeting, pk)
+    meeting = get_permitted_object(request.user, "delete", Meeting, pk)
 
     if request.method == "POST":
         meeting.delete()

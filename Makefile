@@ -51,13 +51,17 @@ rmpod:
 clean: stop rm rmpod
 	podman volume rm pgdata || true
 
-scratch: clean init up migrate seed-users seed-meetings
+scratch: clean init up delete-migrations migrate setup-groups seed-all
 
 # Django management
 migrate:
 	podman exec $(POD_NAME)-web python manage.py makemigrations users
 	podman exec $(POD_NAME)-web python manage.py makemigrations
 	podman exec $(POD_NAME)-web python manage.py migrate
+
+delete-migrations:
+	find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+	find . -path "*/migrations/*.pyc"  -delete	
 
 createsuperuser:
 	podman exec -it $(POD_NAME)-web python manage.py createsuperuser
@@ -68,10 +72,17 @@ shell:
 ssh:
 	podman exec -ti $(POD_NAME)-web /bin/bash
 
+logs:
+	podman logs -f $(POD_NAME)-web
+
 pytest:
 	podman exec $(POD_NAME)-web pytest
 
 test: pytest
+
+# --- Django Management Commands ---
+setup-groups:
+	podman exec $(POD_NAME)-web python manage.py setup_groups
 
 collectstatic:
 	podman exec $(POD_NAME)-web python manage.py collectstatic --noinput

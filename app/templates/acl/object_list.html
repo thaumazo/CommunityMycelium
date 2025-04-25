@@ -18,7 +18,7 @@
           {% for object in objects %}
             <li class="px-4 py-4 sm:px-6">
               <div class="flex items-center justify-between">
-                <h3 class="text-lg font-medium text-indigo-600 truncate"><a href="{% url 'object_user_permission_detail' content_type.id object.id %}" class="hover:text-indigo-900 hover:underline">{{ object.title }}</a></h3>
+                <h3 class="text-lg font-medium text-indigo-600 truncate"><a href="{% url 'object_user_permission_list' content_type.id object.id %}" class="hover:text-indigo-900 hover:underline">{{ object.title }}</a></h3>
                 <div class="ml-2 flex items-center space-x-2">
                   <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ object.created_by.username }}</span>
                 </div>

@@ -18,3 +18,8 @@ class Meeting(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        permissions = [
+            ("delegate_meeting", "Can delegate meeting"),
+        ]
