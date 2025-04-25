@@ -51,7 +51,7 @@ rmpod:
 clean: stop rm rmpod
 	podman volume rm pgdata || true
 
-scratch: clean init up migrate setup-groups
+scratch: clean init up migrate setup-groups seed-all
 
 # Django management
 migrate:
@@ -80,4 +80,12 @@ setup-groups:
 collectstatic:
 	podman exec $(POD_NAME)-web python manage.py collectstatic --noinput
 
-.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups
+seed-users:
+	podman exec $(POD_NAME)-web python manage.py seed_users
+
+seed-meetings:
+	podman exec $(POD_NAME)-web python manage.py seed_meetings
+
+seed-all: seed-users seed-meetings
+
+.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups seed-users seed-meetings seed-all
