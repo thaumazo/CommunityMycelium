@@ -29,13 +29,13 @@
                   </div>
                   <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
                     <p>
-                      {% if user.profile.is_admin %}
+                      {% if user.is_admin %}
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Admin</span>
                       {% endif %}
-                      {% if user.profile.is_editor %}
+                      {% if user.is_editor %}
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Editor</span>
                       {% endif %}
-                      {% if user.profile.is_viewer %}
+                      {% if user.is_viewer %}
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Viewer</span>
                       {% endif %}
                     </p>
