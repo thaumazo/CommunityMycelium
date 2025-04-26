@@ -20,8 +20,12 @@ def content_type_list_view(request):
     for content_type in content_types_with_counts:
         # Get the model class for this content type
         model_class = content_type.model_class()
-        # Count the number of objects for this model
-        object_count = model_class.objects.count()
+        # Count the number of objects that the user
+        # has delegate permissions for either through
+        # model-level permissions or object-level permissions
+        object_count = get_permitted_objects(
+            request.user, "delegate", model_class
+        ).count()
         # Add the content type and its count to our list
         content_type_info.append((content_type, object_count))
 
@@ -39,7 +43,9 @@ def object_list_view(request, content_type_id):
     content_type = get_object_or_404(ContentType, id=content_type_id)
     # Get the model class for this content type
     model_class = content_type.model_class()
-    # Get all objects of this model that the user has delegate permissions for
+    # Get all objects of this model that user
+    # has delegate permissions for either through
+    # model-level permissions or object-level permissions
     objects = get_permitted_objects(request.user, "delegate", model_class)
 
     return render(
