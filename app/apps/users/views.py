@@ -89,7 +89,7 @@ def user_detail_view(request, pk):
 def user_edit_view(request, pk):
     """Edit a user's details."""
     # Get the user to edit
-    user = get_permitted_object(request.user, "edit", User, pk)
+    user = get_permitted_object(request.user, "change", User, pk)
     # If the request method is POST, update the user's details
     if request.method == "POST":
         # Update the user's details

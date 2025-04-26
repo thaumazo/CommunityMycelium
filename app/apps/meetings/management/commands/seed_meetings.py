@@ -78,7 +78,7 @@ class Command(BaseCommand):
                 end_time = start_time + timedelta(hours=1)  # 1 hour duration
 
                 Meeting.objects.create(
-                    title=f"{template['title']} - {user.username}",
+                    title=f"{template['title']}",
                     description=template["description"],
                     start_time=start_time,
                     end_time=end_time,
