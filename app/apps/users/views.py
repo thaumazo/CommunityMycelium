@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserForm, LoginForm
+from apps.acl.utils import get_permitted_objects, get_permitted_object
 
 User = get_user_model()
 
@@ -41,20 +42,30 @@ def register_view(request):
 
 @login_required
 def user_list_view(request):
-    users = User.objects.all()
+    """View a list of all users."""
+    users = get_permitted_objects(request.user, "view", User)
     return render(request, "users/user_list.html", {"users": users})
 
 
 @login_required
 def user_create_view(request):
+    """Create a new user."""
+    # If the request method is POST, create a new user
     if request.method == "POST":
+        # Create a new user form
         form = UserForm(request.POST)
+        # If the form is valid, save the user
         if form.is_valid():
+            # Save the user
             form.save()
+            # Add a success message
             messages.success(request, "User created successfully.")
+            # Redirect to the user list
             return redirect("user_list")
     else:
+        # Create a new user form
         form = UserForm()
+    # Render the user form
     return render(
         request, "users/user_form.html", {"form": form, "title": "Create User"}
     )
@@ -67,14 +78,21 @@ def logout_view(request):
 
 @login_required
 def user_detail_view(request, pk):
-    user = get_object_or_404(User, pk=pk)
+    """View a user's details."""
+    # Get the user to view
+    user = get_permitted_object(request.user, "view", User, pk)
+    # Render the user details
     return render(request, "users/user_detail.html", {"user": user})
 
 
 @login_required
 def user_edit_view(request, pk):
-    user = get_object_or_404(User, pk=pk)
+    """Edit a user's details."""
+    # Get the user to edit
+    user = get_permitted_object(request.user, "edit", User, pk)
+    # If the request method is POST, update the user's details
     if request.method == "POST":
+        # Update the user's details
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
@@ -82,7 +100,7 @@ def user_edit_view(request, pk):
             return redirect("user_detail", pk=user.pk)
     else:
         form = UserForm(instance=user)
-
+    # Render the user form
     return render(
         request,
         "users/user_form.html",
@@ -92,9 +110,16 @@ def user_edit_view(request, pk):
 
 @login_required
 def user_delete_view(request, pk):
-    user = get_object_or_404(User, pk=pk)
+    """Delete a user."""
+    # Get the user to delete
+    user = get_permitted_object(request.user, "delete", User, pk)
+    # If the request method is POST, delete the user
     if request.method == "POST":
+        # Delete the user
         user.delete()
+        # Add a success message
         messages.success(request, "User deleted successfully.")
+        # Redirect to the user list
         return redirect("user_list")
+    # Render the user confirmation delete page
     return render(request, "users/user_confirm_delete.html", {"user": user})
