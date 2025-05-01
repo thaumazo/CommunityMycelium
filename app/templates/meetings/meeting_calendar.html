@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: "{% url 'meeting_calendar_events' %}",
+        eventTimeFormat: {
+          hour: 'numeric',
+          minute: '2-digit',
+          meridiem: 'short'
+        },
+        eventDidMount: function(info) {
+          // Add tooltip with meeting details
+          info.el.title = `${info.event.title}\n${info.event.extendedProps.description || ''}\nCreated by: ${info.event.extendedProps.created_by}`;
+        }
+      });
+      calendar.render();
+    });
+  </script>
+  <style>
+    .fc-event {
+      cursor: pointer;
+    }
+    .fc-event-title {
+      font-weight: 500;
+    }
+    .fc-event-time {
+      font-size: 0.85em;
+    }
+    .fc-toolbar-title {
+      font-size: 1.5em !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Meeting Calendar</h1>
+        <div class="flex space-x-3">
+          <a href="{% url 'meeting_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">List View</a>
+          <a href="{% url 'meeting_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create New Meeting</a>
+        </div>
+      </div>
+
+      {% include '_components/messages.html' %}
+
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="p-4">
+          <div id="calendar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %} 

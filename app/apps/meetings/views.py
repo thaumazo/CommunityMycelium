@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from apps.acl.utils import get_permitted_objects, get_permitted_object
 from .models import Meeting
 from .forms import MeetingForm
@@ -10,6 +11,28 @@ from .forms import MeetingForm
 def meeting_list_view(request):
     meetings = get_permitted_objects(request.user, "view", Meeting)
     return render(request, "meetings/meeting_list.html", {"meetings": meetings})
+
+
+@login_required
+def meeting_calendar_view(request):
+    return render(request, "meetings/meeting_calendar.html")
+
+
+@login_required
+def meeting_calendar_events(request):
+    meetings = get_permitted_objects(request.user, "view", Meeting)
+    events = []
+    for meeting in meetings:
+        events.append({
+            'id': meeting.id,
+            'title': meeting.title,
+            'start': meeting.start_time.isoformat(),
+            'end': meeting.end_time.isoformat(),
+            'url': f'/meetings/{meeting.id}/',
+            'description': meeting.description,
+            'created_by': meeting.created_by.username,
+        })
+    return JsonResponse(events, safe=False)
 
 
 @login_required

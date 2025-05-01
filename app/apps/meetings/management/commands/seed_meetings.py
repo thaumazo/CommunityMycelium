@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from datetime import datetime, timedelta
 from django.utils import timezone
+import random
 from ...models import Meeting
 
 User = get_user_model()
@@ -63,19 +64,25 @@ class Command(BaseCommand):
         # Create meetings for each user
         for user in users:
             # Create 3-5 meetings for each user
-            num_meetings = 3  # Base number of meetings
+            num_meetings = random.randint(3, 5)  # Random number of meetings between 3 and 5
             if user.username in ["whitnelson", "willgarrison"]:
-                num_meetings = 5  # More meetings for the main users
+                num_meetings = random.randint(5, 8)  # More meetings for the main users
 
             for i in range(num_meetings):
                 # Get a random meeting template
-                template = meeting_templates[i % len(meeting_templates)]
+                template = random.choice(meeting_templates)
 
-                # Calculate start and end times with timezone awareness
-                start_time = timezone.now() + timedelta(
-                    days=i * 2, hours=9
-                )  # Every other day at 9 AM
-                end_time = start_time + timedelta(hours=1)  # 1 hour duration
+                # Generate random date within the next 30 days
+                days_ahead = random.randint(0, 30)
+                # Generate random time between 9 AM and 5 PM
+                hour = random.randint(9, 16)
+                minute = random.choice([0, 15, 30, 45])
+                
+                # Calculate start time
+                start_time = timezone.now() + timedelta(days=days_ahead, hours=hour, minutes=minute)
+                # Random duration between 30 minutes and 2 hours
+                duration = random.randint(30, 120)
+                end_time = start_time + timedelta(minutes=duration)
 
                 Meeting.objects.create(
                     title=f"{template['title']}",
