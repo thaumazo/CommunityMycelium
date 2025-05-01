@@ -1599,8 +1599,8 @@ select {
   margin-top: 2.5rem;
 }
 
-.mt-14 {
-  margin-top: 3.5rem;
+.mt-16 {
+  margin-top: 4rem;
 }
 
 .mt-2 {
@@ -1617,10 +1617,6 @@ select {
 
 .mt-8 {
   margin-top: 2rem;
-}
-
-.mt-16 {
-  margin-top: 4rem;
 }
 
 .block {
@@ -1771,10 +1767,6 @@ select {
 
 .items-baseline {
   align-items: baseline;
-}
-
-.justify-start {
-  justify-content: flex-start;
 }
 
 .justify-end {
@@ -2086,16 +2078,8 @@ select {
   padding-bottom: 1.5rem;
 }
 
-.pb-4 {
-  padding-bottom: 1rem;
-}
-
 .pl-5 {
   padding-left: 1.25rem;
-}
-
-.pt-20 {
-  padding-top: 5rem;
 }
 
 .pt-16 {
@@ -2104,6 +2088,10 @@ select {
 
 .text-center {
   text-align: center;
+}
+
+.font-body {
+  font-family: Inter, sans-serif;
 }
 
 .text-2xl {
@@ -2254,12 +2242,6 @@ select {
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-lg {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -2532,8 +2514,4 @@ select {
   .lg\:pl-3 {
     padding-left: 0.75rem;
   }
-}
-
-.rtl\:justify-end:where([dir="rtl"], [dir="rtl"] *) {
-  justify-content: flex-end;
 }

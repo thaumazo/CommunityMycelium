@@ -26,14 +26,3 @@ const app = {
 };
 
 app.registerModules();
-
-// Sample code to test the bundler
-console.log("Hello from Mycelium!");
-
-// Example of a simple function
-function initApp() {
-	console.log("App initialized");
-}
-
-// Initialize the app when the DOM is loaded
-document.addEventListener("DOMContentLoaded", initApp);
