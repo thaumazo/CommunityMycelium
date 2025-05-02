@@ -23,6 +23,16 @@
         {% endif %}
 
         <div>
+          <label for="{{ form.full_name.id_for_label }}" class="block text-sm/6 font-medium text-gray-900">{{ form.full_name.label }}</label>
+          <div class="mt-1">
+            <input type="text" name="{{ form.full_name.html_name }}" id="{{ form.full_name.id_for_label }}" value="{{ form.full_name.value|default:'' }}" class="w-full" />
+          </div>
+          {% if form.full_name.errors %}
+            <div class="mt-1 text-sm text-red-600">{{ form.full_name.errors|join:', ' }}</div>
+          {% endif %}
+        </div>
+
+        <div>
           <label for="{{ form.username.id_for_label }}" class="block text-sm/6 font-medium text-gray-900">{{ form.username.label }}</label>
           <div class="mt-1">
             <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}" class="w-full" />

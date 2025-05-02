@@ -1,8 +1,9 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserForm, LoginForm
+from django.core.exceptions import PermissionDenied
+from .forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object
 
 User = get_user_model()
@@ -27,7 +28,7 @@ def login_view(request):
 
 def register_view(request):
     if request.method == "POST":
-        form = UserForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(
@@ -53,7 +54,7 @@ def user_create_view(request):
     # If the request method is POST, create a new user
     if request.method == "POST":
         # Create a new user form
-        form = UserForm(request.POST)
+        form = RegisterForm(request.POST)
         # If the form is valid, save the user
         if form.is_valid():
             # Save the user
@@ -64,7 +65,7 @@ def user_create_view(request):
             return redirect("user_list")
     else:
         # Create a new user form
-        form = UserForm()
+        form = RegisterForm()
     # Render the user form
     return render(
         request, "users/user_form.html", {"form": form, "title": "Create User"}
@@ -106,6 +107,32 @@ def user_edit_view(request, pk):
         "users/user_form.html",
         {"form": form, "title": "Edit User", "user": user},
     )
+
+
+@login_required
+def user_permission_edit_view(request, pk):
+    """Edit a user's permissions."""
+    if request.user.is_admin():
+        user = User.objects.get(pk=pk)
+        if request.method == "POST":
+            form = UserPermissionForm(request.POST, user=user)
+            if form.is_valid():
+                # Clear existing groups and set the new one
+                user.groups.clear()
+                if form.cleaned_data["groups"]:
+                    user.groups.add(form.cleaned_data["groups"])
+                messages.success(request, "User role updated successfully.")
+                return redirect("user_detail", pk=user.pk)
+        else:
+            form = UserPermissionForm(user=user)
+
+        return render(
+            request,
+            "users/user_permission_form.html",
+            {"user": user, "form": form, "title": "Edit User Role"},
+        )
+    else:
+        raise PermissionDenied
 
 
 @login_required
