@@ -7,7 +7,9 @@ export default class Navigation {
 		this.menuClosedClasses = ["-translate-x-full"];
 		this.state = "closed";
 
-		this.init();
+		if (this.menuButton && this.menu) {
+			this.init();
+		}
 	}
 
 	init() {

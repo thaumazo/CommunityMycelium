@@ -1,10 +1,9 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.contrib.auth.models import Group
-from .forms import UserForm, LoginForm, UserPermissionForm
+from .forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object
 
 User = get_user_model()
@@ -29,7 +28,7 @@ def login_view(request):
 
 def register_view(request):
     if request.method == "POST":
-        form = UserForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(
@@ -55,7 +54,7 @@ def user_create_view(request):
     # If the request method is POST, create a new user
     if request.method == "POST":
         # Create a new user form
-        form = UserForm(request.POST)
+        form = RegisterForm(request.POST)
         # If the form is valid, save the user
         if form.is_valid():
             # Save the user
@@ -66,7 +65,7 @@ def user_create_view(request):
             return redirect("user_list")
     else:
         # Create a new user form
-        form = UserForm()
+        form = RegisterForm()
     # Render the user form
     return render(
         request, "users/user_form.html", {"form": form, "title": "Create User"}

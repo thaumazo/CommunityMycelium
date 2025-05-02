@@ -16,6 +16,7 @@ class Command(BaseCommand):
             username="whit",
             email="whitnelson@gmail.com",
             password="Asdfdsa1",
+            full_name="Whit Nelson",
         )
 
         # Create second user
@@ -23,20 +24,61 @@ class Command(BaseCommand):
             username="will",
             email="willgarrison@gmail.com",
             password="Asdfdsa1",
+            full_name="Will Garrison",
         )
 
         # Additional random users
         dummy_users = [
-            {"username": "alexsmith", "email": "alex.smith@example.com"},
-            {"username": "jennifer_lee", "email": "jennifer.lee@example.com"},
-            {"username": "michaelbrown", "email": "michael.brown@example.com"},
-            {"username": "sarah_wilson", "email": "sarah.wilson@example.com"},
-            {"username": "davidmiller", "email": "david.miller@example.com"},
-            {"username": "emily_jones", "email": "emily.jones@example.com"},
-            {"username": "robertwhite", "email": "robert.white@example.com"},
-            {"username": "laura_davis", "email": "laura.davis@example.com"},
-            {"username": "thomastaylor", "email": "thomas.taylor@example.com"},
-            {"username": "no_group_john", "email": "no_group_john@example.com"},
+            {
+                "username": "alexsmith",
+                "email": "alex.smith@example.com",
+                "full_name": "Alex Smith",
+            },
+            {
+                "username": "jennifer_lee",
+                "email": "jennifer.lee@example.com",
+                "full_name": "Jennifer Lee",
+            },
+            {
+                "username": "michaelbrown",
+                "email": "michael.brown@example.com",
+                "full_name": "Michael Brown",
+            },
+            {
+                "username": "sarah_wilson",
+                "email": "sarah.wilson@example.com",
+                "full_name": "Sarah Wilson",
+            },
+            {
+                "username": "davidmiller",
+                "email": "david.miller@example.com",
+                "full_name": "David Miller",
+            },
+            {
+                "username": "emily_jones",
+                "email": "emily.jones@example.com",
+                "full_name": "Emily Jones",
+            },
+            {
+                "username": "robertwhite",
+                "email": "robert.white@example.com",
+                "full_name": "Robert White",
+            },
+            {
+                "username": "laura_davis",
+                "email": "laura.davis@example.com",
+                "full_name": "Laura Davis",
+            },
+            {
+                "username": "thomastaylor",
+                "email": "thomas.taylor@example.com",
+                "full_name": "Thomas Taylor",
+            },
+            {
+                "username": "no_group_john",
+                "email": "no_group_john@example.com",
+                "full_name": "No Group John",
+            },
         ]
 
         # Create additional users with the same password
@@ -45,6 +87,7 @@ class Command(BaseCommand):
                 username=user_data["username"],
                 email=user_data["email"],
                 password="Asdfdsa1..",
+                full_name=user_data["full_name"],
             )
 
         # Get groups

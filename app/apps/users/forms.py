@@ -11,22 +11,33 @@ class LoginForm(AuthenticationForm):
     password = forms.CharField(widget=forms.PasswordInput())
 
 
-class UserForm(forms.ModelForm):
+class RegisterForm(forms.ModelForm):
+    full_name = forms.CharField(
+        widget=forms.TextInput(),
+        label="Full Name",
+        help_text="Enter your full name.",
+        required=True,
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(),
+        help_text="Enter your email address.",
+        required=True,
+    )
     password = forms.CharField(
         widget=forms.PasswordInput(),
         min_length=8,
         help_text="Password must be at least 8 characters long.",
+        required=True,
     )
     confirm_password = forms.CharField(
-        widget=forms.PasswordInput(), label="Confirm Password"
+        widget=forms.PasswordInput(), label="Confirm Password", required=True
     )
 
     class Meta:
         model = User
-        fields = ["username", "email", "password"]
+        fields = ["username", "email", "full_name", "password"]
         widgets = {
             "username": forms.TextInput(),
-            "email": forms.EmailInput(),
         }
 
     def clean(self):
@@ -44,6 +55,58 @@ class UserForm(forms.ModelForm):
         user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
+
+        return user
+
+
+class UserForm(forms.ModelForm):
+    full_name = forms.CharField(
+        widget=forms.TextInput(),
+        label="Full Name",
+        help_text="Enter your full name.",
+        required=True,
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(),
+        help_text="Enter your email address.",
+        required=True,
+    )
+
+    # Note that password and confirm_password are optional
+    # because we don't want to force a password change on edit.
+    password = forms.CharField(
+        widget=forms.PasswordInput(),
+        min_length=8,
+        help_text="Password must be at least 8 characters long.",
+        required=False,
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(), label="Confirm Password", required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "full_name", "password"]
+        widgets = {
+            "username": forms.TextInput(),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError("Passwords don't match")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+
         return user
 
 

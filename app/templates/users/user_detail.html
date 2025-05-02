@@ -3,6 +3,8 @@
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
+      {% include '_components/user_nav.html' %}
+
       <div class="max-w-3xl mx-auto">
         {% include '_components/messages.html' %}
 
@@ -26,7 +28,7 @@
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">Full Name</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.get_full_name }}</dd>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.full_name }}</dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">Roles</dt>
