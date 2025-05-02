@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import Group
 
 User = get_user_model()
 
@@ -44,3 +45,18 @@ class UserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class UserPermissionForm(forms.Form):
+    groups = forms.ModelChoiceField(
+        queryset=Group.objects.all(), widget=forms.Select, label="Role", required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if self.user and self.user.pk:
+            # Set the initial value to the user's first group
+            user_groups = self.user.groups.all()
+            if user_groups.exists():
+                self.fields["groups"].initial = user_groups.first()

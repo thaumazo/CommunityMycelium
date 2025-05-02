@@ -1,4 +1,6 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+
+{% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
       <div class="max-w-3xl mx-auto">
@@ -40,6 +42,16 @@
                     <div class="mt-1 text-sm text-red-600">{{ form.password.errors|join:', ' }}</div>
                   {% endif %}
                 </div>
+              </div>
+
+              <div>
+                <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.confirm_password.label }}</label>
+                <div class="mt-1">
+                  <input type="password" name="{{ form.confirm_password.html_name }}" id="{{ form.confirm_password.id_for_label }}" class="w-full" />
+                </div>
+                {% if form.confirm_password.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.confirm_password.errors|join:', ' }}</div>
+                {% endif %}
               </div>
 
               <div class="flex justify-end space-x-3 mt-6">

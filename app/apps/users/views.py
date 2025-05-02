@@ -2,7 +2,9 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserForm, LoginForm
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.models import Group
+from .forms import UserForm, LoginForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object
 
 User = get_user_model()
@@ -106,6 +108,32 @@ def user_edit_view(request, pk):
         "users/user_form.html",
         {"form": form, "title": "Edit User", "user": user},
     )
+
+
+@login_required
+def user_permission_edit_view(request, pk):
+    """Edit a user's permissions."""
+    if request.user.is_admin():
+        user = User.objects.get(pk=pk)
+        if request.method == "POST":
+            form = UserPermissionForm(request.POST, user=user)
+            if form.is_valid():
+                # Clear existing groups and set the new one
+                user.groups.clear()
+                if form.cleaned_data["groups"]:
+                    user.groups.add(form.cleaned_data["groups"])
+                messages.success(request, "User role updated successfully.")
+                return redirect("user_detail", pk=user.pk)
+        else:
+            form = UserPermissionForm(user=user)
+
+        return render(
+            request,
+            "users/user_permission_form.html",
+            {"user": user, "form": form, "title": "Edit User Role"},
+        )
+    else:
+        raise PermissionDenied
 
 
 @login_required
