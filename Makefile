@@ -37,7 +37,7 @@ up:
 	fi
 
 	podman build -t $(POD_NAME)-web .
-	podman run -dt --name $(POD_NAME)-web --pod $(POD_NAME) -v ./app:/app --env-file app/.env $(POD_NAME)-web
+	podman run -dt --name $(POD_NAME)-web --pod $(POD_NAME) -v ./mycelium:/mycelium --env-file mycelium/.env $(POD_NAME)-web
 
 stop:
 	podman stop $(POD_NAME)-web $(POD_NAME)-db || true
