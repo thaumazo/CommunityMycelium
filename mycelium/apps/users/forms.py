@@ -10,6 +10,20 @@ class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput())
     password = forms.CharField(widget=forms.PasswordInput())
 
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+        if username and password:
+            try:
+                user = User.objects.get(username=username)
+                if not user.is_email_verified:
+                    raise forms.ValidationError("Please verify your email before logging in.")
+            except User.DoesNotExist:
+                pass  # Let parent class handle non-existent users
+
+        return super().clean()
+
 
 class RegisterForm(forms.ModelForm):
     full_name = forms.CharField(
