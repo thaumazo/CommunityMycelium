@@ -11,21 +11,35 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Seeding users...")
 
-        # Create first user
-        User.objects.create_user(
+        # Create or update first user
+        user, created = User.objects.get_or_create(
             username="whit",
-            email="whitnelson@gmail.com",
-            password="Asdfdsa1",
-            full_name="Whit Nelson",
+            defaults={
+                "email": "whitnelson@gmail.com",
+                "full_name": "Whit Nelson",
+                "is_email_verified": True,
+                "is_active": True,
+            }
         )
+        user.set_password("Asdfdsa1")
+        user.is_email_verified = True
+        user.is_active = True
+        user.save()
 
-        # Create second user
-        User.objects.create_user(
+        # Create or update second user
+        user, created = User.objects.get_or_create(
             username="will",
-            email="willgarrison@gmail.com",
-            password="Asdfdsa1",
-            full_name="Will Garrison",
+            defaults={
+                "email": "willgarrison@gmail.com",
+                "full_name": "Will Garrison",
+                "is_email_verified": True,
+                "is_active": True,
+            }
         )
+        user.set_password("Asdfdsa1")
+        user.is_email_verified = True
+        user.is_active = True
+        user.save()
 
         # Additional random users
         dummy_users = [
@@ -81,14 +95,21 @@ class Command(BaseCommand):
             },
         ]
 
-        # Create additional users with the same password
+        # Create or update additional users
         for user_data in dummy_users:
-            User.objects.create_user(
+            user, created = User.objects.get_or_create(
                 username=user_data["username"],
-                email=user_data["email"],
-                password="Asdfdsa1..",
-                full_name=user_data["full_name"],
+                defaults={
+                    "email": user_data["email"],
+                    "full_name": user_data["full_name"],
+                    "is_email_verified": True,
+                    "is_active": True,
+                }
             )
+            user.set_password("Asdfdsa1..")
+            user.is_email_verified = True
+            user.is_active = True
+            user.save()
 
         # Get groups
         admin_group = Group.objects.get(name="Admin")
