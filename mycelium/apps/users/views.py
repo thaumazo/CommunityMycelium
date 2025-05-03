@@ -1,9 +1,14 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
+from django.urls import reverse
 from .forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
+from .models import EmailVerification
 from apps.acl.utils import get_permitted_objects, get_permitted_object
 
 User = get_user_model()
@@ -26,19 +31,59 @@ def login_view(request):
     return render(request, "users/login.html", {"form": form})
 
 
+def send_verification_email(user, verification):
+    verification_url = settings.SITE_URL + reverse('verify_email', args=[verification.token])
+    context = {
+        'verification_url': verification_url,
+        'expiry_days': settings.EMAIL_VERIFICATION_EXPIRY_DAYS
+    }
+    html_message = render_to_string('users/email/verification_email.html', context)
+    
+    send_mail(
+        subject='Verify your email address',
+        message='Please verify your email address by clicking the link in the email.',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+        html_message=html_message
+    )
+
+
 def register_view(request):
     if request.method == "POST":
-        form = RegisterForm(request.POST)
+        form = UserForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.is_active = False  # User is inactive until email is verified
+            user.save()
+            
+            # Create email verification
+            verification = EmailVerification.create_verification(user)
+            
+            # Send verification email
+            send_verification_email(user, verification)
+            
             messages.success(
-                request, "Registration successful! Please log in with your new account."
+                request, 
+                "Registration successful! Please check your email to verify your account."
             )
             return redirect("login")
     else:
         form = UserForm()
 
     return render(request, "users/register.html", {"form": form})
+
+
+def verify_email_view(request, token):
+    try:
+        verification = EmailVerification.objects.get(token=token)
+        if verification.verify():
+            messages.success(request, "Email verified successfully! You can now log in.")
+        else:
+            messages.error(request, "Verification link has expired. Please request a new one.")
+    except EmailVerification.DoesNotExist:
+        messages.error(request, "Invalid verification link.")
+    
+    return redirect("login")
 
 
 @login_required
