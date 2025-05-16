@@ -75,10 +75,10 @@ ssh:
 logs:
 	podman logs -f $(POD_NAME)-web
 
-pytest:
-	podman exec $(POD_NAME)-web pytest
+# pytest:
+# 	podman exec $(POD_NAME)-web pytest
 
-test: pytest
+# test: pytest
 
 # --- Django Management Commands ---
 setup-groups:
