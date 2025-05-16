@@ -92,21 +92,10 @@ class Command(BaseCommand):
 
         # Get groups
         admin_group = Group.objects.get(name="Admin")
-        editor_group = Group.objects.get(name="Editor")
-        viewer_group = Group.objects.get(name="Viewer")
 
         # Add users to groups
         admin_group.user_set.add(User.objects.get(username="whit"))
         admin_group.user_set.add(User.objects.get(username="will"))
-        editor_group.user_set.add(User.objects.get(username="alexsmith"))
-        editor_group.user_set.add(User.objects.get(username="jennifer_lee"))
-        editor_group.user_set.add(User.objects.get(username="michaelbrown"))
-        editor_group.user_set.add(User.objects.get(username="sarah_wilson"))
-        viewer_group.user_set.add(User.objects.get(username="davidmiller"))
-        viewer_group.user_set.add(User.objects.get(username="emily_jones"))
-        viewer_group.user_set.add(User.objects.get(username="robertwhite"))
-        viewer_group.user_set.add(User.objects.get(username="laura_davis"))
-        viewer_group.user_set.add(User.objects.get(username="thomastaylor"))
-
+      
         # Output success message
         self.stdout.write(self.style.SUCCESS("Successfully seeded users"))
