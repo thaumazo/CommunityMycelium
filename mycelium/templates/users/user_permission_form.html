@@ -13,11 +13,10 @@
             <form method="post" class="space-y-6">
               {% csrf_token %}
 
-              <h4 class="text-lg font-medium text-gray-900">User Roles</h4>
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">{{ form.groups.label }}</label>
-                  <div class="space-y-2">
+                  <div class="space-y-4" id="role-selection">
                     {% for choice in form.groups %}
                       <div class="flex items-center">
                         <input type="checkbox" 
@@ -25,9 +24,18 @@
                                value="{{ choice.data.value }}" 
                                id="{{ choice.id_for_label }}"
                                {% if choice.data.selected %}checked{% endif %}
-                               class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                               class="role-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                               data-role="{{ choice.choice_label }}">
                         <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">
-                          {{ choice.choice_label }}
+                          {% if choice.choice_label == 'Admin' %}
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Admin</span>
+                            <span class="ml-2 text-gray-500">Full system access and control (includes all other permissions)</span>
+                          {% elif choice.choice_label == 'Meetings' %}
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Meetings</span>
+                            <span class="ml-2 text-gray-500">Manage and participate in meetings</span>
+                          {% else %}
+                            {{ choice.choice_label }}
+                          {% endif %}
                         </label>
                       </div>
                     {% endfor %}
@@ -35,12 +43,13 @@
                   {% if form.groups.errors %}
                     <p class="mt-2 text-sm text-red-600">{{ form.groups.errors }}</p>
                   {% endif %}
+                  <p class="mt-2 text-sm text-gray-500">Note: Admin role cannot be combined with other roles as it includes all permissions.</p>
                 </div>
               </div>
 
               <div class="flex justify-end space-x-3 mt-6">
-                <a href="{% url 'user_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
+                <a href="{% url 'user_detail' user.pk %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save Changes</button>
               </div>
             </form>
           </div>
@@ -48,4 +57,33 @@
       </div>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const roleCheckboxes = document.querySelectorAll('.role-checkbox');
+      const adminCheckbox = document.querySelector('.role-checkbox[data-role="Admin"]');
+      const otherCheckboxes = Array.from(roleCheckboxes).filter(cb => cb !== adminCheckbox);
+
+      function updateRoleSelection(event) {
+        const changedCheckbox = event.target;
+        
+        if (changedCheckbox.checked) {
+          if (changedCheckbox === adminCheckbox) {
+            // If Admin is checked, uncheck other roles
+            otherCheckboxes.forEach(checkbox => {
+              checkbox.checked = false;
+            });
+          } else {
+            // If any other role is checked, uncheck Admin
+            adminCheckbox.checked = false;
+          }
+        }
+      }
+
+      // Add event listeners to all checkboxes
+      roleCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateRoleSelection);
+      });
+    });
+  </script>
 {% endblock %}

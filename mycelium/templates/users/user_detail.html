@@ -31,10 +31,10 @@
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.full_name }}</dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Roles</dt>
+                  <dt class="text-sm font-medium text-gray-500">Access</dt>
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                     {% for group in user.groups.all %}
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ group.name }}</span>
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ group.name }}</span>
                     {% empty %}
                       <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Roles</span>
                     {% endfor %}

@@ -129,7 +129,7 @@ def user_permission_edit_view(request, pk):
         return render(
             request,
             "users/user_permission_form.html",
-            {"user": user, "form": form, "title": "Edit User Roles"},
+            {"user": user, "form": form, "title": "Edit User Access"},
         )
     else:
         raise PermissionDenied

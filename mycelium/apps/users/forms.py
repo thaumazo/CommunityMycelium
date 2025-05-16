@@ -112,9 +112,9 @@ class UserForm(forms.ModelForm):
 
 class UserPermissionForm(forms.Form):
     groups = forms.ModelMultipleChoiceField(
-        queryset=Group.objects.all(),
+        queryset=Group.objects.filter(name__in=['Admin', 'Meetings']),
         widget=forms.CheckboxSelectMultiple,
-        label="Roles",
+        label="Access",
         required=False
     )
 
@@ -124,3 +124,14 @@ class UserPermissionForm(forms.Form):
         if self.user and self.user.pk:
             # Set the initial value to all user's groups
             self.fields["groups"].initial = self.user.groups.all()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        groups = cleaned_data.get('groups', [])
+        
+        # If Admin is selected, remove all other groups
+        admin_group = Group.objects.filter(name='Admin').first()
+        if admin_group in groups:
+            cleaned_data['groups'] = [admin_group]
+        
+        return cleaned_data
