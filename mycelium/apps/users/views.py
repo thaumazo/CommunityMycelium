@@ -117,11 +117,11 @@ def user_permission_edit_view(request, pk):
         if request.method == "POST":
             form = UserPermissionForm(request.POST, user=user)
             if form.is_valid():
-                # Clear existing groups and set the new one
+                # Clear existing groups and set the new ones
                 user.groups.clear()
                 if form.cleaned_data["groups"]:
-                    user.groups.add(form.cleaned_data["groups"])
-                messages.success(request, "User role updated successfully.")
+                    user.groups.add(*form.cleaned_data["groups"])
+                messages.success(request, "User roles updated successfully.")
                 return redirect("user_detail", pk=user.pk)
         else:
             form = UserPermissionForm(user=user)
@@ -129,7 +129,7 @@ def user_permission_edit_view(request, pk):
         return render(
             request,
             "users/user_permission_form.html",
-            {"user": user, "form": form, "title": "Edit User Role"},
+            {"user": user, "form": form, "title": "Edit User Roles"},
         )
     else:
         raise PermissionDenied

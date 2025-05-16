@@ -19,15 +19,11 @@
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center space-x-2">
                       <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'user_detail' user.pk %}" class="hover:text-indigo-900 hover:underline">{{ user.username }}</a></h3>
-                      {% if user.is_admin %}
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Admin</span>
-                      {% elif user.is_editor %}
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Editor</span>
-                      {% elif user.is_viewer %}
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Viewer</span>
-                      {% else %}
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Group</span>
-                      {% endif %}
+                      {% for group in user.groups.all %}
+                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ group.name }}</span>
+                      {% empty %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Roles</span>
+                      {% endfor %}
                     </div>
                     <p class="mt-1 text-sm text-gray-500">{{ user.email }}</p>
                     <div class="mt-2 flex items-center text-sm text-gray-500">

@@ -33,15 +33,11 @@
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">Roles</dt>
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% if user.is_admin %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Admin</span>
-                    {% elif user.is_editor %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Editor</span>
-                    {% elif user.is_viewer %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Viewer</span>
-                    {% else %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Group</span>
-                    {% endif %}
+                    {% for group in user.groups.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ group.name }}</span>
+                    {% empty %}
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Roles</span>
+                    {% endfor %}
                   </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
