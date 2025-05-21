@@ -11,8 +11,10 @@ class Command(BaseCommand):
     help = "Sets up meeting-specific roles and permissions"
 
     def handle(self, *args, **options):
-        # Create meeting-specific group
-        meetings_group, _ = Group.objects.get_or_create(name="Meetings")
+        # Create meeting-specific groups
+        meetings_admin_group, _ = Group.objects.get_or_create(name="Meetings Admin")
+        meetings_editor_group, _ = Group.objects.get_or_create(name="Meetings Editor")
+        meetings_viewer_group, _ = Group.objects.get_or_create(name="Meetings Viewer")
 
         # Get content type for Meeting model
         meeting_content_type = ContentType.objects.get_for_model(Meeting)
@@ -22,9 +24,8 @@ class Command(BaseCommand):
             content_type=meeting_content_type
         )
 
-        # Assign permissions to group
-        # Meetings group gets all permissions for meetings
-        meetings_permissions = meeting_permissions.filter(
+        # Meetings admin group gets all permissions for meetings
+        meetings_admin_permissions = meeting_permissions.filter(
             codename__in=[
                 "add_meeting",
                 "change_meeting",
@@ -33,8 +34,27 @@ class Command(BaseCommand):
                 "delegate_meeting",
             ]
         )
-        meetings_group.permissions.set(meetings_permissions)
+        meetings_admin_group.permissions.set(meetings_admin_permissions)
+
+        # Meetings editor group gets view_meeting permission
+        meetings_editor_permissions = meeting_permissions.filter(
+            codename__in=[
+                "add_meeting",
+                "view_meeting",
+            ]
+        )
+        meetings_editor_group.permissions.set(meetings_editor_permissions)
+
+        # Meetings viewer group gets view_meeting permission
+        meetings_viewer_permissions = meeting_permissions.filter(
+            codename__in=[
+                "view_meeting",
+            ]
+        )
+        meetings_viewer_group.permissions.set(meetings_viewer_permissions)
 
         self.stdout.write(
-            self.style.SUCCESS("Successfully set up meeting-specific roles and permissions")
-        ) 
+            self.style.SUCCESS(
+                "Successfully set up meeting-specific roles and permissions"
+            )
+        )

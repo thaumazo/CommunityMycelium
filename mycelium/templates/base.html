@@ -31,12 +31,20 @@
           <div class="flex items-center">
             {% if request.user.is_authenticated %}
               <div data-module="UserMenu">
-                <div>
-                  <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                    <span class="sr-only">Open user menu</span>
-                    <span class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white">{{ request.user.username|first|upper }}</span>
-                  </button>
-                </div>
+                <button type="button" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                  <span class="sr-only">Open user menu</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white">{{ request.user.username|first|upper }}</div>
+                    <div class="">
+                      <!-- list of groups -->
+                      <div class="flex items-center gap-2">
+                        {% for group in request.user.groups.all %}
+                          <span class="text-xs text-gray-500">{{ group.name }}</span>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </button>
                 <div class="absolute right-0 z-50 hidden my-3 text-base list-none bg-gray-50 border border-gray-200 divide-y divide-gray-100 rounded-sm shadow-sm" id="dropdown-user">
                   <div class="px-4 py-3" role="none">
                     <p class="text-sm text-gray-900" role="none">{{ request.user.get_full_name|default:request.user.username }}</p>
