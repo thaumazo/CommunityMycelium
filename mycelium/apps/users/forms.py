@@ -111,15 +111,27 @@ class UserForm(forms.ModelForm):
 
 
 class UserPermissionForm(forms.Form):
-    groups = forms.ModelChoiceField(
-        queryset=Group.objects.all(), widget=forms.Select, label="Role", required=False
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        label="Access",
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         if self.user and self.user.pk:
-            # Set the initial value to the user's first group
-            user_groups = self.user.groups.all()
-            if user_groups.exists():
-                self.fields["groups"].initial = user_groups.first()
+            # Set the initial value to all user's groups
+            self.fields["groups"].initial = self.user.groups.all()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        groups = cleaned_data.get("groups", [])
+
+        # If Admin is selected, remove all other groups
+        admin_group = Group.objects.filter(name="Admin").first()
+        if admin_group in groups:
+            cleaned_data["groups"] = [admin_group]
+
+        return cleaned_data

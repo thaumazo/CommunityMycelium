@@ -1,9 +1,6 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-
-User = get_user_model()
 
 
 class ObjectPermission(models.Model):
@@ -15,7 +12,7 @@ class ObjectPermission(models.Model):
         ("delegate", "Delegate"),  # Ability to grant/revoke permissions
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
 
     # Generic foreign key to any model

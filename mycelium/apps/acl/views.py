@@ -23,9 +23,7 @@ def content_type_list_view(request):
         # Count the number of objects that the user
         # has delegate permissions for either through
         # model-level permissions or object-level permissions
-        object_count = get_permitted_objects(
-            request.user, "delegate", model_class
-        ).count()
+        object_count = len(get_permitted_objects(request.user, "delegate", model_class))
         # Add the content type and its count to our list
         content_type_info.append((content_type, object_count))
 

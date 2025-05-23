@@ -71,7 +71,7 @@
                     <dt class="text-sm font-medium text-gray-500 truncate">Profile</dt>
                     <dd class="flex items-baseline">
                       <div class="text-2xl font-semibold text-gray-900">
-                        <a href="#" class="text-indigo-600 hover:text-indigo-900">View Profile</a>
+                        <a href="{% url 'user_detail' request.user.id %}" class="text-indigo-600 hover:text-indigo-900">View Profile</a>
                       </div>
                     </dd>
                   </dl>

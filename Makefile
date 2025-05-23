@@ -82,7 +82,9 @@ logs:
 
 # --- Django Management Commands ---
 setup-groups:
-	podman exec $(POD_NAME)-web python manage.py setup_groups
+	podman exec $(POD_NAME)-web python manage.py setup_admin_roles
+	podman exec $(POD_NAME)-web python manage.py setup_user_roles
+	podman exec $(POD_NAME)-web python manage.py setup_meeting_roles
 
 collectstatic:
 	podman exec $(POD_NAME)-web python manage.py collectstatic --noinput
