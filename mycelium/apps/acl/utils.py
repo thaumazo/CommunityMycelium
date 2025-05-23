@@ -5,8 +5,17 @@ from django.http import Http404
 from .models import ObjectPermission
 
 
-def can(user, action, obj):
+def is_permitted(user, action, obj_or_string):
     """Check if a user has permission to perform `action` on `obj`."""
+    # If the object is a string, it's a model name
+    if isinstance(obj_or_string, str):
+        # Create a empty object instance of the model
+        obj = ContentType.objects.get(
+            app_label=obj_or_string.split(".")[0], model=obj_or_string.split(".")[1]
+        ).model_class()()
+    else:
+        obj = obj_or_string
+
     # First, if the object is owned by the user, they can always perform the action
     if hasattr(obj, "created_by") and obj.created_by == user:
         return True
@@ -111,7 +120,7 @@ def get_permitted_object(user, action, model_class, object_id):
     except model_class.DoesNotExist:
         raise Http404
 
-    if not can(user, action, obj):
+    if not is_permitted(user, action, obj):
         raise PermissionDenied
 
     return obj

@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from apps.acl.utils import get_permitted_objects, get_permitted_object
+from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from .models import Meeting
 from .forms import MeetingForm
+from django.core.exceptions import PermissionDenied
 
 
 @login_required
@@ -20,6 +21,9 @@ def meeting_detail_view(request, pk):
 
 @login_required
 def meeting_create_view(request):
+    if not is_permitted(request.user, "add", "meetings.meeting"):
+        raise PermissionDenied
+
     if request.method == "POST":
         form = MeetingForm(request.POST)
         if form.is_valid():

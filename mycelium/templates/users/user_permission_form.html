@@ -30,9 +30,6 @@
                           {% if choice.choice_label == 'Admin' %}
                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Admin</span>
                             <span class="ml-2 text-gray-500">Full system access and control (includes all other permissions)</span>
-                          {% elif choice.choice_label == 'Meetings' %}
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Meetings</span>
-                            <span class="ml-2 text-gray-500">Manage and participate in meetings</span>
                           {% else %}
                             {{ choice.choice_label }}
                           {% endif %}
