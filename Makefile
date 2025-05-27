@@ -75,8 +75,8 @@ ssh:
 logs:
 	podman logs -f $(POD_NAME)-web
 
-# pytest:
-# 	podman exec $(POD_NAME)-web pytest
+pytest:
+	podman exec $(POD_NAME)-web pytest
 
 # test: pytest
 
@@ -97,4 +97,14 @@ seed-meetings:
 
 seed-all: seed-users seed-meetings
 
-.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups seed-users seed-meetings seed-all
+# --- Testing Commands ---
+test:
+	podman exec $(POD_NAME)-web bash -c "cd /mycelium && python -m pytest"
+
+test-watch:
+	podman exec $(POD_NAME)-web bash -c "cd /mycelium && python -m pytest -f"
+
+test-coverage:
+	podman exec $(POD_NAME)-web bash -c "cd /mycelium && python -m pytest --cov=. --cov-report=html"
+
+.PHONY: init up stop rm rmpod clean migrate createsuperuser shell test test-watch test-coverage setup-groups seed-users seed-meetings seed-all
