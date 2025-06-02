@@ -1,10 +1,15 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 from .models import ObjectPermission
-from .forms import ObjectPermissionForm
-from .utils import get_permitted_content_types, get_permitted_objects
+from .forms import ObjectPermissionForm, UserSelectForm
+from .utils import (
+    get_permitted_content_types,
+    get_permitted_objects,
+    get_permitted_object,
+)
 
 User = get_user_model()
 
@@ -55,61 +60,37 @@ def object_list_view(request, content_type_id):
 
 @login_required
 def object_user_permission_list_view(request, content_type_id, object_id):
-    """Display details of a specific object."""
+    """Edit permissions for a meeting."""
     content_type = get_object_or_404(ContentType, id=content_type_id)
     model_class = content_type.model_class()
-    object = get_object_or_404(model_class, id=object_id)
+    object = get_permitted_object(request.user, "delegate", model_class, object_id)
 
-    # Get all users along with their permissions for this object
-    users = User.objects.all()
-    users_with_permissions = {}
-
-    for user in users:
-        # Get object-level permissions
-        object_permissions = object.permissions.filter(user=user)
-        object_permission_actions = [
-            permission.action for permission in object_permissions
-        ]
-
-        # Get group-level permissions
-        group_permissions = []
-        for group in user.groups.all():
-            for permission in group.permissions.all():
-                if (
-                    permission.content_type == content_type
-                    and permission.codename.startswith(
-                        ("add_", "change_", "delete_", "view_", "delegate_")
-                    )
-                ):
-                    action = permission.codename.split("_")[0]
-                    if action not in group_permissions:
-                        group_permissions.append(action)
-
-        # Combine both types of permissions
-        users_with_permissions[user] = {
-            "object_permissions": object_permission_actions,
-            "group_permissions": group_permissions,
-            "all_permissions": list(set(object_permission_actions + group_permissions)),
-        }
+    if request.method == "POST":
+        form = UserSelectForm(request.POST)
+        if form.is_valid():
+            return redirect(
+                "object_user_permission_form",
+                content_type_id=content_type_id,
+                object_id=object_id,
+                user_id=form.cleaned_data["user"].id,
+            )
+    else:
+        form = UserSelectForm()
 
     return render(
         request,
         "acl/object_user_permission_list.html",
-        {
-            "object": object,
-            "content_type": content_type,
-            "users_with_permissions": users_with_permissions.items(),
-        },
+        {"form": form, "title": "Edit Meeting Permissions", "object": object},
     )
 
 
 @login_required
 def object_user_permission_form_view(request, content_type_id, object_id, user_id):
     """Edit the permissions for a specific user on a specific object."""
+    user = get_object_or_404(User, id=user_id)
     content_type = get_object_or_404(ContentType, id=content_type_id)
     model_class = content_type.model_class()
-    object = get_object_or_404(model_class, id=object_id)
-    user = get_object_or_404(User, id=user_id)
+    object = get_permitted_object(request.user, "delegate", model_class, object_id)
 
     # Get existing object-level permissions for this user on this object
     existing_object_permissions = object.permissions.filter(user=user)
@@ -147,6 +128,7 @@ def object_user_permission_form_view(request, content_type_id, object_id, user_i
                     object_id=object.id,
                     action=action,
                 )
+            messages.success(request, "Meeting permissions updated successfully!")
             return redirect(
                 "object_user_permission_list",
                 content_type_id=content_type_id,

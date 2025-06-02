@@ -3,6 +3,7 @@ from django.contrib.auth.models import Permission
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from .models import ObjectPermission
+from apps.utils.dump import dump_anything
 
 
 def is_permitted(user, action, obj_or_string):
@@ -117,6 +118,9 @@ def get_permitted_object(user, action, model_class, object_id):
     """Get an object of a given model that a user has permission to perform an action on."""
     try:
         obj = model_class.objects.get(id=object_id)
+        content_type = ContentType.objects.get_for_model(model_class)
+        obj.content_type = content_type
+        obj.foo = "bar"
     except model_class.DoesNotExist:
         raise Http404
 

@@ -28,7 +28,7 @@
         {% endif %}
         {% can request.user 'delegate' meeting as check %}
         {% if check %}
-          <a href="{% url 'meeting_permission_edit' meeting.pk %}"
+          <a href="{% url 'object_user_permission_list' meeting.content_type.id meeting.pk %}"
             class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == 'meeting_permission_edit' %}
                bg-indigo-100 text-indigo-700
             {% else %}

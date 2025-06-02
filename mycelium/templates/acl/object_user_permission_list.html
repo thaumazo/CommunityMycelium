@@ -3,76 +3,30 @@
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-semibold text-gray-900">
-          <a href="{% url 'content_type_list' %}" class="hover:text-indigo-900 hover:underline">Permissions</a>
-          /
-          <a href="{% url 'object_list' content_type.id %}" class="hover:text-indigo-900 hover:underline">{{ content_type.app_label|title }}</a>
-          /
-          {{ content_type.model|title }}
-        </h1>
-      </div>
+      {% include '_components/meeting_nav.html' with meeting=object %}
 
-      {% include '_components/messages.html' %}
+      <div class="max-w-3xl mx-auto">
+        {% include '_components/messages.html' %}
 
-      <div class="bg-white shadow overflow-hidden sm:rounded-md">
-        <div class="px-4 py-5 sm:px-6">
-          <h2 class="text-lg font-medium text-gray-900 mb-4">{{ object.title }}</h2>
-        </div>
-        <ul class="divide-y divide-gray-200">
-          {% for user, permissions in users_with_permissions %}
-            <li>
-              <div class="px-4 py-4 sm:px-6">
-                <div class="flex items-center justify-between">
-                  <h3 class="text-lg font-medium text-indigo-600 truncate"><a href="{% url 'user_detail' user.id %}" class="hover:text-indigo-900 hover:underline">{{ user.username }}</a></h3>
-                  <div class="ml-2 flex items-center space-x-2">
-                    <a href="{% url 'object_user_permission_form' content_type.id object.id user.id %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit Permissions</span></a>
-                  </div>
-                </div>
-                <div class="mt-4 space-y-4 md:space-y-3">
-                  <div class="md:flex md:items-baseline md:gap-4">
-                    <h4 class="text-sm font-medium text-gray-500 md:w-32">Group Permissions</h4>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      {% if permissions.group_permissions %}
-                        {% for perm in permissions.group_permissions %}
-                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ perm }}</span>
-                        {% endfor %}
-                      {% else %}
-                        <span class="text-sm text-gray-400">None</span>
-                      {% endif %}
-                    </div>
-                  </div>
-                  <div class="md:flex md:items-baseline md:gap-4">
-                    <h4 class="text-sm font-medium text-gray-500 md:w-32">Object Permissions</h4>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      {% if permissions.object_permissions %}
-                        {% for perm in permissions.object_permissions %}
-                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">{{ perm }}</span>
-                        {% endfor %}
-                      {% else %}
-                        <span class="text-sm text-gray-400">None</span>
-                      {% endif %}
-                    </div>
-                  </div>
-                  <div class="md:flex md:items-baseline md:gap-4">
-                    <h4 class="text-sm font-medium text-gray-500 md:w-32">All Permissions</h4>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      {% if permissions.all_permissions %}
-                        {% for perm in permissions.all_permissions %}
-                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ perm }}</span>
-                        {% endfor %}
-                      {% else %}
-                        <span class="text-sm text-gray-400">None</span>
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <h1 class="text-2xl font-semibold text-gray-900 mb-6">{{ title }}</h1>
+
+            <form method="post" class="space-y-6">
+              {% csrf_token %}
+              <div>
+                <label for="{{ form.user.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user.label }}</label>
+                <div class="mt-1">{{ form.user }}</div>
+                {% if form.user.errors %}
+                  <p class="mt-2 text-sm text-red-600">{{ form.user.errors }}</p>
+                {% endif %}
               </div>
-            </li>
-          {% empty %}
-            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No users with permissions found.</li>
-          {% endfor %}
-        </ul>
+              <div class="mt-6 flex space-x-3">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Select</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>

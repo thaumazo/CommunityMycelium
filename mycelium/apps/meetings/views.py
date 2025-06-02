@@ -3,8 +3,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from .models import Meeting
-from .forms import MeetingForm, MeetingPermissionForm
+from .forms import MeetingForm
 from django.core.exceptions import PermissionDenied
+from apps.utils.dump import dump_anything
 
 
 @login_required
@@ -59,27 +60,6 @@ def meeting_edit_view(request, pk):
         request,
         "meetings/meeting_form.html",
         {"form": form, "title": "Edit Meeting", "meeting": meeting},
-    )
-
-
-@login_required
-def meeting_permission_edit_view(request, pk):
-    """Edit permissions for a meeting."""
-    meeting = get_permitted_object(request.user, "delegate", Meeting, pk)
-
-    if request.method == "POST":
-        form = MeetingPermissionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Meeting permissions updated successfully!")
-            return redirect("meeting_detail", pk=meeting.pk)
-    else:
-        form = MeetingPermissionForm()
-
-    return render(
-        request,
-        "meetings/meeting_permission_form.html",
-        {"form": form, "title": "Edit Meeting Permissions", "meeting": meeting},
     )
 
 
