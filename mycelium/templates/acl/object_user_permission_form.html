@@ -3,13 +3,18 @@
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
-      {% include '_components/meeting_nav.html' with meeting=object %}
+      {% include '_components/object_nav.html' %}
 
       <div class="max-w-3xl mx-auto">
         {% include '_components/messages.html' %}
 
         <div class="bg-white shadow overflow-hidden sm:rounded-md">
-          <div class="px-4 py-5 sm:px-6">
+          <div class="px-4 py-5 sm:px-6 space-y-6">
+            <div class="space-y-2">
+              <h1 class="text-2xl font-semibold text-gray-900">{{ object.title }}</h1>
+              <h2 class="text-lg text-gray-500">Edit Permissions</h2>
+            </div>
+
             <div class="space-y-6">
               <div>
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Group-Level Permissions</h2>

@@ -21,7 +21,7 @@ class UniversalEncoder(json.JSONEncoder):
             return f"<Unserializable object: {e}>"
 
 
-def dump_anything(obj, pretty=False):
+def dump(obj, pretty=False):
     try:
         if pretty:
             return json.dumps(obj, cls=UniversalEncoder, indent=2)

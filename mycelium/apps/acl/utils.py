@@ -3,7 +3,7 @@ from django.contrib.auth.models import Permission
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from .models import ObjectPermission
-from apps.utils.dump import dump_anything
+from apps.utils.dump import dump
 
 
 def is_permitted(user, action, obj_or_string):

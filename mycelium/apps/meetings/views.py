@@ -5,7 +5,7 @@ from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permi
 from .models import Meeting
 from .forms import MeetingForm
 from django.core.exceptions import PermissionDenied
-from apps.utils.dump import dump_anything
+from apps.utils.dump import dump
 
 
 @login_required
@@ -39,7 +39,7 @@ def meeting_create_view(request):
     return render(
         request,
         "meetings/meeting_form.html",
-        {"form": form, "title": "Create Meeting"},
+        {"form": form},
     )
 
 
@@ -59,7 +59,7 @@ def meeting_edit_view(request, pk):
     return render(
         request,
         "meetings/meeting_form.html",
-        {"form": form, "title": "Edit Meeting", "meeting": meeting},
+        {"form": form, "meeting": meeting},
     )
 
 

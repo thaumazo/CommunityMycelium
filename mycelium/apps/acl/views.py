@@ -60,7 +60,7 @@ def object_list_view(request, content_type_id):
 
 @login_required
 def object_user_permission_list_view(request, content_type_id, object_id):
-    """Edit permissions for a meeting."""
+    """Edit permissions for a any given object."""
     content_type = get_object_or_404(ContentType, id=content_type_id)
     model_class = content_type.model_class()
     object = get_permitted_object(request.user, "delegate", model_class, object_id)
@@ -80,7 +80,7 @@ def object_user_permission_list_view(request, content_type_id, object_id):
     return render(
         request,
         "acl/object_user_permission_list.html",
-        {"form": form, "title": "Edit Meeting Permissions", "object": object},
+        {"form": form, "object": object},
     )
 
 
@@ -128,7 +128,7 @@ def object_user_permission_form_view(request, content_type_id, object_id, user_i
                     object_id=object.id,
                     action=action,
                 )
-            messages.success(request, "Meeting permissions updated successfully!")
+            messages.success(request, "Permissions updated successfully!")
             return redirect(
                 "object_user_permission_list",
                 content_type_id=content_type_id,
