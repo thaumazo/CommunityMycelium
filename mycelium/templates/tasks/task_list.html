@@ -27,25 +27,31 @@
                     </div>
                     <p class="mt-1 text-sm text-gray-500">{{ task.description|truncatewords:30 }}</p>
                     <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                      {% include 'svgs/calendar.html' %}
+                      {% include '_icons/calendar.html' %}
                       <span>Due: {{ task.due_date|date:'F j, Y P' }}</span>
                       <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                         {% if task.status == 'completed' %}
                           
                           
+                          
                           bg-green-100 text-green-800
+
 
 
                         {% elif task.status == 'in_progress' %}
                           
                           
+                          
                           bg-yellow-100 text-yellow-800
+
 
 
                         {% else %}
                           
                           
+                          
                           bg-gray-100 text-gray-800
+
 
 
                         {% endif %}">

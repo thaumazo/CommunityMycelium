@@ -74,44 +74,44 @@
             <ul class="space-y-2 font-medium">
               <li>
                 <a href="{% url 'home' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                  {% include 'svgs/home.html' %}
+                  {% include '_icons/home.html' %}
                   <span class="ms-3">Dashboard</span>
                 </a>
               </li>
               <li>
                 <a href="{% url 'meeting_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                  {% include 'svgs/meetings.html' %}
+                  {% include '_icons/meetings.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Meetings</span>
                 </a>
               </li>
               <li>
                 <a href="{% url 'task_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                  {% include 'svgs/tasks.html' %}
+                  {% include '_icons/tasks.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
                 </a>
               </li>
               <li>
                 <a href="{% url 'user_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                  {% include 'svgs/users.html' %}
+                  {% include '_icons/users.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
                 </a>
               </li>
               <li>
                 <a href="{% url 'acl_content_type_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                  {% include 'svgs/lock.html' %}
+                  {% include '_icons/lock.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Permissions</span>
                 </a>
               </li>
               {% if not request.user.is_authenticated %}
                 <li>
                   <a href="{% url 'login' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                    {% include 'svgs/login.html' %}
+                    {% include '_icons/login.html' %}
                     <span class="flex-1 ms-3 whitespace-nowrap">Sign In</span>
                   </a>
                 </li>
                 <li>
                   <a href="{% url 'register' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                    {% include 'svgs/register.html' %}
+                    {% include '_icons/register.html' %}
                     <span class="flex-1 ms-3 whitespace-nowrap">Sign Up</span>
                   </a>
                 </li>

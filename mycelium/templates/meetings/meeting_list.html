@@ -27,7 +27,7 @@
                     </div>
                     <p class="mt-1 text-sm text-gray-500">{{ meeting.description|truncatewords:30 }}</p>
                     <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                      {% include 'svgs/calendar.html' %}
+                      {% include '_icons/calendar.html' %}
                       <span>{{ meeting.start_time|date:'F j, Y P' }} - {{ meeting.end_time|date:'P' }}</span>
                     </div>
                   </div>
