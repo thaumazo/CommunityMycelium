@@ -1,22 +1,22 @@
 from django.urls import path
 from .views import (
-    content_type_list_view,
-    object_list_view,
-    object_user_permission_list_view,
-    object_user_permission_form_view,
+    acl_content_type_list_view,
+    acl_object_list_view,
+    acl_object_permission_form_step_1_view,
+    acl_object_permission_form_step_2_view,
 )
 
 urlpatterns = [
-    path("", content_type_list_view, name="content_type_list"),
-    path("<int:content_type_id>/", object_list_view, name="object_list"),
+    path("", acl_content_type_list_view, name="acl_content_type_list"),
+    path("<int:content_type_id>/", acl_object_list_view, name="acl_object_list"),
     path(
         "<int:content_type_id>/<int:object_id>/",
-        object_user_permission_list_view,
-        name="object_user_permission_list",
+        acl_object_permission_form_step_1_view,
+        name="acl_object_permission_form_step_1",
     ),
     path(
         "<int:content_type_id>/<int:object_id>/<int:user_id>/",
-        object_user_permission_form_view,
-        name="object_user_permission_form",
+        acl_object_permission_form_step_2_view,
+        name="acl_object_permission_form_step_2",
     ),
 ]

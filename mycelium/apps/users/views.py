@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from .forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
+from apps.utils import dump
 
 User = get_user_model()
 
@@ -70,9 +71,7 @@ def user_create_view(request):
         # Create a new user form
         form = RegisterForm()
     # Render the user form
-    return render(
-        request, "users/user_form.html", {"form": form, "title": "Create User"}
-    )
+    return render(request, "users/user_form.html", {"form": form, "user": None})
 
 
 def logout_view(request):
@@ -108,7 +107,7 @@ def user_edit_view(request, pk):
     return render(
         request,
         "users/user_form.html",
-        {"form": form, "title": "Edit User", "user": user},
+        {"form": form, "user": user},
     )
 
 
@@ -135,7 +134,7 @@ def user_permission_edit_view(request, pk):
     return render(
         request,
         "users/user_permission_form.html",
-        {"user": user, "form": form, "title": "Edit User Access"},
+        {"user": user, "form": form},
     )
 
 

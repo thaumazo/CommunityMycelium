@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.users",
     "apps.meetings",
+    "apps.tasks",
     "apps.acl",
 ]
 
