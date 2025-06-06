@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      {% include '_components/object_nav.html' with object=task %}
+
+      <div class="max-w-3xl mx-auto">
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="space-y-2">
+              {% if task %}
+                <h1 class="text-2xl font-semibold text-gray-900">{{ task.title }}</h1>
+                <h2 class="text-lg text-gray-500">Edit</h2>
+              {% else %}
+                <h1 class="text-2xl font-semibold text-gray-900">Create Task</h1>
+              {% endif %}
+            </div>
+
+            <form method="post" class="space-y-6">
+              {% csrf_token %}
+
+              <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.title.label }}</label>
+                <div class="mt-1">
+                  <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="w-full" />
+                </div>
+                {% if form.title.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.title.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.due_date.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.due_date.label }}</label>
+                <div class="mt-1">
+                  <input type="datetime-local" name="{{ form.due_date.html_name }}" id="{{ form.due_date.id_for_label }}" value="{{ form.due_date.value|date:'Y-m-d\TH:i'|default:'' }}" class="w-full" />
+                </div>
+                {% if form.due_date.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.due_date.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.status.label }}</label>
+                <div class="mt-1">
+                  <select name="{{ form.status.html_name }}" id="{{ form.status.id_for_label }}" class="w-full">
+                    {% for value, label in form.status.field.choices %}
+                      <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                {% if form.status.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.status.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.description.label }}</label>
+                <div class="mt-1">
+                  <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="4" class="w-full">{{ form.description.value|default:'' }}</textarea>
+                </div>
+                {% if form.description.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.description.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div class="flex justify-end space-x-3">
+                <a href="{% url 'task_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save Task</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %} 

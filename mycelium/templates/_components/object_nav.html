@@ -28,8 +28,8 @@
         {% endif %}
         {% can request.user 'delegate' object as check %}
         {% if check %}
-          <a href="{% url 'object_user_permission_list' object.content_type.id object.pk %}"
-            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == 'object_user_permission_list' or request.resolver_match.url_name == 'object_user_permission_form' %}
+          <a href="{% url 'acl_object_permission_form_step_1' object.content_type.id object.pk %}"
+            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == 'acl_object_permission_form_step_1' or request.resolver_match.url_name == 'acl_object_permission_form_step_2' %}
                bg-indigo-100 text-indigo-700
             {% else %}
                text-gray-500 hover:text-gray-700 hover:bg-gray-100

@@ -115,6 +115,24 @@ class Command(BaseCommand):
         meetings_viewer_group.user_set.add(User.objects.get(username="laura_davis"))
         meetings_viewer_group.user_set.add(User.objects.get(username="thomastaylor"))
 
+        # Add users to tasks admin group
+        tasks_admin_group = Group.objects.get(name="Tasks Admin")
+        tasks_admin_group.user_set.add(User.objects.get(username="alexsmith"))
+        tasks_admin_group.user_set.add(User.objects.get(username="jennifer_lee"))
+
+        # Add users to tasks editor group
+        tasks_editor_group = Group.objects.get(name="Tasks Editor")
+        tasks_editor_group.user_set.add(User.objects.get(username="michaelbrown"))
+        tasks_editor_group.user_set.add(User.objects.get(username="sarah_wilson"))
+
+        # Add users to tasks viewer group
+        tasks_viewer_group = Group.objects.get(name="Tasks Viewer")
+        tasks_viewer_group.user_set.add(User.objects.get(username="davidmiller"))
+        tasks_viewer_group.user_set.add(User.objects.get(username="emily_jones"))
+        tasks_viewer_group.user_set.add(User.objects.get(username="robertwhite"))
+        tasks_viewer_group.user_set.add(User.objects.get(username="laura_davis"))
+        tasks_viewer_group.user_set.add(User.objects.get(username="thomastaylor"))
+
         # Add users to user admin group
         user_admin_group = Group.objects.get(name="User Admin")
         user_admin_group.user_set.add(User.objects.get(username="alexsmith"))

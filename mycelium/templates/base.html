@@ -85,13 +85,19 @@
                 </a>
               </li>
               <li>
+                <a href="{% url 'task_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include 'svgs/tasks.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
+                </a>
+              </li>
+              <li>
                 <a href="{% url 'user_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   {% include 'svgs/users.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'content_type_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'acl_content_type_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   {% include 'svgs/lock.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Permissions</span>
                 </a>

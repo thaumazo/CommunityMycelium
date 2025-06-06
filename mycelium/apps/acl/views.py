@@ -15,7 +15,7 @@ User = get_user_model()
 
 
 @login_required
-def content_type_list_view(request):
+def acl_content_type_list_view(request):
     """List all object types in the database for which this user has group or object delegate permissions."""
     # Get all content types that the user has delegate permissions for
     content_types_with_counts = get_permitted_content_types(request.user, "delegate")
@@ -34,13 +34,13 @@ def content_type_list_view(request):
 
     return render(
         request,
-        "acl/content_type_list.html",
+        "acl/acl_content_type_list.html",
         {"content_types_with_counts": content_type_info},
     )
 
 
 @login_required
-def object_list_view(request, content_type_id):
+def acl_object_list_view(request, content_type_id):
     """List all objects of a specific type for which this user has object delegate permissions."""
     # Get the content type for this object list
     content_type = get_object_or_404(ContentType, id=content_type_id)
@@ -53,13 +53,13 @@ def object_list_view(request, content_type_id):
 
     return render(
         request,
-        "acl/object_list.html",
+        "acl/acl_object_list.html",
         {"objects": objects, "content_type": content_type},
     )
 
 
 @login_required
-def object_user_permission_list_view(request, content_type_id, object_id):
+def acl_object_permission_form_step_1_view(request, content_type_id, object_id):
     """Edit permissions for a any given object."""
     content_type = get_object_or_404(ContentType, id=content_type_id)
     model_class = content_type.model_class()
@@ -69,7 +69,7 @@ def object_user_permission_list_view(request, content_type_id, object_id):
         form = UserSelectForm(request.POST)
         if form.is_valid():
             return redirect(
-                "object_user_permission_form",
+                "acl_object_permission_form_step_2",
                 content_type_id=content_type_id,
                 object_id=object_id,
                 user_id=form.cleaned_data["user"].id,
@@ -79,13 +79,15 @@ def object_user_permission_list_view(request, content_type_id, object_id):
 
     return render(
         request,
-        "acl/object_user_permission_list.html",
+        "acl/acl_object_permission_form_step_1.html",
         {"form": form, "object": object},
     )
 
 
 @login_required
-def object_user_permission_form_view(request, content_type_id, object_id, user_id):
+def acl_object_permission_form_step_2_view(
+    request, content_type_id, object_id, user_id
+):
     """Edit the permissions for a specific user on a specific object."""
     user = get_object_or_404(User, id=user_id)
     content_type = get_object_or_404(ContentType, id=content_type_id)
@@ -130,7 +132,7 @@ def object_user_permission_form_view(request, content_type_id, object_id, user_i
                 )
             messages.success(request, "Permissions updated successfully!")
             return redirect(
-                "object_user_permission_list",
+                "acl_object_permission_form_step_1",
                 content_type_id=content_type_id,
                 object_id=object_id,
             )
@@ -141,7 +143,7 @@ def object_user_permission_form_view(request, content_type_id, object_id, user_i
 
     return render(
         request,
-        "acl/object_user_permission_form.html",
+        "acl/acl_object_permission_form_step_2.html",
         {
             "form": form,
             "object": object,
