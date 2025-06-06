@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      {% include '_components/object_nav.html' with object=meeting %}
+
+      <div class="max-w-3xl mx-auto">
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="space-y-2">
+              {% if meeting %}
+                <h1 class="text-2xl font-semibold text-gray-900">{{ meeting.title }}</h1>
+                <h2 class="text-lg text-gray-500">Edit</h2>
+              {% else %}
+                <h1 class="text-2xl font-semibold text-gray-900">Create Meeting</h1>
+              {% endif %}
+            </div>
+
+            <form method="post" class="space-y-6">
+              {% csrf_token %}
+
+              <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.title.label }}</label>
+                <div class="mt-1">
+                  <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="w-full" />
+                </div>
+                {% if form.title.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.title.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.start_time.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.start_time.label }}</label>
+                <div class="mt-1">
+                  <input type="datetime-local" name="{{ form.start_time.html_name }}" id="{{ form.start_time.id_for_label }}" value="{{ form.start_time.value|date:'Y-m-d\TH:i'|default:'' }}" class="w-full" />
+                </div>
+                {% if form.start_time.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.start_time.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.end_time.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.end_time.label }}</label>
+                <div class="mt-1">
+                  <input type="datetime-local" name="{{ form.end_time.html_name }}" id="{{ form.end_time.id_for_label }}" value="{{ form.end_time.value|date:'Y-m-d\TH:i'|default:'' }}" class="w-full" />
+                </div>
+                {% if form.end_time.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.end_time.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.description.label }}</label>
+                <div class="mt-1">
+                  <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="4" class="w-full">{{ form.description.value|default:'' }}</textarea>
+                </div>
+                {% if form.description.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.description.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div class="flex justify-end space-x-3">
+                <a href="{% url 'meeting_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save Meeting</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -37,7 +37,7 @@ up:
 	fi
 
 	podman build -t $(POD_NAME)-web .
-	podman run -dt --name $(POD_NAME)-web --pod $(POD_NAME) -v ./app:/app --env-file app/.env $(POD_NAME)-web
+	podman run -dt --name $(POD_NAME)-web --pod $(POD_NAME) -v ./mycelium:/mycelium --env-file mycelium/.env $(POD_NAME)-web
 
 stop:
 	podman stop $(POD_NAME)-web $(POD_NAME)-db || true
@@ -51,11 +51,17 @@ rmpod:
 clean: stop rm rmpod
 	podman volume rm pgdata || true
 
+scratch: clean init up delete-migrations migrate setup-groups seed-all
+
 # Django management
 migrate:
 	podman exec $(POD_NAME)-web python manage.py makemigrations users
 	podman exec $(POD_NAME)-web python manage.py makemigrations
 	podman exec $(POD_NAME)-web python manage.py migrate
+
+delete-migrations:
+	find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+	find . -path "*/migrations/*.pyc"  -delete	
 
 createsuperuser:
 	podman exec -it $(POD_NAME)-web python manage.py createsuperuser
@@ -66,9 +72,33 @@ shell:
 ssh:
 	podman exec -ti $(POD_NAME)-web /bin/bash
 
-pytest:
-	podman exec $(POD_NAME)-web pytest
+logs:
+	podman logs -f $(POD_NAME)-web
 
-test: pytest
+# pytest:
+# 	podman exec $(POD_NAME)-web pytest
 
-.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test
+# test: pytest
+
+# --- Django Management Commands ---
+setup-groups:
+	podman exec $(POD_NAME)-web python manage.py setup_admin_roles
+	podman exec $(POD_NAME)-web python manage.py setup_user_roles
+	podman exec $(POD_NAME)-web python manage.py setup_meeting_roles
+	podman exec $(POD_NAME)-web python manage.py setup_task_roles
+
+collectstatic:
+	podman exec $(POD_NAME)-web python manage.py collectstatic --noinput
+
+seed-users:
+	podman exec $(POD_NAME)-web python manage.py seed_users
+
+seed-meetings:
+	podman exec $(POD_NAME)-web python manage.py seed_meetings
+
+seed-tasks:
+	podman exec $(POD_NAME)-web python manage.py seed_tasks
+
+seed-all: seed-users seed-meetings seed-tasks
+
+.PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups seed-users seed-meetings seed-all

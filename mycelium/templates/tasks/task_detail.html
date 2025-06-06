@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      {% include '_components/object_nav.html' with object=task %}
+
+      <div class="max-w-3xl mx-auto">
+        {% include '_components/messages.html' %}
+
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="flex justify-between items-start">
+              <div class="space-y-2">
+                <h1 class="text-2xl font-semibold text-gray-900">{{ task.title }}</h1>
+                <p class="text-base text-gray-500">Details</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                {% can request.user 'change' task as check %}
+                {% if check %}
+                  <a href="{% url 'task_edit' task.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
+                  <a href="{% url 'task_delete' task.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="mt-6 border-t border-gray-200">
+              <dl class="divide-y divide-gray-200">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Created by</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ task.created_by.username }}</dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Due date</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ task.due_date|date:'F j, Y P' }}</dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Status</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                      {% if task.status == 'completed' %}
+                        
+                        bg-green-100 text-green-800
+
+                      {% elif task.status == 'in_progress' %}
+                        
+                        bg-yellow-100 text-yellow-800
+
+                      {% else %}
+                        
+                        bg-gray-100 text-gray-800
+
+                      {% endif %}">
+                      {{ task.get_status_display }}
+                    </span>
+                  </dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Description</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ task.description|linebreaks }}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+              <a href="{% url 'task_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Back to Tasks</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

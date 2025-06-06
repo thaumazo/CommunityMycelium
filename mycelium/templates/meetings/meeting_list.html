@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Meetings</h1>
+        {% can request.user 'add' 'meetings.meeting' as check %}
+        {% if check %}
+          <a href="{% url 'meeting_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create New Meeting</a>
+        {% endif %}
+      </div>
+
+      {% include '_components/messages.html' %}
+
+      <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+          {% for meeting in meetings %}
+            <li class="hover:bg-gray-50 transition-colors duration-150">
+              <div class="px-4 py-4 sm:px-6">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center space-x-2">
+                      <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'meeting_detail' meeting.pk %}" class="hover:text-indigo-900 hover:underline">{{ meeting.title }}</a></h3>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ meeting.created_by.username }}</span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">{{ meeting.description|truncatewords:30 }}</p>
+                    <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
+                      {% include 'svgs/calendar.html' %}
+                      <span>{{ meeting.start_time|date:'F j, Y P' }} - {{ meeting.end_time|date:'P' }}</span>
+                    </div>
+                  </div>
+                  <div class="ml-4 flex-shrink-0 flex items-center space-x-2">
+                    {% can request.user 'change' meeting as check %}
+                    {% if check %}
+                      <a href="{% url 'meeting_edit' meeting.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
+                      <a href="{% url 'meeting_delete' meeting.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </li>
+          {% empty %}
+            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No meetings scheduled yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% load user_tags %}
+
+{% if request.user.is_authenticated %}
+  <div class="flex justify-center mb-6 overflow-x-auto">
+    <nav class="flex space-x-4" aria-label="Object navigation">
+      {% if object %}
+        {% can request.user 'view' object as check %}
+        {% if check %}
+          <a href="{% url object.content_type.model|add:'_detail' object.pk %}"
+            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == object.content_type.model|add:'_detail' %}
+             bg-indigo-100 text-indigo-700
+            {% else %}
+             text-gray-500 hover:text-gray-700 hover:bg-gray-100
+            {% endif %}">
+            Details
+          </a>
+        {% endif %}
+        {% can request.user 'change' object as check %}
+        {% if check %}
+          <a href="{% url object.content_type.model|add:'_edit' object.pk %}"
+            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == object.content_type.model|add:'_edit' %}
+               bg-indigo-100 text-indigo-700
+            {% else %}
+               text-gray-500 hover:text-gray-700 hover:bg-gray-100
+            {% endif %}">
+            Edit
+          </a>
+        {% endif %}
+        {% can request.user 'delegate' object as check %}
+        {% if check %}
+          <a href="{% url 'acl_object_permission_form_step_1' object.content_type.id object.pk %}"
+            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == 'acl_object_permission_form_step_1' or request.resolver_match.url_name == 'acl_object_permission_form_step_2' %}
+               bg-indigo-100 text-indigo-700
+            {% else %}
+               text-gray-500 hover:text-gray-700 hover:bg-gray-100
+            {% endif %}">
+            Permissions
+          </a>
+        {% endif %}
+      {% endif %}
+    </nav>
+  </div>
+{% endif %}

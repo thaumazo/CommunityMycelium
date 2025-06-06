@@ -1,3 +1,22 @@
 {
-    "makefile.configureOnOpen": false
+	"makefile.configureOnOpen": false,
+	// Associate Django templates with the right language mode
+	"files.associations": {
+		"**/templates/**/*.html": "django-html",
+		"*.tpl": "django-html",
+		"*.tpl.html": "django-html"
+	},
+
+	// Use the django-html language mode settings
+	"[django-html]": {
+		"editor.defaultFormatter": "junstyle.vscode-django-support",
+		"editor.formatOnSave": true
+	},
+
+	// Disable regular HTML validation that conflicts with Django tags
+	"html.validate.scripts": false,
+	"html.validate.styles": false,
+
+	// Optional: Specific Python path if you're using a virtualenv
+	"python.pythonPath": "venv/bin/python3"
 }

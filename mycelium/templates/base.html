@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mycelium</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    {% load static %}
+    <!-- Main CSS -->
+    <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+  </head>
+
+  <body class="font-body">
+    <div data-module="Navigation">
+      <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200">
+        <div class="flex items-center justify-between px-3 py-3 lg:px-5 lg:pl-3 min-h-16">
+          <div class="flex items-center">
+            {% if request.user.is_authenticated %}
+              <button data-menu-button aria-controls="sidebar" type="button" class="sm:hidden inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                <span class="sr-only">Open sidebar</span>
+                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+                </svg>
+              </button>
+            {% endif %}
+            <a href="{% url 'home' %}" class="flex ms-2 md:me-24"><span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Mycelium</span></a>
+          </div>
+          <div class="flex items-center">
+            {% if request.user.is_authenticated %}
+              <div data-module="UserMenu">
+                <button type="button" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                  <span class="sr-only">Open user menu</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white">{{ request.user.username|first|upper }}</div>
+                    <div class="">
+                      <!-- list of groups -->
+                      <div class="flex items-center gap-2">
+                        {% for group in request.user.groups.all %}
+                          <span class="text-xs text-gray-500">{{ group.name }}</span>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+                <div class="absolute right-0 z-50 hidden my-3 text-base list-none bg-gray-50 border border-gray-200 divide-y divide-gray-100 rounded-sm shadow-sm" id="dropdown-user">
+                  <div class="px-4 py-3" role="none">
+                    <p class="text-sm text-gray-900" role="none">{{ request.user.get_full_name|default:request.user.username }}</p>
+                    <p class="text-sm font-medium text-gray-900 truncate" role="none">{{ request.user.email }}</p>
+                  </div>
+                  <ul class="py-1" role="none">
+                    <li>
+                      <a href="{% url 'user_detail' request.user.id %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Profile</a>
+                    </li>
+                    <li>
+                      <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            {% else %}
+              <a href="{% url 'login' %}" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Login</a>
+              <a href="{% url 'register' %}" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Register</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+
+      {% if request.user.is_authenticated %}
+        <aside data-menu id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform bg-white border-r border-gray-200 sm:translate-x-0 -translate-x-full" aria-label="Sidebar">
+          <div class="h-full px-3 py-4 overflow-y-auto bg-white">
+            <ul class="space-y-2 font-medium">
+              <li>
+                <a href="{% url 'home' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include 'svgs/home.html' %}
+                  <span class="ms-3">Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'meeting_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include 'svgs/meetings.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Meetings</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'task_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include 'svgs/tasks.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'user_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include 'svgs/users.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'acl_content_type_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include 'svgs/lock.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Permissions</span>
+                </a>
+              </li>
+              {% if not request.user.is_authenticated %}
+                <li>
+                  <a href="{% url 'login' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                    {% include 'svgs/login.html' %}
+                    <span class="flex-1 ms-3 whitespace-nowrap">Sign In</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'register' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                    {% include 'svgs/register.html' %}
+                    <span class="flex-1 ms-3 whitespace-nowrap">Sign Up</span>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        </aside>
+      {% endif %}
+    </div>
+    <div class="mt-16 {% if request.user.is_authenticated %}sm:ml-64{% endif %}">
+      {% block content %}
+
+      {% endblock %}
+
+      {% include '_partials/footer.html' %}
+    </div>
+
+    <script src="{% static 'js/dist/main.js' %}"></script>
+  </body>
+</html>
