@@ -9,6 +9,13 @@ User = get_user_model()
 class Hat(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    agreements = models.ManyToManyField(
+         'agreements.Agreement',  # 'app_label.ModelName'
+        related_name="hat_agreements",
+        blank=True,
+        help_text="agreements required for this hat"
+    )
+    url = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="hats"
     )

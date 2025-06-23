@@ -9,6 +9,7 @@ User = get_user_model()
 class Agreement(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    url = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="agreements"
     )

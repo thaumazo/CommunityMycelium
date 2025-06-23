@@ -35,8 +35,23 @@
                     {% endif %}
                   </div>
                 </div>
+{% if hat.agreements.all %}
+  <div class="mt-2">
+    <p class="text-sm font-medium text-gray-700">Required Agreements:</p>
+    <ul class="list-disc list-inside text-sm text-indigo-600">
+      {% for agreement in hat.agreements.all %}
+        <li>
+          <a href="{{ agreement.url }}" target="_blank" rel="noopener noreferrer" class="hover:underline">
+            {{ agreement.title }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
               </div>
             </li>
+
           {% empty %}
             <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No hats listed yet.</li>
           {% endfor %}

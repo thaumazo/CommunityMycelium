@@ -31,6 +31,7 @@ def hat_create_view(request):
             hat = form.save(commit=False)
             hat.created_by = request.user
             hat.save()
+            form.save_m2m()  # This line saves the agreements
             messages.success(request, "Hat created successfully!")
             return redirect("hat_list")
     else:
