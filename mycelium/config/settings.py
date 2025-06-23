@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     "apps.communities",
     "apps.projects",
     "apps.meetings",
+    "apps.hats",
+    "apps.agreements",
     "apps.tasks",
     "apps.acl",
 ]

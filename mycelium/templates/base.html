@@ -109,6 +109,18 @@
                 </a>
               </li>
               <li>
+                <a href="{% url 'hat_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include '_icons/tasks.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Hats</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'agreement_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include '_icons/tasks.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Agreements</span>
+                </a>
+              </li>
+              <li>
                 <a href="{% url 'acl_content_type_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   {% include '_icons/lock.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Permissions</span>
