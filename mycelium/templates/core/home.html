@@ -19,6 +19,66 @@
       <!-- Quick Actions -->
       <div class="px-4 py-6 sm:px-0">
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Users Card -->
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  {% include '_icons/users.html' %}
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">People</dt>
+                    <dd class="flex items-baseline">
+                      <div class="text-2xl font-semibold text-gray-900">
+                        <a href="{% url 'user_list' %}" class="text-indigo-600 hover:text-indigo-900">View People</a>
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Communities Card -->
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  {% include '_icons/users.html' %}
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Communities</dt>
+                    <dd class="flex items-baseline">
+                      <div class="text-2xl font-semibold text-gray-900">
+                        <a href="{% url 'community_list' %}" class="text-indigo-600 hover:text-indigo-900">View Communities</a>
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Projects Card -->
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  {% include '_icons/users.html' %}
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Projects</dt>
+                    <dd class="flex items-baseline">
+                      <div class="text-2xl font-semibold text-gray-900">
+                        <a href="{% url 'project_list' %}" class="text-indigo-600 hover:text-indigo-900">View Projects</a>
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- Meetings Card -->
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
@@ -52,26 +112,6 @@
                     <dd class="flex items-baseline">
                       <div class="text-2xl font-semibold text-gray-900">
                         <a href="{% url 'task_list' %}" class="text-indigo-600 hover:text-indigo-900">View Tasks</a>
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Users Card -->
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="flex-shrink-0">
-                  {% include '_icons/users.html' %}
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">Users</dt>
-                    <dd class="flex items-baseline">
-                      <div class="text-2xl font-semibold text-gray-900">
-                        <a href="{% url 'user_list' %}" class="text-indigo-600 hover:text-indigo-900">View Users</a>
                       </div>
                     </dd>
                   </dl>
