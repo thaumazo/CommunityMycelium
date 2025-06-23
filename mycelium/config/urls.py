@@ -8,6 +8,8 @@ urlpatterns = [
     path("", include("apps.core.urls")),  # Core app handles main website pages
     path("users/", include("apps.users.urls")),  # User management routes
     path("meetings/", include("apps.meetings.urls")),
+    path("communities/", include("apps.communities.urls")),
+    path("projects/", include("apps.projects.urls")),
     path("tasks/", include("apps.tasks.urls")),
     path("acl/", include("apps.acl.urls")),  # Access Control List routes
 ]

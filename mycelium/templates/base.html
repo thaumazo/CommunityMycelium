@@ -79,6 +79,24 @@
                 </a>
               </li>
               <li>
+                <a href="{% url 'user_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include '_icons/users.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">People</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'community_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include '_icons/users.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Communities</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'project_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  {% include '_icons/users.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
+                </a>
+              </li>
+              <li>
                 <a href="{% url 'meeting_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   {% include '_icons/meetings.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Meetings</span>
@@ -88,12 +106,6 @@
                 <a href="{% url 'task_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                   {% include '_icons/tasks.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'user_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
-                  {% include '_icons/users.html' %}
-                  <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
                 </a>
               </li>
               <li>

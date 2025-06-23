@@ -6,20 +6,18 @@ from apps.acl.models import ObjectPermission
 User = get_user_model()
 
 
-class Meeting(models.Model):
+class Community(models.Model):
     title = models.CharField(max_length=255)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
     description = models.TextField(blank=True, null=True)
-    attending = models.ManyToManyField(
+    members = models.ManyToManyField(
         User,
-        related_name="attending_meetings",
+        related_name="members_communities",
         blank=True,
-        help_text="Users who are attending this meeting"
+        help_text="Users who are members of this community"
     )
     url = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="meetings"
+        User, on_delete=models.SET_NULL, null=True, related_name="communities"
     )
     permissions = GenericRelation(ObjectPermission)
 
@@ -28,5 +26,5 @@ class Meeting(models.Model):
 
     class Meta:
         permissions = [
-            ("delegate_meeting", "Can delegate meeting"),
+            ("delegate_community", "Can delegate community"),
         ]
