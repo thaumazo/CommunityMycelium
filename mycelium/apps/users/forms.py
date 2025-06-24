@@ -1,4 +1,6 @@
 from django import forms
+from apps.communities.models import Community
+from apps.hats.models import Hat
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
@@ -84,9 +86,40 @@ class UserForm(forms.ModelForm):
         widget=forms.PasswordInput(), label="Confirm Password", required=False
     )
 
+    userCommunities = forms.ModelMultipleChoiceField(
+        queryset=Community.objects.all(),
+        widget=forms.SelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+    )
+
+    userHats = forms.ModelMultipleChoiceField(
+        queryset=Hat.objects.all(),
+        widget=forms.SelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+    )
+
+    invited_by = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.Select(attrs={"class": "w-full"}),
+        required=False,
+        label="Invited by"
+    )
+
+    linkedIn = forms.URLField(
+        required=False,
+        widget=forms.TextInput(attrs={"class": "w-full"}),
+        label="LinkedIn URL"
+    )
+
+    userLocation = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class": "w-full"}),
+        label="Location"
+    )
+
     class Meta:
         model = User
-        fields = ["username", "email", "full_name", "password"]
+        fields = ["username", "email", "full_name", "password", "linkedIn", "userLocation", "userCommunities", "invited_by", "userHats"]
         widgets = {
             "username": forms.TextInput(),
         }

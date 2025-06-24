@@ -27,14 +27,6 @@ class Command(BaseCommand):
             full_name="Will Garrison",
         )
 
-        # Create third user
-        User.objects.create_user(
-            username="daniel",
-            email="daniel@thaumazo.org",
-            password="qwerty411",
-            full_name="Daniel Lindenberger",
-        )
-
         # Additional random users
         dummy_users = [
             {
@@ -104,7 +96,6 @@ class Command(BaseCommand):
         # Add users to groups
         admin_group.user_set.add(User.objects.get(username="whit"))
         admin_group.user_set.add(User.objects.get(username="will"))
-        admin_group.user_set.add(User.objects.get(username="daniel"))
 
         # Add users to meetings groups
         meetings_admin_group = Group.objects.get(name="Meetings Admin")
