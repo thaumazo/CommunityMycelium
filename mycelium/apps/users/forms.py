@@ -90,12 +90,14 @@ class UserForm(forms.ModelForm):
         queryset=Community.objects.all(),
         widget=forms.SelectMultiple(attrs={"class": "w-full"}),
         required=False,
+        label="Communities",
     )
 
     userHats = forms.ModelMultipleChoiceField(
         queryset=Hat.objects.all(),
         widget=forms.SelectMultiple(attrs={"class": "w-full"}),
         required=False,
+        label="Hats",
     )
 
     invited_by = forms.ModelChoiceField(
