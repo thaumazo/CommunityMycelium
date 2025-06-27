@@ -37,7 +37,7 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "full_name", "password"]
+        fields = ["username", "email", "full_name"]
         widgets = {
             "username": forms.TextInput(),
         }
@@ -57,6 +57,7 @@ class RegisterForm(forms.ModelForm):
         user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
+            self.save_m2m()  # save many to many fields
 
         return user
 
@@ -74,57 +75,68 @@ class UserForm(forms.ModelForm):
         required=True,
     )
 
-    # Note that password and confirm_password are optional
-    # because we don't want to force a password change on edit.
-    password = forms.CharField(
-        widget=forms.PasswordInput(),
-        min_length=8,
-        help_text="Password must be at least 8 characters long.",
+    user_location = forms.CharField(
         required=False,
-    )
-    confirm_password = forms.CharField(
-        widget=forms.PasswordInput(), label="Confirm Password", required=False
-    )
-
-    userCommunities = forms.ModelMultipleChoiceField(
-        queryset=Community.objects.all(),
-        widget=forms.SelectMultiple(attrs={"class": "w-full"}),
-        required=False,
-        label="Communities",
-    )
-
-    userHats = forms.ModelMultipleChoiceField(
-        queryset=Hat.objects.all(),
-        widget=forms.SelectMultiple(attrs={"class": "w-full"}),
-        required=False,
-        label="Hats",
+        widget=forms.TextInput(attrs={"class": "w-full"}),
+        label="Location",
     )
 
     invited_by = forms.ModelChoiceField(
         queryset=User.objects.all(),
         widget=forms.Select(attrs={"class": "w-full"}),
         required=False,
-        label="Invited by"
+        label="Invited by",
     )
 
-    linkedIn = forms.URLField(
+    user_communities = forms.ModelMultipleChoiceField(
+        queryset=Community.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
         required=False,
-        widget=forms.TextInput(attrs={"class": "w-full"}),
-        label="LinkedIn URL"
+        label="Communities",
     )
 
-    userLocation = forms.CharField(
+    user_hats = forms.ModelMultipleChoiceField(
+        queryset=Hat.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+        label="Hats",
+    )
+
+    linked_in = forms.URLField(
         required=False,
         widget=forms.TextInput(attrs={"class": "w-full"}),
-        label="Location"
+        label="LinkedIn URL",
     )
 
     class Meta:
         model = User
-        fields = ["username", "email", "full_name", "password", "linkedIn", "userLocation", "userCommunities", "invited_by", "userHats"]
+        fields = [
+            "username",
+            "email",
+            "full_name",
+            "user_location",
+            "invited_by",
+            "user_communities",
+            "user_hats",
+            "linked_in",
+        ]
         widgets = {
             "username": forms.TextInput(),
         }
+
+
+class UserPasswordChangeForm(forms.Form):
+    """Separate form for changing user passwords."""
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(),
+        min_length=8,
+        help_text="Password must be at least 8 characters long.",
+        required=True,
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(), label="Confirm Password", required=True
+    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -136,12 +148,10 @@ class UserForm(forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
+    def save(self, user):
+        """Update the user's password."""
         user.set_password(self.cleaned_data["password"])
-        if commit:
-            user.save()
-
+        user.save()
         return user
 
 

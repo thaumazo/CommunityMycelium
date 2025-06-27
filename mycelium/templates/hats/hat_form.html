@@ -41,11 +41,14 @@
               </div>
 
               <div>
-                <label for="{{ form.agreements.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                  {{ form.agreements.label }}
-                </label>
-                <div class="mt-1">
-                  {{ form.agreements }}
+                <label for="{{ form.agreements.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.agreements.label }}</label>
+                <div class="mt-1 space-y-2">
+                  {% for choice in form.agreements %}
+                    <div class="flex items-center">
+                      <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                      <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                    </div>
+                  {% endfor %}
                 </div>
                 {% if form.agreements.errors %}
                   <div class="mt-1 text-sm text-red-600">{{ form.agreements.errors|join:', ' }}</div>

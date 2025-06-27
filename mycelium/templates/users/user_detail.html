@@ -35,8 +35,8 @@
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">LinkedIn</dt>
                   <dd class="mt-1 text-sm text-indigo-600 sm:mt-0 sm:col-span-2">
-                    {% if user.linkedIn %}
-                      <a href="{{ user.linkedIn }}" target="_blank" class="hover:underline">{{ user.linkedIn }}</a>
+                    {% if user.linked_in %}
+                      <a href="{{ user.linked_in }}" target="_blank" class="hover:underline">{{ user.linked_in }}</a>
                     {% else %}
                       <span class="text-gray-400">Not provided</span>
                     {% endif %}
@@ -44,20 +44,16 @@
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">Location</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {{ user.userLocation|default:"Not specified" }}
-                  </dd>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.user_location|default:'Not specified' }}</dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">Invited By</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {{ user.invited_by.full_name|default:"–" }}
-                  </dd>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.invited_by.full_name|default:'–' }}</dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">Communities</dt>
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for community in user.userCommunities.all %}
+                    {% for community in user.user_communities.all %}
                       <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ community.title }}</span>
                     {% empty %}
                       <span class="text-gray-400">None</span>
@@ -67,7 +63,7 @@
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">Hats</dt>
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for hat in user.userHats.all %}
+                    {% for hat in user.user_hats.all %}
                       <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ hat.title }}</span>
                     {% empty %}
                       <span class="text-gray-400">None</span>
@@ -93,7 +89,6 @@
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.last_login|date:'F j, Y' }}</dd>
                 </div>
               </dl>
-              
             </div>
 
             <div class="mt-6 flex justify-end">

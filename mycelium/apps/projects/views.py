@@ -31,6 +31,7 @@ def project_create_view(request):
             project = form.save(commit=False)
             project.created_by = request.user
             project.save()
+            form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Project created successfully!")
             return redirect("project_list")
     else:

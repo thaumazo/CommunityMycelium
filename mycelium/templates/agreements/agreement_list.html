@@ -27,11 +27,8 @@
                     </div>
                     <p class="mt-1 text-sm text-gray-500">{{ agreement.description|truncatewords:30 }}</p>
                     <p class="mt-1 text-sm text-indigo-600 hover:underline">
-                      <a href="{{ agreement.url }}" target="_blank" rel="noopener noreferrer">
-                        {{ agreement.url|truncatewords:30 }}
-                      </a>
+                      <a href="{{ agreement.url }}" target="_blank" rel="noopener noreferrer">{{ agreement.url|truncatewords:30 }}</a>
                     </p>
-
                   </div>
                   <div class="ml-4 flex-shrink-0 flex items-center space-x-2">
                     {% can request.user 'change' agreement as check %}

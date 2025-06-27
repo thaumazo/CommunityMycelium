@@ -1,6 +1,5 @@
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from django.conf import settings
 from .models import Project
 from apps.acl.utils import grant_object_permission, revoke_object_permission
 from django.contrib.auth.models import Permission

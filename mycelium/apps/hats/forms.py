@@ -8,5 +8,5 @@ class HatForm(forms.ModelForm):
         fields = ["title", "description", "agreements"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
-            "agreements": forms.SelectMultiple(attrs={"class": "w-full"}),
+            "agreements": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
         }

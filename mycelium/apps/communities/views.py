@@ -11,13 +11,17 @@ from apps.utils.dump import dump
 @login_required
 def community_list_view(request):
     communities = get_permitted_objects(request.user, "view", Community)
-    return render(request, "communities/community_list.html", {"communities": communities})
+    return render(
+        request, "communities/community_list.html", {"communities": communities}
+    )
 
 
 @login_required
 def community_detail_view(request, pk):
     community = get_permitted_object(request.user, "view", Community, pk)
-    return render(request, "communities/community_detail.html", {"community": community})
+    return render(
+        request, "communities/community_detail.html", {"community": community}
+    )
 
 
 @login_required
@@ -31,6 +35,7 @@ def community_create_view(request):
             community = form.save(commit=False)
             community.created_by = request.user
             community.save()
+            form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Community created successfully!")
             return redirect("community_list")
     else:
@@ -72,4 +77,6 @@ def community_delete_view(request, pk):
         messages.success(request, "Community deleted successfully!")
         return redirect("community_list")
 
-    return render(request, "communities/community_confirm_delete.html", {"community": community})
+    return render(
+        request, "communities/community_confirm_delete.html", {"community": community}
+    )

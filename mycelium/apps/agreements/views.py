@@ -31,6 +31,7 @@ def agreement_create_view(request):
             agreement = form.save(commit=False)
             agreement.created_by = request.user
             agreement.save()
+            form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Agreement created successfully!")
             return redirect("agreement_list")
     else:
@@ -72,4 +73,6 @@ def agreement_delete_view(request, pk):
         messages.success(request, "Agreement deleted successfully!")
         return redirect("agreement_list")
 
-    return render(request, "agreements/agreement_confirm_delete.html", {"agreement": agreement})
+    return render(
+        request, "agreements/agreement_confirm_delete.html", {"agreement": agreement}
+    )

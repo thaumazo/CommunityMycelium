@@ -8,6 +8,6 @@ class ProjectForm(forms.ModelForm):
         fields = ["title", "description", "members", "url"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
-            "members": forms.SelectMultiple(attrs={"class": "w-full"}),
+            "members": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "url": forms.Textarea(attrs={"rows": 1}),
         }

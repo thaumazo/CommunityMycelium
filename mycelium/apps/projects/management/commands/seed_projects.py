@@ -17,7 +17,7 @@ class Command(BaseCommand):
         users = User.objects.all()
 
         # Sample project titles and descriptions
-        community_templates = [
+        project_templates = [
             {
                 "title": "Bioregional Mapping",
                 "description": "Mapping the People, Communities and Projects in your Bioregion",
