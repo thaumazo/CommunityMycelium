@@ -25,7 +25,11 @@ INSTALLED_APPS = [
     # Local apps
     "apps.core",
     "apps.users",
+    "apps.communities",
+    "apps.projects",
     "apps.meetings",
+    "apps.hats",
+    "apps.agreements",
     "apps.tasks",
     "apps.acl",
 ]

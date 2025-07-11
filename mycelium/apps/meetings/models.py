@@ -11,6 +11,13 @@ class Meeting(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     description = models.TextField(blank=True, null=True)
+    attending = models.ManyToManyField(
+        User,
+        related_name="attending_meetings",
+        blank=True,
+        help_text="Users who are attending this meeting"
+    )
+    url = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="meetings"
     )

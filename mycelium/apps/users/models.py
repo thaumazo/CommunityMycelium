@@ -5,6 +5,24 @@ from django.db import models
 class User(AbstractUser):
     full_name = models.CharField(max_length=255, blank=True)
 
+    user_location = models.CharField(max_length=255, blank=True, null=True)
+
+    invited_by = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="invited_users",
+    )
+
+    user_communities = models.ManyToManyField(
+        "communities.Community", blank=True, related_name="users"
+    )
+
+    user_hats = models.ManyToManyField("hats.Hat", blank=True, related_name="users")
+
+    linked_in = models.URLField(blank=True, null=True)
+
     # Remove first_name and last_name from the model
     first_name = None
     last_name = None

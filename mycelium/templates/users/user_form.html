@@ -54,24 +54,62 @@
                 </div>
 
                 <div>
-                  <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.password.label }}</label>
+                  <label for="{{ form.linked_in.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.linked_in.label }}</label>
                   <div class="mt-1">
-                    <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" class="w-full" />
+                    <input type="url" name="{{ form.linked_in.html_name }}" id="{{ form.linked_in.id_for_label }}" value="{{ form.linked_in.value|default:'' }}" class="w-full" />
                   </div>
-                  {% if form.password.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.password.errors|join:', ' }}</div>
+                  {% if form.linked_in.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.linked_in.errors|join:', ' }}</div>
                   {% endif %}
                 </div>
-              </div>
 
-              <div>
-                <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.confirm_password.label }}</label>
-                <div class="mt-1">
-                  <input type="password" name="{{ form.confirm_password.html_name }}" id="{{ form.confirm_password.id_for_label }}" class="w-full" />
+                <div>
+                  <label for="{{ form.user_location.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_location.label }}</label>
+                  <div class="mt-1">
+                    <input type="text" name="{{ form.user_location.html_name }}" id="{{ form.user_location.id_for_label }}" value="{{ form.user_location.value|default:'' }}" class="w-full" />
+                  </div>
+                  {% if form.user_location.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.user_location.errors|join:', ' }}</div>
+                  {% endif %}
                 </div>
-                {% if form.confirm_password.errors %}
-                  <div class="mt-1 text-sm text-red-600">{{ form.confirm_password.errors|join:', ' }}</div>
-                {% endif %}
+
+                <div>
+                  <label for="{{ form.invited_by.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.invited_by.label }}</label>
+                  <div class="mt-1">{{ form.invited_by }}</div>
+                  {% if form.invited_by.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.invited_by.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
+
+                <div>
+                  <label for="{{ form.user_communities.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_communities.label }}</label>
+                  <div class="mt-1 space-y-2">
+                    {% for choice in form.user_communities %}
+                      <div class="flex items-center">
+                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  {% if form.user_communities.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.user_communities.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
+
+                <div>
+                  <label for="{{ form.user_hats.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_hats.label }}</label>
+                  <div class="mt-1 space-y-2">
+                    {% for choice in form.user_hats %}
+                      <div class="flex items-center">
+                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  {% if form.user_hats.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.user_hats.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
               </div>
 
               <div class="flex justify-end space-x-3 mt-6">

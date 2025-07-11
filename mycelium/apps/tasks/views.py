@@ -30,6 +30,7 @@ def task_create_view(request):
             task = form.save(commit=False)
             task.created_by = request.user
             task.save()
+            form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Task created successfully!")
             return redirect("task_list")
     else:

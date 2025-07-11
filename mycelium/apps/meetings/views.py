@@ -31,6 +31,7 @@ def meeting_create_view(request):
             meeting = form.save(commit=False)
             meeting.created_by = request.user
             meeting.save()
+            form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Meeting created successfully!")
             return redirect("meeting_list")
     else:
