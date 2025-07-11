@@ -1,34 +1,23 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from .models import Task
 from .forms import TaskForm
 from django.core.exceptions import PermissionDenied
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def task_list_view(request):
     tasks = get_permitted_objects(request.user, "view", Task)
     
-    # Pagination
-    paginator = Paginator(tasks, 10)  # Show 10 tasks per page
-    page = request.GET.get('page')
-    
-    try:
-        tasks_page = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page
-        tasks_page = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, deliver last page of results
-        tasks_page = paginator.page(paginator.num_pages)
+    # Pagination using helper function
+    tasks_page, pagination_data = paginate_queryset(tasks, request, per_page=10)
     
     return render(request, "tasks/task_list.html", {
         "tasks": tasks_page,
-        "page_obj": tasks_page,
-        "paginator": paginator,
+        "pagination": pagination_data,
     })
 
 

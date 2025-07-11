@@ -1,35 +1,24 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from .models import Hat
 from .forms import HatForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def hat_list_view(request):
     hats = get_permitted_objects(request.user, "view", Hat)
     
-    # Pagination
-    paginator = Paginator(hats, 10)  # Show 10 hats per page
-    page = request.GET.get('page')
-    
-    try:
-        hats_page = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page
-        hats_page = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, deliver last page of results
-        hats_page = paginator.page(paginator.num_pages)
+    # Pagination using helper function
+    hats_page, pagination_data = paginate_queryset(hats, request, per_page=10)
     
     return render(request, "hats/hat_list.html", {
         "hats": hats_page,
-        "page_obj": hats_page,
-        "paginator": paginator,
+        "pagination": pagination_data,
     })
 
 

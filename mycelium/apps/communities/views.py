@@ -1,36 +1,25 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from .models import Community
 from .forms import CommunityForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def community_list_view(request):
     communities = get_permitted_objects(request.user, "view", Community)
     
-    # Pagination
-    paginator = Paginator(communities, 10)  # Show 10 communities per page
-    page = request.GET.get('page')
-    
-    try:
-        communities_page = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page
-        communities_page = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, deliver last page of results
-        communities_page = paginator.page(paginator.num_pages)
+    # Pagination using helper function
+    communities_page, pagination_data = paginate_queryset(communities, request, per_page=10)
     
     return render(
         request, "communities/community_list.html", {
             "communities": communities_page,
-            "page_obj": communities_page,
-            "paginator": paginator,
+            "pagination": pagination_data,
         }
     )
 

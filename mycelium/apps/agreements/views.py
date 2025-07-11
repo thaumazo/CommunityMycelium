@@ -1,35 +1,24 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from .models import Agreement
 from .forms import AgreementForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def agreement_list_view(request):
     agreements = get_permitted_objects(request.user, "view", Agreement)
     
-    # Pagination
-    paginator = Paginator(agreements, 10)  # Show 10 agreements per page
-    page = request.GET.get('page')
-    
-    try:
-        agreements_page = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page
-        agreements_page = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, deliver last page of results
-        agreements_page = paginator.page(paginator.num_pages)
+    # Pagination using helper function
+    agreements_page, pagination_data = paginate_queryset(agreements, request, per_page=10)
     
     return render(request, "agreements/agreement_list.html", {
         "agreements": agreements_page,
-        "page_obj": agreements_page,
-        "paginator": paginator,
+        "pagination": pagination_data,
     })
 
 

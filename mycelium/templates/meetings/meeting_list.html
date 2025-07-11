@@ -14,10 +14,10 @@
 
       {% include '_components/messages.html' %}
 
-      <!-- Debug info: meetings count = {{ page_obj|length }}, paginator.count = {{ paginator.count }}, paginator.num_pages = {{ paginator.num_pages }} -->
+      <!-- Debug info: meetings count = {{ meetings|length }}, pagination.total_count = {{ pagination.total_count }}, pagination.total_pages = {{ pagination.total_pages }} -->
       <div class="bg-white shadow overflow-hidden sm:rounded-md">
         <ul class="divide-y divide-gray-200">
-          {% for meeting in page_obj %}
+          {% for meeting in meetings %}
             <li class="hover:bg-gray-50 transition-colors duration-150">
               <div class="px-4 py-4 sm:px-6">
                 <div class="flex items-start justify-between">
@@ -56,9 +56,9 @@
         {% include '_components/pagination.html' %}
         
         <!-- Fallback debug info -->
-        {% if not paginator %}
+        {% if not pagination %}
           <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4">
-            <p><strong>Debug:</strong> paginator variable is not available in template</p>
+            <p><strong>Debug:</strong> pagination variable is not available in template</p>
           </div>
         {% endif %}
       </div>
