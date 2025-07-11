@@ -1,3 +1,5 @@
+{% load active_nav %}
+
 <!DOCTYPE html>
 <html lang="en" class="h-full">
   <head>
@@ -73,68 +75,68 @@
           <div class="h-full px-3 py-4 overflow-y-auto bg-white">
             <ul class="space-y-2 font-medium">
               <li>
-                <a href="{% url 'home' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'home' %}" class="{% active_class 'home' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/home.html' %}
                   <span class="ms-3">Dashboard</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'user_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'user_list' %}" class="{% active_class 'user_*' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/users.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">People</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'community_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'community_list' %}" class="{% active_class 'community_*' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/chat-bubbles.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Communities</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'project_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'project_list' %}" class="{% active_class 'project_*' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/folder-open.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'meeting_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'meeting_list' %}" class="{% active_class 'meeting_*' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/meetings.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Meetings</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'task_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'task_list' %}" class="{% active_class 'task_*' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/tasks.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'hat_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'hat_list' %}" class="{% active_class 'hat_*' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/puzzle-piece.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Hats</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'agreement_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'agreement_list' %}" class="{% active_class 'agreement_*' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/document-text.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Agreements</span>
                 </a>
               </li>
               <li>
-                <a href="{% url 'acl_content_type_list' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <a href="{% url 'acl_content_type_list' %}" class="{% active_class 'acl_*' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/lock.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Permissions</span>
                 </a>
               </li>
               {% if not request.user.is_authenticated %}
                 <li>
-                  <a href="{% url 'login' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  <a href="{% url 'login' %}" class="{% active_class 'login' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                     {% include '_icons/login.html' %}
                     <span class="flex-1 ms-3 whitespace-nowrap">Sign In</span>
                   </a>
                 </li>
                 <li>
-                  <a href="{% url 'register' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                  <a href="{% url 'register' %}" class="{% active_class 'register' 'bg-blue-100' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                     {% include '_icons/register.html' %}
                     <span class="flex-1 ms-3 whitespace-nowrap">Sign Up</span>
                   </a>
