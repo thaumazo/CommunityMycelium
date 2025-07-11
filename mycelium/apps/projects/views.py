@@ -6,12 +6,20 @@ from .models import Project
 from .forms import ProjectForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def project_list_view(request):
     projects = get_permitted_objects(request.user, "view", Project)
-    return render(request, "projects/project_list.html", {"projects": projects})
+    
+    # Pagination using helper function
+    projects_page, pagination_data = paginate_queryset(projects, request, per_page=10)
+    
+    return render(request, "projects/project_list.html", {
+        "projects": projects_page,
+        "pagination": pagination_data,
+    })
 
 
 @login_required

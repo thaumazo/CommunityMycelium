@@ -6,12 +6,20 @@ from .models import Hat
 from .forms import HatForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def hat_list_view(request):
     hats = get_permitted_objects(request.user, "view", Hat)
-    return render(request, "hats/hat_list.html", {"hats": hats})
+    
+    # Pagination using helper function
+    hats_page, pagination_data = paginate_queryset(hats, request, per_page=10)
+    
+    return render(request, "hats/hat_list.html", {
+        "hats": hats_page,
+        "pagination": pagination_data,
+    })
 
 
 @login_required

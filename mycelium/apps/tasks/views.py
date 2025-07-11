@@ -5,12 +5,20 @@ from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permi
 from .models import Task
 from .forms import TaskForm
 from django.core.exceptions import PermissionDenied
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def task_list_view(request):
     tasks = get_permitted_objects(request.user, "view", Task)
-    return render(request, "tasks/task_list.html", {"tasks": tasks})
+    
+    # Pagination using helper function
+    tasks_page, pagination_data = paginate_queryset(tasks, request, per_page=10)
+    
+    return render(request, "tasks/task_list.html", {
+        "tasks": tasks_page,
+        "pagination": pagination_data,
+    })
 
 
 @login_required

@@ -6,12 +6,20 @@ from .models import Agreement
 from .forms import AgreementForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def agreement_list_view(request):
     agreements = get_permitted_objects(request.user, "view", Agreement)
-    return render(request, "agreements/agreement_list.html", {"agreements": agreements})
+    
+    # Pagination using helper function
+    agreements_page, pagination_data = paginate_queryset(agreements, request, per_page=10)
+    
+    return render(request, "agreements/agreement_list.html", {
+        "agreements": agreements_page,
+        "pagination": pagination_data,
+    })
 
 
 @login_required

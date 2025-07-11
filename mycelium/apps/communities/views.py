@@ -6,13 +6,21 @@ from .models import Community
 from .forms import CommunityForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def community_list_view(request):
     communities = get_permitted_objects(request.user, "view", Community)
+    
+    # Pagination using helper function
+    communities_page, pagination_data = paginate_queryset(communities, request, per_page=10)
+    
     return render(
-        request, "communities/community_list.html", {"communities": communities}
+        request, "communities/community_list.html", {
+            "communities": communities_page,
+            "pagination": pagination_data,
+        }
     )
 
 

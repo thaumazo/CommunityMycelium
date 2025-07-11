@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from .forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from apps.utils import dump
+from apps.utils.pagination import paginate_queryset
 
 User = get_user_model()
 
@@ -46,7 +47,14 @@ def register_view(request):
 def user_list_view(request):
     """View a list of all users."""
     users = get_permitted_objects(request.user, "view", User)
-    return render(request, "users/user_list.html", {"users": users})
+    
+    # Pagination using helper function
+    users_page, pagination_data = paginate_queryset(users, request, per_page=10)
+    
+    return render(request, "users/user_list.html", {
+        "users": users_page,
+        "pagination": pagination_data,
+    })
 
 
 @login_required

@@ -6,12 +6,20 @@ from .models import Meeting
 from .forms import MeetingForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
+from apps.utils.pagination import paginate_queryset
 
 
 @login_required
 def meeting_list_view(request):
     meetings = get_permitted_objects(request.user, "view", Meeting)
-    return render(request, "meetings/meeting_list.html", {"meetings": meetings})
+    
+    # Pagination using helper function
+    meetings_page, pagination_data = paginate_queryset(meetings, request, per_page=10)
+    
+    return render(request, "meetings/meeting_list.html", {
+        "meetings": meetings_page,
+        "pagination": pagination_data,
+    })
 
 
 @login_required
