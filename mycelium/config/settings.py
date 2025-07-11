@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "apps.agreements",
     "apps.tasks",
     "apps.acl",
+    "apps.utils",
 ]
 
 # Custom user model
