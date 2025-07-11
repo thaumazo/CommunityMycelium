@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from .models import Meeting
 from .forms import MeetingForm
@@ -11,7 +12,25 @@ from apps.utils.dump import dump
 @login_required
 def meeting_list_view(request):
     meetings = get_permitted_objects(request.user, "view", Meeting)
-    return render(request, "meetings/meeting_list.html", {"meetings": meetings})
+    
+    # Pagination
+    paginator = Paginator(meetings, 10)  # Show 10 meetings per page
+    page = request.GET.get('page')
+    
+    try:
+        meetings_page = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page
+        meetings_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results
+        meetings_page = paginator.page(paginator.num_pages)
+    
+    return render(request, "meetings/meeting_list.html", {
+        "meetings": meetings_page,
+        "page_obj": meetings_page,
+        "paginator": paginator,
+    })
 
 
 @login_required

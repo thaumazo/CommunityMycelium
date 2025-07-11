@@ -16,7 +16,7 @@
 
       <div class="bg-white shadow overflow-hidden sm:rounded-md">
         <ul class="divide-y divide-gray-200">
-          {% for community in communities %}
+          {% for community in page_obj %}
             <li class="hover:bg-gray-50 transition-colors duration-150">
               <div class="px-4 py-4 sm:px-6">
                 <div class="flex items-start justify-between">
@@ -47,6 +47,8 @@
             <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No communities listed yet.</li>
           {% endfor %}
         </ul>
+        
+        {% include '_components/pagination.html' %}
       </div>
     </div>
   </div>

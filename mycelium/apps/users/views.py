@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from apps.utils import dump
@@ -46,7 +47,25 @@ def register_view(request):
 def user_list_view(request):
     """View a list of all users."""
     users = get_permitted_objects(request.user, "view", User)
-    return render(request, "users/user_list.html", {"users": users})
+    
+    # Pagination
+    paginator = Paginator(users, 10)  # Show 10 users per page
+    page = request.GET.get('page')
+    
+    try:
+        users_page = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page
+        users_page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results
+        users_page = paginator.page(paginator.num_pages)
+    
+    return render(request, "users/user_list.html", {
+        "users": users_page,
+        "page_obj": users_page,
+        "paginator": paginator,
+    })
 
 
 @login_required
