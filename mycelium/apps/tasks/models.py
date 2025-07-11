@@ -22,6 +22,12 @@ class Task(models.Model):
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="tasks"
     )
+    assigned_to = models.ManyToManyField(
+        User,
+        related_name="assigned_tasks",
+        blank=True,
+        help_text="Users who are assigned to this task",
+    )
     permissions = GenericRelation(ObjectPermission)
 
     def __str__(self):

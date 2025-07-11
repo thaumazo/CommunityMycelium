@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from datetime import datetime, timedelta
 from django.utils import timezone
 from ...models import Task
+import random
 
 User = get_user_model()
 
@@ -15,6 +16,7 @@ class Command(BaseCommand):
 
         # Get all users
         users = User.objects.all()
+        num_users = users.count()
 
         # Sample task titles and descriptions
         task_templates = [
@@ -81,12 +83,18 @@ class Command(BaseCommand):
                 elif i % 3 == 1:
                     status = "in_progress"
 
-                Task.objects.create(
+                task = Task.objects.create(
                     title=f"{template['title']} - {user.username}",
                     description=template["description"],
                     due_date=due_date,
                     status=status,
                     created_by=user,
                 )
+
+                # Set some random number of assigned_to
+                num_assigned_to = random.randint(1, num_users)
+                assigned_to = User.objects.order_by("?")[:num_assigned_to]
+                for assigned_to in assigned_to:
+                    task.assigned_to.add(assigned_to)
 
         self.stdout.write(self.style.SUCCESS("Successfully seeded tasks"))

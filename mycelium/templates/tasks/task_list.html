@@ -26,37 +26,25 @@
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ task.created_by.username }}</span>
                     </div>
                     <p class="mt-1 text-sm text-gray-500">{{ task.description|truncatewords:30 }}</p>
+                    <div class="flex items-center space-x-2">
+                      <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
+                        {% include '_icons/calendar.html' %}
+                        <span>Due: {{ task.due_date|date:'F j, Y P' }}</span>
+                      </div>
+                      <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
+                        {% include '_icons/users.html' %}
+                        <span>{{ task.assigned_to.count }} assignee{{ task.assigned_to.count|pluralize }}</span>
+                      </div>
+                    </div>
                     <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                      {% include '_icons/calendar.html' %}
-                      <span>Due: {{ task.due_date|date:'F j, Y P' }}</span>
-                      <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        {% if task.status == 'completed' %}
-                          
-                          
-                          
-                          bg-green-100 text-green-800
-
-
-
-                        {% elif task.status == 'in_progress' %}
-                          
-                          
-                          
-                          bg-yellow-100 text-yellow-800
-
-
-
-                        {% else %}
-                          
-                          
-                          
-                          bg-gray-100 text-gray-800
-
-
-
-                        {% endif %}">
-                        {{ task.get_status_display }}
-                      </span>
+                      <span>Status:</span>
+                      {% if task.status == 'completed' %}
+                        <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ task.get_status_display }}</span>
+                      {% elif task.status == 'in_progress' %}
+                        <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">{{ task.get_status_display }}</span>
+                      {% else %}
+                        <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ task.get_status_display }}</span>
+                      {% endif %}
                     </div>
                   </div>
                   <div class="ml-4 flex-shrink-0 flex items-center space-x-2">
