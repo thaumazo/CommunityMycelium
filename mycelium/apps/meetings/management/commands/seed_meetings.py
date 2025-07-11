@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from datetime import datetime, timedelta
 from django.utils import timezone
 from ...models import Meeting
+import random
 
 User = get_user_model()
 
@@ -15,6 +16,7 @@ class Command(BaseCommand):
 
         # Get all users
         users = User.objects.all()
+        num_users = users.count()
 
         # Sample meeting titles and descriptions
         meeting_templates = [
@@ -77,12 +79,18 @@ class Command(BaseCommand):
                 )  # Every other day at 9 AM
                 end_time = start_time + timedelta(hours=1)  # 1 hour duration
 
-                Meeting.objects.create(
+                meeting = Meeting.objects.create(
                     title=f"{template['title']} - {user.username}",
                     description=template["description"],
                     start_time=start_time,
                     end_time=end_time,
                     created_by=user,
                 )
+
+                # Set some random number of attendees
+                num_attendees = random.randint(1, num_users)
+                attendees = User.objects.order_by("?")[:num_attendees]
+                for attendee in attendees:
+                    meeting.attending.add(attendee)
 
         self.stdout.write(self.style.SUCCESS("Successfully seeded meetings"))
