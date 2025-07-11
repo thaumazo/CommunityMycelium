@@ -20,8 +20,27 @@ def get_pagination_data(page_obj, paginator, request) -> Dict[str, Any]:
     Returns:
         Dictionary containing all pagination data needed for templates
     """
-    if not page_obj or not paginator:
+    if not paginator:
         return {}
+    
+    # Handle case where page_obj might be None (empty queryset)
+    if not page_obj:
+        # Return basic pagination data for empty queryset
+        return {
+            'has_previous': False,
+            'has_next': False,
+            'previous_page_number': None,
+            'next_page_number': None,
+            'current_page': 1,
+            'total_pages': 0,
+            'total_count': paginator.count,
+            'start_index': 0,
+            'end_index': 0,
+            'page_range': [],
+            'show_ellipsis_start': False,
+            'show_ellipsis_end': False,
+            'show_pagination': False,
+        }
     
     current_page = page_obj.number
     total_pages = paginator.num_pages
@@ -88,12 +107,16 @@ def paginate_queryset(queryset, request, per_page=DEFAULT_PER_PAGE):
     paginator = Paginator(queryset, per_page)
     page = request.GET.get('page')
     
-    try:
-        page_obj = paginator.page(page)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
+    # Handle empty queryset
+    if paginator.count == 0:
+        page_obj = None
+    else:
+        try:
+            page_obj = paginator.page(page)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
     
     pagination_data = get_pagination_data(page_obj, paginator, request)
     
