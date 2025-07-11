@@ -26,16 +26,21 @@
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ meeting.created_by.username }}</span>
                     </div>
                     <p class="mt-1 text-sm text-gray-500">{{ meeting.description|truncatewords:30 }}</p>
-                    <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                      {% include '_icons/calendar.html' %}
-                      <span>{{ meeting.start_time|date:'F j, Y P' }} - {{ meeting.end_time|date:'P' }}</span>
+                    <div class="flex items-center space-x-2">
+                      <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
+                        {% include '_icons/calendar.html' %}
+                        <span>{{ meeting.start_time|date:'F j, Y P' }} - {{ meeting.end_time|date:'P' }}</span>
+                      </div>
+                      <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
+                        {% include '_icons/users.html' %}
+                        <span>{{ meeting.attending.count }} attendee{{ meeting.attending.count|pluralize }}</span>
+                      </div>
                     </div>
                     <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                    {% if meeting.url %}                                        
-                      <p class="mt-1 text-sm text-gray-500">{{ meeting.url}}</p>
-                    {% endif %}
+                      {% if meeting.url %}
+                        <p class="mt-1 text-sm text-gray-500">{{ meeting.url }}</p>
+                      {% endif %}
                     </div>
-
                   </div>
                   <div class="ml-4 flex-shrink-0 flex items-center space-x-2">
                     {% can request.user 'change' meeting as check %}

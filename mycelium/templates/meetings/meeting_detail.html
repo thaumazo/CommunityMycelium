@@ -45,7 +45,20 @@
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">URL</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ meeting.url}}</dd>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ meeting.url }}</dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Attendees</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    <ul class="list-disc list-inside space-y-2">
+                      {% for attendee in meeting.attending.all %}
+                        <li class="flex items-center space-x-2">
+                          {% include '_icons/user.html' %}
+                          <a href="{% url 'user_detail' attendee.pk %}" class="text-indigo-600 hover:text-indigo-900 hover:underline">{{ attendee.username }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
                 </div>
               </dl>
             </div>
