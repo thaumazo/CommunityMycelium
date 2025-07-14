@@ -11,8 +11,8 @@ class Command(BaseCommand):
         self.stdout.write("Seeding communities...")
 
         community_templates = [
-            {"title": "Thaumazo", "description": "Thaumazo Community"},
-            {"title": "ParTecK", "description": "ParTecK is a community that's great"},
+            {"title": "Thaumazo", "description": "Thaumazo Nonprofit Community"},
+            {"title": "ParTecK", "description": "ParTecK"},
         ]
 
         for template in community_templates:

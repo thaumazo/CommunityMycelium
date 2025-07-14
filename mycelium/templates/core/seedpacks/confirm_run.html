@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="max-w-xl mx-auto p-6 bg-white rounded shadow">
+    <h2 class="text-xl font-bold mb-4">Confirm Seedpack Load</h2>
+    <p class="mb-4">
+      You are about to run the seedpack: <strong>{{ slug }}</strong>.
+    </p>
+    <p class="text-red-600 mb-4">
+      <strong>This will permanently delete all existing data (except superusers and system models) and replace it with demo data.</strong>
+    </p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="flex gap-4">
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+          Yes, run it
+        </button>
+        <a href="{% url 'core:seedpack_list' %}" class="text-gray-700 underline">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
