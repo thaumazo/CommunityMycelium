@@ -73,6 +73,10 @@ def get_permitted_content_types(user, action):
 
     permitted_content_types = []
     for content_type in content_types:
+        # if the content type doesn't have a model (e.g. session), skip it
+        if not content_type.model_class():
+            continue
+
         # Check if user has model-level permission
         if user.has_perm(
             f"{content_type.app_label}.{action}_{content_type._meta.model_name}"
