@@ -273,6 +273,9 @@
   .ms-3 {
     margin-inline-start: calc(var(--spacing) * 3);
   }
+  .me-2 {
+    margin-inline-end: calc(var(--spacing) * 2);
+  }
   .prose {
     color: var(--tw-prose-body);
     max-width: 65ch;
@@ -911,8 +914,14 @@
   .mr-1\.5 {
     margin-right: calc(var(--spacing) * 1.5);
   }
+  .-mb-px {
+    margin-bottom: -1px;
+  }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
+  }
+  .mb-3 {
+    margin-bottom: calc(var(--spacing) * 3);
   }
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
@@ -1051,6 +1060,9 @@
   .flex-col {
     flex-direction: column;
   }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
   .items-baseline {
     align-items: baseline;
   }
@@ -1175,6 +1187,10 @@
   .rounded-sm {
     border-radius: var(--radius-sm);
   }
+  .rounded-t-lg {
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+  }
   .rounded-l-md {
     border-top-left-radius: var(--radius-md);
     border-bottom-left-radius: var(--radius-md);
@@ -1198,6 +1214,10 @@
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
+  }
+  .border-b-2 {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 2px;
   }
   .border-l-4 {
     border-left-style: var(--tw-border-style);
@@ -1474,6 +1494,13 @@
     --tw-duration: 150ms;
     transition-duration: 150ms;
   }
+  .hover\:border-gray-300 {
+    &:hover {
+      @media (hover: hover) {
+        border-color: var(--color-gray-300);
+      }
+    }
+  }
   .hover\:bg-gray-50 {
     &:hover {
       @media (hover: hover) {
@@ -1527,6 +1554,13 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-red-700);
+      }
+    }
+  }
+  .hover\:text-gray-600 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-gray-600);
       }
     }
   }
@@ -1775,6 +1809,20 @@
   .lg\:pl-3 {
     @media (width >= 64rem) {
       padding-left: calc(var(--spacing) * 3);
+    }
+  }
+  .dark\:border-gray-700 {
+    @media (prefers-color-scheme: dark) {
+      border-color: var(--color-gray-700);
+    }
+  }
+  .dark\:hover\:text-gray-300 {
+    @media (prefers-color-scheme: dark) {
+      &:hover {
+        @media (hover: hover) {
+          color: var(--color-gray-300);
+        }
+      }
     }
   }
 }
