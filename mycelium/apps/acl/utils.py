@@ -4,6 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from .models import ObjectPermission
 from apps.utils.dump import dump
+from apps.users.models import User
 
 
 def is_permitted(user, action, obj_or_string):
@@ -17,6 +18,10 @@ def is_permitted(user, action, obj_or_string):
     else:
         obj = obj_or_string
 
+    # If the object is a user, and it's the current user
+    if isinstance(obj, User) and obj == user:
+        return True
+    
     # First, if the object is owned by the user, they can always perform the action
     if hasattr(obj, "created_by") and obj.created_by == user:
         return True
@@ -73,7 +78,7 @@ def get_permitted_content_types(user, action):
 
     permitted_content_types = []
     for content_type in content_types:
-        # if the content type doesn't have a model (e.g. session), skip it
+        # Skip content types that don't have a model
         if not content_type.model_class():
             continue
 
