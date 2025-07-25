@@ -16,14 +16,32 @@
       <div class="bg-white shadow overflow-hidden sm:rounded-md">
         <ul class="divide-y divide-gray-200">
           {% for object in objects %}
-            <li class="px-4 py-4 sm:px-6">
-              <div class="flex items-center justify-between">
-                <h3 class="text-lg font-medium text-indigo-600 truncate"><a href="{% url 'acl_object_permission_form_step_1' content_type.id object.id %}" class="hover:text-indigo-900 hover:underline">{{ object.title }}</a></h3>
-                <div class="ml-2 flex items-center space-x-2">
-                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ object.created_by.username }}</span>
+            <li class="hover:bg-gray-50 transition-colors duration-150">
+              <div class="px-4 py-4 sm:px-6">
+                <div class="flex items-start gap-4">
+                  <!-- Object Icon -->
+                  <div class="shrink-0">
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-500">{% include '_icons/lock.html' %}</span>
+                  </div>
+
+                  <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
+                    <!-- Object Details -->
+                    <div class="flex flex-col space-y-2">
+                      <!-- Object Title & Creator -->
+                      <div class="">
+                        <!-- Object Title -->
+                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'acl_object_permission_form_step_1' content_type.id object.id %}" class="hover:text-indigo-900 hover:underline">{{ object.title }}</a></h3>
+
+                        <!-- Object Creator -->
+                        <p class="text-sm text-gray-500">Created by {{ object.created_by.username }}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </li>
+          {% empty %}
+            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No objects found.</li>
           {% endfor %}
         </ul>
       </div>
