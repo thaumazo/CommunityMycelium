@@ -82,7 +82,9 @@ def get_permitted_content_types(user, action):
         if not content_type.model_class():
             continue
 
-        if not content_type.app_label.startswith('apps.'):
+        # if the content type doesn't start with apps (e.g. django.contrib.sessions), skip it
+        model_class = content_type.model_class()
+        if not model_class.__module__.startswith("apps."):
             continue
 
         # Check if user has model-level permission

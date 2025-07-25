@@ -43,7 +43,7 @@
                       {% endif %}
                     </div>
                   </div>
-                  <div class="ml-4 flex-shrink-0 flex items-center space-x-2">
+                  <div class="ml-4 shrink-0 flex items-center space-x-2">
                     {% can request.user 'change' meeting as check %}
                     {% if check %}
                       <a href="{% url 'meeting_edit' meeting.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
