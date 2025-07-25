@@ -4,11 +4,16 @@
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
-      <div class="flex justify-between items-center mb-6">
+      <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
         <h1 class="text-2xl font-semibold text-gray-900">Tasks</h1>
         {% can request.user 'add' 'tasks.task' as check %}
         {% if check %}
-          <a href="{% url 'task_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create New Task</a>
+          <a href="{% url 'task_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
+            <span class="flex items-center gap-2">
+              <span>{% include '_icons/plus.html' %}</span>
+              <span>Create New Task</span>
+            </span>
+          </a>
         {% endif %}
       </div>
 
@@ -20,17 +25,25 @@
           <li class="me-2" role="presentation">
             <a href="{% url 'task_list' %}?tab=all"
               class="inline-block p-4 border-b-2 rounded-t-lg {% if active_tab == 'all' %}
+                
                 border-indigo-600 text-indigo-600
+
               {% else %}
+                
                 border-transparent hover:text-gray-600 hover:border-gray-300
+
               {% endif %}"
               id="all-tasks-tab"
               role="tab"
               aria-controls="all-tasks"
               aria-selected="{% if active_tab == 'all' %}
+                
                 true
+
               {% else %}
+                
                 false
+
               {% endif %}">
               All Tasks
             </a>
@@ -38,17 +51,25 @@
           <li class="me-2" role="presentation">
             <a href="{% url 'task_list' %}?tab=my"
               class="inline-block p-4 border-b-2 rounded-t-lg {% if active_tab == 'my' %}
+                
                 border-indigo-600 text-indigo-600
+
               {% else %}
+                
                 border-transparent hover:text-gray-600 hover:border-gray-300
+
               {% endif %}"
               id="my-tasks-tab"
               role="tab"
               aria-controls="my-tasks"
               aria-selected="{% if active_tab == 'my' %}
+                
                 true
+
               {% else %}
+                
                 false
+
               {% endif %}">
               My Tasks
             </a>

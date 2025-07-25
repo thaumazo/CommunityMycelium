@@ -71,6 +71,13 @@ def get_permitted_content_types(user, action):
     """Get all content types that a user has permission to perform an action on."""
     content_types = ContentType.objects.all()
 
+    # dump out all the content types
+    for content_type in content_types:
+        print(
+            f"Content type: {content_type} - {content_type.app_label}.{content_type.model} - {content_type.model_class()}",
+            flush=True,
+        )
+
     permitted_content_types = []
     for content_type in content_types:
         # if the content type doesn't have a model (e.g. session), skip it

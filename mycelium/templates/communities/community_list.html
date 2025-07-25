@@ -4,11 +4,16 @@
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
-      <div class="flex justify-between items-center mb-6">
+      <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
         <h1 class="text-2xl font-semibold text-gray-900">Community</h1>
         {% can request.user 'add' 'communities.community' as check %}
         {% if check %}
-          <a href="{% url 'community_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create New Community</a>
+          <a href="{% url 'user_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
+            <span class="flex items-center gap-2">
+              <span>{% include '_icons/plus.html' %}</span>
+              <span>Create New Community</span>
+            </span>
+          </a>
         {% endif %}
       </div>
 
@@ -27,11 +32,10 @@
                     </div>
                     <p class="mt-1 text-sm text-gray-500">{{ community.description|truncatewords:30 }}</p>
                     <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                    {% if community.url %}                                        
-                      <p class="mt-1 text-sm text-gray-500">{{ community.url}}</p>
-                    {% endif %}
+                      {% if community.url %}
+                        <p class="mt-1 text-sm text-gray-500">{{ community.url }}</p>
+                      {% endif %}
                     </div>
-
                   </div>
                   <div class="ml-4 shrink-0 flex items-center space-x-2">
                     {% can request.user 'change' community as check %}
@@ -47,7 +51,7 @@
             <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No communities listed yet.</li>
           {% endfor %}
         </ul>
-        
+
         {% include '_components/pagination.html' %}
       </div>
     </div>
