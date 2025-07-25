@@ -4,11 +4,16 @@
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
-      <div class="flex justify-between items-center mb-6">
+      <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
         <h1 class="text-2xl font-semibold text-gray-900">Tasks</h1>
         {% can request.user 'add' 'tasks.task' as check %}
         {% if check %}
-          <a href="{% url 'task_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create New Task</a>
+          <a href="{% url 'task_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
+            <span class="flex items-center gap-2">
+              <span>{% include '_icons/plus.html' %}</span>
+              <span>Create New Task</span>
+            </span>
+          </a>
         {% endif %}
       </div>
 
@@ -18,40 +23,18 @@
       <div class="mb-4 border-b border-gray-200">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="task-tabs" data-tabs-toggle="#task-tab-content" role="tablist">
           <li class="me-2" role="presentation">
-            <a href="{% url 'task_list' %}?tab=all"
-              class="inline-block p-4 border-b-2 rounded-t-lg {% if active_tab == 'all' %}
-                border-indigo-600 text-indigo-600
-              {% else %}
-                border-transparent hover:text-gray-600 hover:border-gray-300
-              {% endif %}"
-              id="all-tasks-tab"
-              role="tab"
-              aria-controls="all-tasks"
-              aria-selected="{% if active_tab == 'all' %}
-                true
-              {% else %}
-                false
-              {% endif %}">
-              All Tasks
-            </a>
+            {% if active_tab == 'all' %}
+              <a href="{% url 'task_list' %}?tab=all" class="inline-block p-4 border-b-2 rounded-t-lg border-indigo-600 text-indigo-600" id="all-tasks-tab" role="tab" aria-controls="all-tasks" aria-selected="true">All Tasks</a>
+            {% else %}
+              <a href="{% url 'task_list' %}?tab=all" class="inline-block p-4 border-b-2 rounded-t-lg border-transparent hover:text-gray-600 hover:border-gray-300" id="all-tasks-tab" role="tab" aria-controls="all-tasks" aria-selected="false">All Tasks</a>
+            {% endif %}
           </li>
           <li class="me-2" role="presentation">
-            <a href="{% url 'task_list' %}?tab=my"
-              class="inline-block p-4 border-b-2 rounded-t-lg {% if active_tab == 'my' %}
-                border-indigo-600 text-indigo-600
-              {% else %}
-                border-transparent hover:text-gray-600 hover:border-gray-300
-              {% endif %}"
-              id="my-tasks-tab"
-              role="tab"
-              aria-controls="my-tasks"
-              aria-selected="{% if active_tab == 'my' %}
-                true
-              {% else %}
-                false
-              {% endif %}">
-              My Tasks
-            </a>
+            {% if active_tab == 'my' %}
+              <a href="{% url 'task_list' %}?tab=my" class="inline-block p-4 border-b-2 rounded-t-lg border-indigo-600 text-indigo-600" id="my-tasks-tab" role="tab" aria-controls="my-tasks" aria-selected="true">My Tasks</a>
+            {% else %}
+              <a href="{% url 'task_list' %}?tab=my" class="inline-block p-4 border-b-2 rounded-t-lg border-transparent hover:text-gray-600 hover:border-gray-300" id="my-tasks-tab" role="tab" aria-controls="my-tasks" aria-selected="false">My Tasks</a>
+            {% endif %}
           </li>
         </ul>
       </div>
@@ -64,40 +47,68 @@
               {% for task in tasks %}
                 <li class="hover:bg-gray-50 transition-colors duration-150">
                   <div class="px-4 py-4 sm:px-6">
-                    <div class="flex items-start justify-between">
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center space-x-2">
-                          <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'task_detail' task.pk %}" class="hover:text-indigo-900 hover:underline">{{ task.title }}</a></h3>
-                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ task.created_by.username }}</span>
-                        </div>
-                        <p class="mt-1 text-sm text-gray-500">{{ task.description|truncatewords:30 }}</p>
-                        <div class="flex items-center space-x-2">
-                          <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                            {% include '_icons/calendar.html' %}
-                            <span>Due: {{ task.due_date|date:'F j, Y P' }}</span>
+                    <div class="flex items-start gap-4">
+                      <!-- Task Icon -->
+                      <div class="shrink-0">
+                        <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-orange-500">{% include '_icons/tasks.html' %}</span>
+                      </div>
+
+                      <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
+                        <!-- Task Details -->
+                        <div class="flex flex-col space-y-2">
+                          <!-- Task Title & Creator -->
+                          <div class="">
+                            <!-- Task Title -->
+                            <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'task_detail' task.pk %}" class="hover:text-indigo-900 hover:underline">{{ task.title }}</a></h3>
+
+                            <!-- Task Creator -->
+                            <p class="text-sm text-gray-500">Created by {{ task.created_by.username }}</p>
                           </div>
-                          <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                            {% include '_icons/users.html' %}
-                            <span>{{ task.assigned_to.count }} assignee{{ task.assigned_to.count|pluralize }}</span>
+
+                          <!-- Task Description -->
+                          {% if task.description %}
+                            <div class="">
+                              <p class="text-sm text-gray-700">{{ task.description|truncatewords:30 }}</p>
+                            </div>
+                          {% endif %}
+
+                          <!-- Task Due Date & Assignees -->
+                          <div class="flex flex-wrap items-center gap-y-2 gap-x-4 pb-2">
+                            <!-- Task Due Date -->
+                            <div class="flex items-center text-sm text-gray-700 gap-1">
+                              {% include '_icons/calendar.html' %}
+                              <span>Due: {{ task.due_date|date:'F j, Y P' }}</span>
+                            </div>
+
+                            <!-- Task Assignees -->
+                            <div class="flex items-center text-sm text-gray-700 gap-1">
+                              {% include '_icons/users.html' %}
+                              <span>{{ task.assigned_to.count }} assignee{{ task.assigned_to.count|pluralize }}</span>
+                            </div>
+                          </div>
+
+                          <!-- Task Status -->
+                          <div class="flex items-center text-sm text-gray-700 gap-1">
+                            <span>Status:</span>
+                            {% if task.status == 'completed' %}
+                              <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ task.get_status_display }}</span>
+                            {% elif task.status == 'in_progress' %}
+                              <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">{{ task.get_status_display }}</span>
+                            {% else %}
+                              <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ task.get_status_display }}</span>
+                            {% endif %}
                           </div>
                         </div>
-                        <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                          <span>Status:</span>
-                          {% if task.status == 'completed' %}
-                            <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ task.get_status_display }}</span>
-                          {% elif task.status == 'in_progress' %}
-                            <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">{{ task.get_status_display }}</span>
-                          {% else %}
-                            <span class="ml-4 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ task.get_status_display }}</span>
+
+                        <!-- Task Controls -->
+                        <div class="flex items-center gap-2">
+                          <!-- Task Edit/Delete -->
+                          {% can request.user 'change' task as check %}
+                          {% if check %}
+                            <a href="{% url 'task_edit' task.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a>
+                            <a href="{% url 'task_delete' task.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a>
                           {% endif %}
                         </div>
-                      </div>
-                      <div class="ml-4 shrink-0 flex items-center space-x-2">
-                        {% can request.user 'change' task as check %}
-                        {% if check %}
-                          <a href="{% url 'task_edit' task.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
-                          <a href="{% url 'task_delete' task.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
-                        {% endif %}
                       </div>
                     </div>
                   </div>
@@ -105,7 +116,7 @@
               {% empty %}
                 <li class="px-4 py-4 sm:px-6 text-center text-gray-500">
                   {% if active_tab == 'all' %}
-                    No tasks created yet.
+                    No tasks found.
                   {% else %}
                     You don't have any tasks assigned to you yet.
                   {% endif %}

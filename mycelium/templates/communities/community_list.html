@@ -4,11 +4,16 @@
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-semibold text-gray-900">Community</h1>
+      <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Communities</h1>
         {% can request.user 'add' 'communities.community' as check %}
         {% if check %}
-          <a href="{% url 'community_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create New Community</a>
+          <a href="{% url 'community_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
+            <span class="flex items-center gap-2">
+              <span>{% include '_icons/plus.html' %}</span>
+              <span>Create New Community</span>
+            </span>
+          </a>
         {% endif %}
       </div>
 
@@ -19,35 +24,59 @@
           {% for community in communities %}
             <li class="hover:bg-gray-50 transition-colors duration-150">
               <div class="px-4 py-4 sm:px-6">
-                <div class="flex items-start justify-between">
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center space-x-2">
-                      <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'community_detail' community.pk %}" class="hover:text-indigo-900 hover:underline">{{ community.title }}</a></h3>
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ community.created_by.username }}</span>
-                    </div>
-                    <p class="mt-1 text-sm text-gray-500">{{ community.description|truncatewords:30 }}</p>
-                    <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                    {% if community.url %}                                        
-                      <p class="mt-1 text-sm text-gray-500">{{ community.url}}</p>
-                    {% endif %}
+                <div class="flex items-start gap-4">
+                  <!-- Community Icon -->
+                  <div class="shrink-0">
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500">{% include '_icons/chat-bubbles.html' %}</span>
+                  </div>
+
+                  <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
+                    <!-- Community Details -->
+                    <div class="flex flex-col space-y-2">
+                      <!-- Community Title & Creator -->
+                      <div class="">
+                        <!-- Community Title -->
+                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'community_detail' community.pk %}" class="hover:text-indigo-900 hover:underline">{{ community.title }}</a></h3>
+
+                        <!-- Community Creator -->
+                        <p class="text-sm text-gray-500">Created by {{ community.created_by.username }}</p>
+                      </div>
+
+                      <!-- Community Description -->
+                      {% if community.description %}
+                        <div class="">
+                          <p class="text-sm text-gray-700">{{ community.description|truncatewords:30 }}</p>
+                        </div>
+                      {% endif %}
+
+                      <!-- Community URL -->
+                      {% if community.url %}
+                        <div class="flex flex-wrap items-center gap-y-2 gap-x-4 pb-2">
+                          <p class="text-sm text-indigo-600 flex items-start gap-1">
+                            <a href="{{ community.url }}" class="hover:underline" target="_blank" rel="noopener noreferrer">Community URL</a>
+                            {% include '_icons/arrow-up-right.html' %}
+                          </p>
+                        </div>
+                      {% endif %}
                     </div>
 
-                  </div>
-                  <div class="ml-4 shrink-0 flex items-center space-x-2">
-                    {% can request.user 'change' community as check %}
-                    {% if check %}
-                      <a href="{% url 'community_edit' community.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
-                      <a href="{% url 'community_delete' community.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
-                    {% endif %}
+                    <!-- Community Controls -->
+                    <div class="flex items-center gap-2">
+                      <!-- Community Edit/Delete -->
+                      {% can request.user 'change' community as check %}
+                      {% if check %}
+                        <a href="{% url 'community_edit' community.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a>
+                        <a href="{% url 'community_delete' community.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a>
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
               </div>
             </li>
           {% empty %}
-            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No communities listed yet.</li>
+            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No communities found.</li>
           {% endfor %}
         </ul>
-        
         {% include '_components/pagination.html' %}
       </div>
     </div>

@@ -4,68 +4,95 @@
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
-      <div class="flex justify-between items-center mb-6">
+      <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
         <h1 class="text-2xl font-semibold text-gray-900">Meetings</h1>
         {% can request.user 'add' 'meetings.meeting' as check %}
         {% if check %}
-          <a href="{% url 'meeting_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Create New Meeting</a>
+          <a href="{% url 'meeting_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
+            <span class="flex items-center gap-2">
+              <span>{% include '_icons/plus.html' %}</span>
+              <span>Create New Meeting</span>
+            </span>
+          </a>
         {% endif %}
       </div>
 
       {% include '_components/messages.html' %}
 
-      <!-- Debug info: meetings count = {{ meetings|length }}, pagination.total_count = {{ pagination.total_count }}, pagination.total_pages = {{ pagination.total_pages }} -->
       <div class="bg-white shadow overflow-hidden sm:rounded-md">
         <ul class="divide-y divide-gray-200">
           {% for meeting in meetings %}
             <li class="hover:bg-gray-50 transition-colors duration-150">
               <div class="px-4 py-4 sm:px-6">
-                <div class="flex items-start justify-between">
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center space-x-2">
-                      <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'meeting_detail' meeting.pk %}" class="hover:text-indigo-900 hover:underline">{{ meeting.title }}</a></h3>
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ meeting.created_by.username }}</span>
-                    </div>
-                    <p class="mt-1 text-sm text-gray-500">{{ meeting.description|truncatewords:30 }}</p>
-                    <div class="flex items-center space-x-2">
-                      <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                        {% include '_icons/calendar.html' %}
-                        <span>{{ meeting.start_time|date:'F j, Y P' }} - {{ meeting.end_time|date:'P' }}</span>
+                <div class="flex items-start gap-4">
+                  <!-- Meeting Icon -->
+                  <div class="shrink-0">
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-500">{% include '_icons/meetings.html' %}</span>
+                  </div>
+
+                  <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
+                    <!-- Meeting Details -->
+                    <div class="flex flex-col space-y-2">
+                      <!-- Meeting Title & Creator -->
+                      <div class="">
+                        <!-- Meeting Title -->
+                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'meeting_detail' meeting.pk %}" class="hover:text-indigo-900 hover:underline">{{ meeting.title }}</a></h3>
+
+                        <!-- Meeting Creator -->
+                        <p class="text-sm text-gray-500">Created by {{ meeting.created_by.username }}</p>
                       </div>
-                      <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
-                        {% include '_icons/users.html' %}
-                        <span>{{ meeting.attending.count }} attendee{{ meeting.attending.count|pluralize }}</span>
+
+                      <!-- Meeting Description -->
+                      {% if meeting.description %}
+                        <div class="">
+                          <p class="text-sm text-gray-700">{{ meeting.description|truncatewords:30 }}</p>
+                        </div>
+                      {% endif %}
+
+                      <!-- Meeting Time & Attendees -->
+                      <div class="flex flex-wrap items-center gap-y-2 gap-x-4 pb-2">
+                        <!-- Meeting Time -->
+                        <div class="flex items-center text-sm text-gray-700 gap-1">
+                          {% include '_icons/calendar.html' %}
+                          <span>{{ meeting.start_time|date:'F j, Y P' }} - {{ meeting.end_time|date:'P' }}</span>
+                        </div>
+
+                        <!-- Meeting Attendees -->
+                        <div class="flex items-center text-sm text-gray-700 gap-1">
+                          {% include '_icons/users.html' %}
+                          <span>{{ meeting.attending.count }} attendee{{ meeting.attending.count|pluralize }}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mt-2 flex items-center text-sm text-gray-500 space-x-2">
+
+                      <!-- Meeting URL -->
                       {% if meeting.url %}
-                        <p class="mt-1 text-sm text-gray-500">{{ meeting.url }}</p>
+                        <div class="flex flex-wrap items-center gap-y-2 gap-x-4 pb-2">
+                          <p class="text-sm text-indigo-600 flex items-start gap-1">
+                            <a href="{{ meeting.url }}" class="hover:underline" target="_blank" rel="noopener noreferrer">Meeting URL</a>
+                            {% include '_icons/arrow-up-right.html' %}
+                          </p>
+                        </div>
                       {% endif %}
                     </div>
-                  </div>
-                  <div class="ml-4 shrink-0 flex items-center space-x-2">
-                    {% can request.user 'change' meeting as check %}
-                    {% if check %}
-                      <a href="{% url 'meeting_edit' meeting.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
-                      <a href="{% url 'meeting_delete' meeting.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
-                    {% endif %}
+
+                    <!-- Meeting Controls -->
+                    <div class="flex items-center gap-2">
+                      <!-- Meeting Edit/Delete -->
+                      {% can request.user 'change' meeting as check %}
+                      {% if check %}
+                        <a href="{% url 'meeting_edit' meeting.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a>
+                        <a href="{% url 'meeting_delete' meeting.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a>
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
               </div>
             </li>
           {% empty %}
-            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No meetings scheduled yet.</li>
+            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No meetings found.</li>
           {% endfor %}
         </ul>
-        
         {% include '_components/pagination.html' %}
-        
-        <!-- Fallback debug info -->
-        {% if not pagination %}
-          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4">
-            <p><strong>Debug:</strong> pagination variable is not available in template</p>
-          </div>
-        {% endif %}
       </div>
     </div>
   </div>
