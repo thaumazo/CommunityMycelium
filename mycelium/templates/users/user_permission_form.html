@@ -20,27 +20,54 @@
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">{{ form.groups.label }}</label>
-                  <div class="space-y-4" id="role-selection">
-                    {% for choice in form.groups %}
-                      <div class="flex items-center">
-                        <input type="checkbox" 
-                               name="{{ form.groups.html_name }}" 
-                               value="{{ choice.data.value }}" 
-                               id="{{ choice.id_for_label }}"
-                               {% if choice.data.selected %}checked{% endif %}
-                               class="role-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                               data-role="{{ choice.choice_label }}">
-                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">
-                          {% if choice.choice_label == 'Admin' %}
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Admin</span>
-                            <span class="ml-2 text-gray-500">Full system access and control (includes all other permissions)</span>
-                          {% else %}
-                            {{ choice.choice_label }}
-                          {% endif %}
-                        </label>
-                      </div>
-                    {% endfor %}
+                  
+                  <!-- Admin Role Section -->
+                  <div class="mb-6 mt-4">
+                    <h3 class="text-lg font-medium text-gray-900 mb-3">Administrative Access</h3>
+                    <div class="space-y-4 mt-4">
+                      {% for choice in form.groups %}
+                        {% if choice.choice_label == 'Admin' %}
+                          <div class="flex items-center">
+                            <input type="checkbox" 
+                                    name="{{ form.groups.html_name }}" 
+                                    value="{{ choice.data.value }}" 
+                                    id="{{ choice.id_for_label }}"
+                                    {% if choice.data.selected %}checked{% endif %}
+                                    class="role-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                    data-role="{{ choice.choice_label }}">
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                              <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Full Admin</span>
+                              <span class="ml-2 text-gray-500">Full system access and control (includes all other permissions)</span>
+                            </label>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
                   </div>
+
+                  <!-- Other Roles Section -->
+                  <div id="role-based-permissions">
+                    <h3 class="text-lg font-medium text-gray-900 mb-3">Role-Based Permissions</h3>
+                    <div class="space-y-4 mt-4">
+                      {% for choice in form.groups %}
+                        {% if choice.choice_label != 'Admin' %}
+                          <div class="flex items-center">
+                            <input type="checkbox" 
+                                    name="{{ form.groups.html_name }}" 
+                                    value="{{ choice.data.value }}" 
+                                    id="{{ choice.id_for_label }}"
+                                    {% if choice.data.selected %}checked{% endif %}
+                                    class="role-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                    data-role="{{ choice.choice_label }}">
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                              {{ choice.choice_label }}
+                            </label>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                  
                   {% if form.groups.errors %}
                     <p class="mt-2 text-sm text-red-600">{{ form.groups.errors }}</p>
                   {% endif %}
@@ -63,19 +90,27 @@
       const roleCheckboxes = document.querySelectorAll('.role-checkbox');
       const adminCheckbox = document.querySelector('.role-checkbox[data-role="Admin"]');
       const otherCheckboxes = Array.from(roleCheckboxes).filter(cb => cb !== adminCheckbox);
+      const roleBasedSection = document.getElementById('role-based-permissions');
 
       function updateRoleSelection(event) {
         const changedCheckbox = event.target;
         
         if (changedCheckbox.checked) {
           if (changedCheckbox === adminCheckbox) {
-            // If Admin is checked, uncheck other roles
+            // If Admin is checked, uncheck other roles and hide the section
             otherCheckboxes.forEach(checkbox => {
               checkbox.checked = false;
             });
+            roleBasedSection.style.display = 'none';
           } else {
-            // If any other role is checked, uncheck Admin
+            // If any other role is checked, uncheck Admin and show the section
             adminCheckbox.checked = false;
+            roleBasedSection.style.display = 'block';
+          }
+        } else {
+          // If admin is unchecked, show the role-based section
+          if (changedCheckbox === adminCheckbox) {
+            roleBasedSection.style.display = 'block';
           }
         }
       }
@@ -84,6 +119,13 @@
       roleCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', updateRoleSelection);
       });
+
+      // Initialize the display state based on current admin selection
+      if (adminCheckbox.checked) {
+        roleBasedSection.style.display = 'none';
+      } else {
+        roleBasedSection.style.display = 'block';
+      }
     });
   </script>
 {% endblock %}

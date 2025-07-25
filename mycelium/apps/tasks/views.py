@@ -7,21 +7,27 @@ from .forms import TaskForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.pagination import paginate_queryset
 
-
 @login_required
 def task_list_view(request):
-    tasks = get_permitted_objects(request.user, "view", Task)
+    tab_type = request.GET.get('tab', 'all')
+    
+    if tab_type == 'my':
+        tasks = Task.objects.filter(assigned_to=request.user)
+        active_tab = 'my'
+    else:
+        tasks = get_permitted_objects(request.user, "view", Task)
+        active_tab = 'all'
     
     # Pagination using helper function
     tasks_page, pagination_data = paginate_queryset(tasks, request, per_page=10)
     
     return render(request, "tasks/task_list.html", {
+        "tab_type": tab_type,
         "tasks": tasks_page,
         "pagination": pagination_data,
+        "active_tab": active_tab,
     })
 
-
-@login_required
 def task_detail_view(request, pk):
     task = get_permitted_object(request.user, "view", Task, pk)
     return render(request, "tasks/task_detail.html", {"task": task})
