@@ -10,6 +10,7 @@ urlpatterns = [
     path("meetings/", include("apps.meetings.urls")),
     path("communities/", include("apps.communities.urls")),
     path("projects/", include("apps.projects.urls")),
+    path("bioregions/", include("apps.bioregions.urls")),
     path("hats/", include("apps.hats.urls")),
     path("agreements/", include("apps.agreements.urls")),
     path("tasks/", include("apps.tasks.urls")),

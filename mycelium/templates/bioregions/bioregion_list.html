@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Bioregions</h1>
+        {% can request.user 'add' 'bioregions.bioregion' as check %}
+        {% if check %}
+          <a href="{% url 'bioregion_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
+            <span class="flex items-center gap-2">
+              <span>{% include '_icons/plus.html' %}</span>
+              <span>Create New Bioregion</span>
+            </span>
+          </a>
+        {% endif %}
+      </div>
+
+      {% include '_components/messages.html' %}
+
+      <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+          {% for bioregion in bioregions %}
+            <li class="hover:bg-gray-50 transition-colors duration-150">
+              <div class="px-4 py-4 sm:px-6">
+                <div class="flex items-start gap-4">
+                  <!-- Bioregion Icon -->
+                  <div class="shrink-0">
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/folder-open.html' %}</span>
+                  </div>
+
+                  <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
+                    <!-- Bioregion Details -->
+                    <div class="flex flex-col space-y-2">
+                      <!-- Bioregion Title & Creator -->
+                      <div class="">
+                        <!-- Bioregion Title -->
+                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'bioregion_detail' bioregion.pk %}" class="hover:text-indigo-900 hover:underline">{{ bioregion.title }}</a></h3>
+
+                        <!-- Bioregion Creator -->
+                        <p class="text-sm text-gray-500">Created by {{ bioregion.created_by.username }}</p>
+                      </div>
+
+                      <!-- Bioregion Description -->
+                      {% if bioregion.description %}
+                        <div class="">
+                          <p class="text-sm text-gray-700">{{ bioregion.description|truncatewords:30 }}</p>
+                        </div>
+                      {% endif %}
+
+                    </div>
+
+                    <!-- Bioregion Controls -->
+                    <div class="flex items-center gap-2">
+                      <!-- Bioregion Edit/Delete -->
+                      {% can request.user 'change' bioregion as check %}
+                      {% if check %}
+                        <a href="{% url 'bioregion_edit' bioregion.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a>
+                        <a href="{% url 'bioregion_delete' bioregion.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          {% empty %}
+            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No bioregions found.</li>
+          {% endfor %}
+        </ul>
+        {% include '_components/pagination.html' %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
