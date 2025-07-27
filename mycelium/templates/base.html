@@ -28,7 +28,7 @@
                 </svg>
               </button>
             {% endif %}
-            <a href="{% url 'home' %}" class="flex ms-2 md:me-24"><span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Mycelium</span></a>
+            <a href="{% url 'core:home' %}" class="flex ms-2 md:me-24"><span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Mycelium</span></a>
           </div>
           <div class="flex items-center">
             {% if request.user.is_authenticated %}
@@ -69,7 +69,7 @@
           <div class="h-full px-3 py-4 overflow-y-auto bg-white">
             <ul class="space-y-2 font-medium">
               <li>
-                <a href="{% url 'home' %}" class="{% active_class 'home' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                <a href="{% url 'core:home' %}" class="{% active_class 'home' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/home.html' %}
                   <span class="ms-3">Dashboard</span>
                 </a>

@@ -101,6 +101,10 @@ seed-meetings:
 seed-tasks:
 	podman exec $(POD_NAME)-web python manage.py seed_tasks
 
-seed-all: seed-users seed-meetings seed-tasks
+seed-all:
+	@podman exec $(POD_NAME)-web python manage.py print_seed_order | while read cmd; do \
+		echo "Running $$cmd..."; \
+		podman exec $(POD_NAME)-web python manage.py $$cmd || true; \
+	done
 
 .PHONY: init up stop rm rmpod clean migrate createsuperuser shell pytest test setup-groups seed-users seed-meetings seed-all
