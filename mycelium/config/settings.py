@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.communities",
     "apps.projects",
+    "apps.socialroles",
     "apps.bioregions",
     "apps.meetings",
     "apps.hats",

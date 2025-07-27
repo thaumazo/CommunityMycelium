@@ -159,7 +159,7 @@
               </div>
             </div>
           </div>
-          <!-- Bioregionss Card -->
+          <!-- Bioregions Card -->
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
               <div class="flex items-center">
@@ -172,6 +172,26 @@
                     <dd class="flex items-baseline">
                       <div class="text-2xl font-semibold text-gray-900">
                         <a href="{% url 'bioregion_list' %}" class="text-indigo-600 hover:text-indigo-900">View Bioregions</a>
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Social Change Roles Card -->
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="shrink-0">
+                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/socialroles.html' %}</span>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Social Change Roles</dt>
+                    <dd class="flex items-baseline">
+                      <div class="text-2xl font-semibold text-gray-900">
+                        <a href="{% url 'socialrole_list' %}" class="text-indigo-600 hover:text-indigo-900">View Social Change Roles</a>
                       </div>
                     </dd>
                   </dl>
