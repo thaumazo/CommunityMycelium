@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load user_tags %}
-
+{% load static %}
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
       <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
         <h1 class="text-2xl font-semibold text-gray-900">Social Roles</h1>
+<!--        
         {% can request.user 'add' 'socialroles.socialrole' as check %}
         {% if check %}
           <a href="{% url 'socialrole_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
@@ -15,6 +16,7 @@
             </span>
           </a>
         {% endif %}
+-->        
       </div>
 
       {% include '_components/messages.html' %}
@@ -27,7 +29,7 @@
                 <div class="flex items-start gap-4">
                   <!-- Social Role Icon -->
                   <div class="shrink-0">
-                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/folder-open.html' %}</span>
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full "><img src="{% static socialrole.image_path %}" alt="{{ socialrole.title }}"></span>
                   </div>
 
                   <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
@@ -55,8 +57,8 @@
                       <!-- Social Role Edit/Delete -->
                       {% can request.user 'change' socialrole as check %}
                       {% if check %}
-                        <a href="{% url 'socialrole_edit' socialrole.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a>
-                        <a href="{% url 'socialrole_delete' socialrole.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a>
+<!--                        <a href="{% url 'socialrole_edit' socialrole.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a> -->
+<!--                        <a href="{% url 'socialrole_delete' socialrole.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a> -->
                       {% endif %}
                     </div>
                   </div>

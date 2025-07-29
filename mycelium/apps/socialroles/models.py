@@ -3,15 +3,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from apps.acl.models import ObjectPermission
 
-User = get_user_model()
-
-
 class Socialrole(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="socialroles"
-    )
+    image_path = models.CharField(max_length=255, blank=True, help_text="Relative path to static image (e.g. 'img/roles/weavers.webp')")    
     permissions = GenericRelation(ObjectPermission)
 
     def __str__(self):

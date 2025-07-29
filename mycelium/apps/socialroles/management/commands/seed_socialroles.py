@@ -1,10 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
-from datetime import datetime, timedelta
-from django.utils import timezone
 from ...models import Socialrole
-
-User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -13,15 +8,30 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Seeding social roles...")
 
-        # Get all users
-        users = User.objects.all()
-
-        # Sample social role titles and descriptions
         socialrole_templates = [
-            {
-                "title": "Test 1",
-                "description": "This is a test",
-            },
+            {"title": "Weavers", "description": "We see the through-lines of connectivity between people, places, organizations, ideas, and movements.", "image_path": "img/roles/01_Weavers.webp"},
+            {"title": "Experimenters", "description": "We innovate, pioneer, and invent. We take risks and course correct as needed.", "image_path": "img/roles/02_Experimenters.webp"},
+            {"title": "Frontline Responders", "description": "We address community crises by assembling and organizing resources, networks, and messages.", "image_path": "img/roles/03_FrontlineResponders.webp"},
+            {"title": "Visionaries", "description": "We imagine and generate our boldest possibilities, hopes, and dreams, and remind us of our direction.", "image_path": "img/roles/04_Visionaries.webp"},
+            {"title": "Builders", "description": "We develop, organize, and implement ideas, practices, people, and resources in service to a collective vision.", "image_path": "img/roles/05_Builders.webp"},
+            {"title": "Caregivers", "description": "We nurture and nourish the people around us by creating and sustaining a community of care, joy, and connection.", "image_path": "img/roles/06_Caregivers.webp"},
+            {"title": "Disruptors", "description": "We take uncomfortable and risky actions to shake up the status quo, to raise awareness, and to build power.", "image_path": "img/roles/07_Disrupters.webp"},
+            {"title": "Healers", "description": "We recognize and tend to the generational and current traumas caused by oppressive systems, institutions, policies, and practices.", "image_path": "img/roles/08_Healers.webp"},
+            {"title": "Storytellers", "description": "We craft and share our community stories, cultures, experiences, histories, and possibilities through word, art, music, media and movement.", "image_path": "img/roles/09_Storytellers.webp"},
+            {"title": "Guides", "description": "We teach, counsel, and advise, using our gifts of well-earned discernment and wisdom.", "image_path": "img/roles/10_Guides.webp"},
         ]
 
-        self.stdout.write(self.style.SUCCESS("Successfully seeded social roles"))
+        for template in socialrole_templates:
+            obj, created = Socialrole.objects.get_or_create(
+                title=template["title"],
+                defaults={
+                    "description": template["description"],
+                    "image_path": template["image_path"]
+                },
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f"Created: {obj.title}"))
+            else:
+                self.stdout.write(self.style.WARNING(f"Skipped (already exists): {obj.title}"))
+
+        self.stdout.write(self.style.SUCCESS("✅ Done seeding social roles."))
