@@ -219,6 +219,26 @@
               </div>
             </div>
           </div>
+          <!-- Capitals Card -->
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="shrink-0">
+                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/capitals.html' %}</span>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Capitals</dt>
+                    <dd class="flex items-baseline">
+                      <div class="text-2xl font-semibold text-gray-900">
+                        <a href="{% url 'capital_list' %}" class="text-indigo-600 hover:text-indigo-900">View Capitals</a>
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
           {% if request.user.is_superuser %}
           <!-- Seedpacks Card (Superuser Only) -->
           <div class="bg-white overflow-hidden shadow rounded-lg">

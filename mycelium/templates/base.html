@@ -135,6 +135,12 @@
                 </a>
               </li>
               <li>
+                <a href="{% url 'capital_list' %}" class="{% active_class 'bioregion_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                  {% include '_icons/capitals.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Capitals</span>
+                </a>
+              </li>
+              <li>
                 <a href="{% url 'acl_content_type_list' %}" class="{% active_class 'acl_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/lock.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Permissions</span>

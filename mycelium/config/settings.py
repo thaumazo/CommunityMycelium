@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "apps.projects",
     "apps.socialroles",
     "apps.maladaptives",
+    "apps.capitals",
     "apps.bioregions",
     "apps.meetings",
     "apps.hats",
