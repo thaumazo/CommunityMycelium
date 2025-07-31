@@ -11,6 +11,7 @@ urlpatterns = [
     path("communities/", include("apps.communities.urls")),
     path("projects/", include("apps.projects.urls")),
     path("socialroles/", include("apps.socialroles.urls")),
+    path("maladaptives/", include("apps.maladaptives.urls")),
     path("bioregions/", include("apps.bioregions.urls")),
     path("hats/", include("apps.hats.urls")),
     path("agreements/", include("apps.agreements.urls")),

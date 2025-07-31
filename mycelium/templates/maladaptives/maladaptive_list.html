@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+{% load static %}
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Maladaptive Schema</h1>
+<!--        
+        {% can request.user 'add' 'maladaptives.maladaptive' as check %}
+        {% if check %}
+          <a href="{% url 'maladaptive_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
+            <span class="flex items-center gap-2">
+              <span>{% include '_icons/plus.html' %}</span>
+              <span>Create New Maladaptive Schema</span>
+            </span>
+          </a>
+        {% endif %}
+-->        
+      </div>
+
+      {% include '_components/messages.html' %}
+
+      <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+          {% for maladaptive in maladaptives %}
+            <li class="hover:bg-gray-50 transition-colors duration-150">
+              <div class="px-4 py-4 sm:px-6">
+                <div class="flex items-start gap-4">
+                  <!-- Maladaptive Schema Icon -->
+                  <div class="shrink-0">
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full "><img src="{% static maladaptive.image_path %}" alt="{{ maladaptive.title }}"></span>
+                  </div>
+
+                  <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
+                    <!-- Maladaptive Schema Details -->
+                    <div class="flex flex-col space-y-2">
+                      <!-- Maladaptive Schema Title & Creator -->
+                      <div class="">
+                        <!-- Maladaptive Schema Title -->
+                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'maladaptive_detail' maladaptive.pk %}" class="hover:text-indigo-900 hover:underline">{{ maladaptive.title }}</a></h3>
+
+                        <!-- Maladaptive Schema Creator -->
+                        <p class="text-sm text-gray-500">Created by {{ maladaptive.created_by.username }}</p>
+                      </div>
+
+                      <!-- Maladaptive Schema Description -->
+                      {% if maladaptive.description %}
+                        <div class="">
+                          <p class="text-sm text-gray-700">{{ maladaptive.description|truncatewords:30 }}</p>
+                        </div>
+                      {% endif %}
+                    </div>
+
+                    <!-- Maladaptive Schema Controls -->
+                    <div class="flex items-center gap-2">
+                      <!-- Maladaptive Schema Edit/Delete -->
+                      {% can request.user 'change' maladaptive as check %}
+                      {% if check %}
+<!--                        <a href="{% url 'maladaptive_edit' maladaptive.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a> -->
+<!--                        <a href="{% url 'maladaptive_delete' maladaptive.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a> -->
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          {% empty %}
+            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No maladaptive schema found.</li>
+          {% endfor %}
+        </ul>
+        {% include '_components/pagination.html' %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
