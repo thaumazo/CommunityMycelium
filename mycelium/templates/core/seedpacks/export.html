@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="bg-white shadow rounded p-6 space-y-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Export Seedpack</h1>
+
+        {% include '_components/messages.html' %}
+
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Seedpack Name</label>
+              {{ form.name }}
+              {% if form.name.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.name.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Include apps</label>
+              <div class="mt-2 border rounded p-3 max-h-64 overflow-auto">
+                {{ form.apps }}
+              </div>
+              {% if form.apps.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.apps.errors.0 }}</p>
+              {% endif %}
+              <p class="text-xs text-gray-500 mt-1">Tip: Hold Ctrl / Cmd to select multiple.</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <label class="inline-flex items-center">
+                {{ form.include_users }}
+                <span class="ml-2 text-sm text-gray-700">Include users (non-superusers)</span>
+              </label>
+              <label class="inline-flex items-center">
+                {{ form.include_media }}
+                <span class="ml-2 text-sm text-gray-700">Include media files</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-6 flex gap-2">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+              Export
+            </button>
+            <a href="{% url 'core:seedpack_list' %}" class="bg-white border hover:bg-gray-50 text-gray-900 font-semibold py-2 px-4 rounded">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

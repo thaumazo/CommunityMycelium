@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="bg-white shadow rounded p-6 space-y-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Upload Seedpack (.zip)</h1>
+
+        {% include '_components/messages.html' %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Zip file</label>
+              {{ form.file }}
+              {% if form.file.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.file.errors.0 }}</p>
+              {% endif %}
+              <p class="text-xs text-gray-500 mt-1">Upload a .zip previously exported from this system.</p>
+            </div>
+
+            <div class="flex items-center">
+              <label class="inline-flex items-center">
+                {{ form.activate_now }}
+                <span class="ml-2 text-sm text-gray-700">Run this seedpack immediately after upload</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-6 flex gap-2">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+              Upload
+            </button>
+            <a href="{% url 'core:seedpack_list' %}" class="bg-white border hover:bg-gray-50 text-gray-900 font-semibold py-2 px-4 rounded">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

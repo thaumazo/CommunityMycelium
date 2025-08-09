@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <div class="bg-white shadow rounded p-6 space-y-6">
+            <h1 class="text-2xl font-semibold text-gray-900">Seedpack Export Complete</h1>
+
+            <p>Your seedpack <strong>{{ slug }}</strong> has been exported successfully.</p>
+
+            {% if zip_url %}
+                <p>
+                    <a href="{{ zip_url }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                        Download Seedpack ZIP
+                    </a>
+                </p>
+            {% else %}
+                <p class="text-gray-600">Zip file saved at: <code>{{ zip_abspath }}</code></p>
+                <p>You can manually download it from your server's filesystem.</p>
+            {% endif %}
+
+            <p>
+                <a href="{% url 'core:seedpack_list' %}" class="bg-white border hover:bg-gray-50 text-gray-900 font-semibold py-2 px-4 rounded">
+                    Back to Seedpacks
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
