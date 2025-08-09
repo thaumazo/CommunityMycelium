@@ -71,6 +71,27 @@
                   </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Social Roles</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {% for socialrole in user.user_socialroles.all %}
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ socialrole.title }}</span>
+                    {% empty %}
+                      <span class="text-gray-400">None</span>
+                    {% endfor %}
+                  </dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Maladaptive Schemas</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {% for maladaptive in user.user_maladaptives.all %}
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ maladaptive.title }}</span>
+                    {% empty %}
+                      <span class="text-gray-400">None</span>
+                    {% endfor %}
+                  </dd>
+                </div>
+
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt class="text-sm font-medium text-gray-500">Access</dt>
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                     {% for group in user.groups.all %}

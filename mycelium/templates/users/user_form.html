@@ -137,6 +137,37 @@
                     <div class="mt-1 text-sm text-red-600">{{ form.user_hats.errors|join:', ' }}</div>
                   {% endif %}
                 </div>
+
+                <div>
+                  <label for="{{ form.user_socialroles.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_socialroles.label }}</label>
+                  <div class="mt-1 space-y-2">
+                    {% for choice in form.user_socialroles %}
+                      <div class="flex items-center">
+                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  {% if form.user_socialroles.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.user_socialroles.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
+
+                <div>
+                  <label for="{{ form.user_maladaptives.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_maladaptives.label }}</label>
+                  <div class="mt-1 space-y-2">
+                    {% for choice in form.user_maladaptives %}
+                      <div class="flex items-center">
+                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  {% if form.user_maladaptives.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.user_maladaptives.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
+
               </div>
 
                 <!-- Optional Password (admin create/edit) -->
