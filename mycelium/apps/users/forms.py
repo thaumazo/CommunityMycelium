@@ -108,6 +108,20 @@ class UserForm(forms.ModelForm):
         label="LinkedIn URL",
     )
 
+    # NEW: optional password fields (for admin create/edit)
+    password = forms.CharField(
+        widget=forms.PasswordInput(),
+        required=False,
+        label="Password (optional)",
+        help_text="Leave blank to keep the existing password.",
+        min_length=8,
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(),
+        required=False,
+        label="Confirm Password",
+    )
+
     class Meta:
         model = User
         fields = [
@@ -119,11 +133,43 @@ class UserForm(forms.ModelForm):
             "user_communities",
             "user_hats",
             "linked_in",
+            # password fields are not model fields; they’re above
         ]
         widgets = {
             "username": forms.TextInput(),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # If editing, don't allow "invited_by" to be self
+        if self.instance and self.instance.pk:
+            self.fields["invited_by"].queryset = User.objects.exclude(pk=self.instance.pk)
+
+    def clean(self):
+        cleaned = super().clean()
+        pwd = cleaned.get("password") or ""
+        cpw = cleaned.get("confirm_password") or ""
+        # Only validate if a password was provided
+        if pwd or cpw:
+            if pwd != cpw:
+                raise forms.ValidationError("Passwords don't match.")
+            if len(pwd) < 8:
+                raise forms.ValidationError("Password must be at least 8 characters long.")
+        return cleaned
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        pwd = self.cleaned_data.get("password")
+
+        if pwd:
+            user.set_password(pwd)
+
+        if commit:
+            user.save()
+            self.save_m2m()
+
+        return user
 
 class UserPasswordChangeForm(forms.Form):
     """Separate form for changing user passwords."""

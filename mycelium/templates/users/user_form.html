@@ -9,7 +9,7 @@
         <div class="bg-white shadow sm:rounded-lg">
           <div class="px-4 py-5 sm:p-6">
             <div class="space-y-2">
-              {% if user %}
+              {% if form.instance and form.instance.pk %}
                 <h1 class="text-2xl font-semibold text-gray-900">Edit User</h1>
                 <p class="text-sm text-gray-500">Edit the user's details.</p>
               {% else %}
@@ -22,60 +22,87 @@
               {% csrf_token %}
 
               <h4 class="text-lg font-medium text-gray-900">User Information</h4>
+
               <div class="space-y-4">
+                <!-- Full Name -->
                 <div>
-                  <label for="{{ form.full_name.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.full_name.label }}</label>
+                  <label for="{{ form.full_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.full_name.label }}
+                  </label>
                   <div class="mt-1">
-                    <input type="text" name="{{ form.full_name.html_name }}" id="{{ form.full_name.id_for_label }}" value="{{ form.full_name.value|default:'' }}" class="w-full" />
+                    {{ form.full_name }}
                   </div>
+                  {% if form.full_name.help_text %}
+                    <p class="text-xs text-gray-500 mt-1">{{ form.full_name.help_text }}</p>
+                  {% endif %}
                   {% if form.full_name.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.full_name.errors|join:', ' }}</div>
                   {% endif %}
                 </div>
 
+                <!-- Username -->
                 <div>
-                  <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.username.label }}</label>
+                  <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.username.label }}
+                  </label>
                   <div class="mt-1">
-                    <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}" class="w-full" />
+                    {{ form.username }}
                   </div>
                   {% if form.username.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.username.errors|join:', ' }}</div>
                   {% endif %}
                 </div>
 
+                <!-- Email -->
                 <div>
-                  <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.email.label }}</label>
+                  <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.email.label }}
+                  </label>
                   <div class="mt-1">
-                    <input type="email" name="{{ form.email.html_name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default:'' }}" class="w-full" />
+                    {{ form.email }}
                   </div>
+                  {% if form.email.help_text %}
+                    <p class="text-xs text-gray-500 mt-1">{{ form.email.help_text }}</p>
+                  {% endif %}
                   {% if form.email.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.email.errors|join:', ' }}</div>
                   {% endif %}
                 </div>
 
+                <!-- LinkedIn -->
                 <div>
-                  <label for="{{ form.linked_in.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.linked_in.label }}</label>
+                  <label for="{{ form.linked_in.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.linked_in.label }}
+                  </label>
                   <div class="mt-1">
-                    <input type="url" name="{{ form.linked_in.html_name }}" id="{{ form.linked_in.id_for_label }}" value="{{ form.linked_in.value|default:'' }}" class="w-full" />
+                    {{ form.linked_in }}
                   </div>
                   {% if form.linked_in.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.linked_in.errors|join:', ' }}</div>
                   {% endif %}
                 </div>
 
+                <!-- Location -->
                 <div>
-                  <label for="{{ form.user_location.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_location.label }}</label>
+                  <label for="{{ form.user_location.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.user_location.label }}
+                  </label>
                   <div class="mt-1">
-                    <input type="text" name="{{ form.user_location.html_name }}" id="{{ form.user_location.id_for_label }}" value="{{ form.user_location.value|default:'' }}" class="w-full" />
+                    {{ form.user_location }}
                   </div>
                   {% if form.user_location.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.user_location.errors|join:', ' }}</div>
                   {% endif %}
                 </div>
 
+                <!-- Invited by -->
                 <div>
-                  <label for="{{ form.invited_by.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.invited_by.label }}</label>
-                  <div class="mt-1">{{ form.invited_by }}</div>
+                  <label for="{{ form.invited_by.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.invited_by.label }}
+                  </label>
+                  <div class="mt-1">
+                    {{ form.invited_by }}
+                  </div>
                   {% if form.invited_by.errors %}
                     <div class="mt-1 text-sm text-red-600">{{ form.invited_by.errors|join:', ' }}</div>
                   {% endif %}
@@ -112,11 +139,45 @@
                 </div>
               </div>
 
+                <!-- Optional Password (admin create/edit) -->
+                <div class="pt-4 border-t border-gray-200">
+                  <h4 class="text-md font-medium text-gray-900">Password (optional)</h4>
+
+                  <div class="mt-4">
+                    <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                      {{ form.password.label }}
+                    </label>
+                    <div class="mt-1">
+                      {{ form.password }}
+                    </div>
+                    {% if form.password.help_text %}
+                      <p class="text-xs text-gray-500 mt-1">{{ form.password.help_text }}</p>
+                    {% endif %}
+                    {% if form.password.errors %}
+                      <div class="mt-1 text-sm text-red-600">{{ form.password.errors|join:', ' }}</div>
+                    {% endif %}
+                  </div>
+
+                  <div class="mt-4">
+                    <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                      {{ form.confirm_password.label }}
+                    </label>
+                    <div class="mt-1">
+                      {{ form.confirm_password }}
+                    </div>
+                    {% if form.confirm_password.errors %}
+                      <div class="mt-1 text-sm text-red-600">{{ form.confirm_password.errors|join:', ' }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
               <div class="flex justify-end space-x-3 mt-6">
                 <a href="{% url 'user_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
                 <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save User</button>
               </div>
             </form>
+
           </div>
         </div>
       </div>

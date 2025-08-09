@@ -38,10 +38,10 @@ def register_view(request):
             )
             return redirect("login")
     else:
-        form = UserForm()
+        # ✅ was: form = UserForm()
+        form = RegisterForm()
 
     return render(request, "users/register.html", {"form": form})
-
 
 @login_required
 def user_list_view(request):
@@ -60,25 +60,19 @@ def user_list_view(request):
 @login_required
 def user_create_view(request):
     """Create a new user."""
-    # Check if the user has permission to add a user
     if not is_permitted(request.user, "add", "users.user"):
         raise PermissionDenied
-    # If the request method is POST, create a new user
+
     if request.method == "POST":
-        # Create a new user form
-        form = RegisterForm(request.POST)
-        # If the form is valid, save the user
+        # ✅ was RegisterForm
+        form = UserForm(request.POST)
         if form.is_valid():
-            # Save the user
-            form.save()
-            # Add a success message
+            user = form.save()  # commit=True, so M2M will save
             messages.success(request, "User created successfully.")
-            # Redirect to the user list
-            return redirect("user_list")
+            return redirect("user_detail", pk=user.pk)
     else:
-        # Create a new user form
-        form = RegisterForm()
-    # Render the user form
+        form = UserForm()
+
     return render(request, "users/user_form.html", {"form": form, "user": None})
 
 
