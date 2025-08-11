@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Maladaptive',
+            name='Capital',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255)),
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('image_path', models.CharField(blank=True, help_text="Relative path to static image (e.g. 'img/roles/weavers.webp')", max_length=255)),
             ],
             options={
-                'permissions': [('delegate_maladaptive', 'Can delegate maladaptive schemas')],
+                'permissions': [('delegate_capital', 'Can delegate capitals')],
             },
         ),
     ]
