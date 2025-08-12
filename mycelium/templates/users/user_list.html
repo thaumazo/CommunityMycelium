@@ -54,20 +54,13 @@
                               <span>{{ user.user_location }}</span>
                             </p>
                           {% endif %}
-                          <!-- User LinkedIn -->
-                          {% if user.linked_in %}
-                            <p class="text-sm text-indigo-600 flex items-start gap-1">
-                              <a href="{{ user.linked_in }}" class="hover:underline" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a>
-                              {% include '_icons/arrow-up-right.html' %}
-                            </p>
-                          {% endif %}
                         </div>
                       {% endif %}
 
                       <!-- User Roles -->
                       <div class="flex flex-wrap items-center gap-2">
-                        {% for group in user.groups.all %}
-                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 whitespace-nowrap">{{ group.name }}</span>
+                        {% for hat in user.hats.all %}
+                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 whitespace-nowrap">{{ hat.name }}</span>
                         {% empty %}
                           <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Roles</span>
                         {% endfor %}

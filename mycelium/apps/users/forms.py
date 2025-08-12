@@ -1,8 +1,6 @@
 from django import forms
 from apps.communities.models import Community
 from apps.hats.models import Hat
-from apps.socialroles.models import Socialrole
-from apps.maladaptives.models import Maladaptive
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
@@ -104,26 +102,6 @@ class UserForm(forms.ModelForm):
         label="Hats",
     )
 
-    user_socialroles = forms.ModelMultipleChoiceField(
-        queryset=Socialrole.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
-        required=False,
-        label="Social Roles",
-    )
-
-    user_maladaptives = forms.ModelMultipleChoiceField(
-        queryset=Maladaptive.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
-        required=False,
-        label="Maladaptive Schemas",
-    )
-
-    linked_in = forms.URLField(
-        required=False,
-        widget=forms.TextInput(attrs={"class": "w-full"}),
-        label="LinkedIn URL",
-    )
-
     # NEW: optional password fields (for admin create/edit)
     password = forms.CharField(
         widget=forms.PasswordInput(),
@@ -148,9 +126,6 @@ class UserForm(forms.ModelForm):
             "invited_by",
             "user_communities",
             "user_hats",
-            "user_socialroles",
-            "user_maladaptives",
-            "linked_in",
             # password fields are not model fields; they’re above
         ]
         widgets = {

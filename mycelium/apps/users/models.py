@@ -20,10 +20,6 @@ class User(AbstractUser):
     )
 
     user_hats = models.ManyToManyField("hats.Hat", blank=True, related_name="users")
-    user_socialroles = models.ManyToManyField("socialroles.Socialrole", blank=True, related_name="users")
-    user_maladaptives = models.ManyToManyField("maladaptives.Maladaptive", blank=True, related_name="users")
-
-    linked_in = models.URLField(blank=True, null=True)
 
     # Remove first_name and last_name from the model
     first_name = None

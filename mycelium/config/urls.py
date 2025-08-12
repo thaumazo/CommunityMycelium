@@ -7,14 +7,11 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("apps.core.urls")),  # Core app handles main website pages
     path("users/", include("apps.users.urls")),  # User management routes
+    path("students/", include("apps.students.urls")),  # User management routes
+    path("books/", include("apps.books.urls")),  # User management routes
     path("meetings/", include("apps.meetings.urls")),
     path("communities/", include("apps.communities.urls")),
     path("projects/", include("apps.projects.urls")),
-    path("socialroles/", include("apps.socialroles.urls")),
-    path("maladaptives/", include("apps.maladaptives.urls")),
-    path("metacrisis_facets/", include("apps.metacrisis_facets.urls")),
-    path("capitals/", include("apps.capitals.urls")),
-    path("bioregions/", include("apps.bioregions.urls")),
     path("hats/", include("apps.hats.urls")),
     path("agreements/", include("apps.agreements.urls")),
     path("tasks/", include("apps.tasks.urls")),

@@ -39,6 +39,46 @@
               </div>
             </div>
           </div>
+          <!-- Students Card -->
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="shrink-0">
+                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500">{% include '_icons/chat-bubbles.html' %}</span>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Students</dt>
+                    <dd class="flex items-baseline">
+                      <div class="text-2xl font-semibold text-gray-900">
+                        <a href="{% url 'student_list' %}" class="text-indigo-600 hover:text-indigo-900">View Students</a>
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Books Card -->
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="shrink-0">
+                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500">{% include '_icons/chat-bubbles.html' %}</span>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">Books</dt>
+                    <dd class="flex items-baseline">
+                      <div class="text-2xl font-semibold text-gray-900">
+                        <a href="{% url 'book_list' %}" class="text-indigo-600 hover:text-indigo-900">View Books</a>
+                      </div>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- Communities Card -->
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
@@ -159,107 +199,6 @@
               </div>
             </div>
           </div>
-          <!-- Bioregions Card -->
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="shrink-0">
-                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/bioregion.html' %}</span>
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">Bioregions</dt>
-                    <dd class="flex items-baseline">
-                      <div class="text-2xl font-semibold text-gray-900">
-                        <a href="{% url 'bioregion_list' %}" class="text-indigo-600 hover:text-indigo-900">View Bioregions</a>
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Social Change Roles Card -->
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="shrink-0">
-                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/socialroles.html' %}</span>
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">Social Change Roles</dt>
-                    <dd class="flex items-baseline">
-                      <div class="text-2xl font-semibold text-gray-900">
-                        <a href="{% url 'socialrole_list' %}" class="text-indigo-600 hover:text-indigo-900">View Social Change Roles</a>
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Maladaptive Schemas Card -->
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="shrink-0">
-                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/maladaptives.html' %}</span>
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">Maladaptive Schemas</dt>
-                    <dd class="flex items-baseline">
-                      <div class="text-2xl font-semibold text-gray-900">
-                        <a href="{% url 'maladaptive_list' %}" class="text-indigo-600 hover:text-indigo-900">View Maladaptive Schemas</a>
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Capitals Card -->
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="shrink-0">
-                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/capitals.html' %}</span>
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">Capitals</dt>
-                    <dd class="flex items-baseline">
-                      <div class="text-2xl font-semibold text-gray-900">
-                        <a href="{% url 'capital_list' %}" class="text-indigo-600 hover:text-indigo-900">View Capitals</a>
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Metacrisis Facets Card -->
-          <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-              <div class="flex items-center">
-                <div class="shrink-0">
-                  <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/metacrisis_facets.html' %}</span>
-                </div>
-                <div class="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">Metacrisis Facets</dt>
-                    <dd class="flex items-baseline">
-                      <div class="text-2xl font-semibold text-gray-900">
-                        <a href="{% url 'metacrisis_facet_list' %}" class="text-indigo-600 hover:text-indigo-900">View Metacrisis Facets</a>
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% if request.user.is_superuser %}
           <!-- Seedpacks Card (Superuser Only) -->
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
@@ -280,7 +219,6 @@
               </div>
             </div>
           </div>
-          {% endif %}          
           <!-- Profile Card -->
           <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
