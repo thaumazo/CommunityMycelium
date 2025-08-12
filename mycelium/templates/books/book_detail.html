@@ -19,7 +19,7 @@
               <div class="flex items-center space-x-2">
                 {% can request.user 'change' book as check %}
                 {% if check %}
-                  <a href="{% url 'book_edit' studbookent.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
+                  <a href="{% url 'book_edit' book.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
                   <a href="{% url 'book_delete' book.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
                 {% endif %}
               </div>
