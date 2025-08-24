@@ -42,6 +42,12 @@
                         <p class="text-sm text-gray-500">Created by {{ book.created_by.username }}</p>
                       </div>
 
+                      <!-- Book Level & Category -->
+                      <div class="flex gap-4 text-sm text-gray-600">
+                        <span><strong>Level:</strong> {{ book.level }}</span>
+                        <span><strong>Category:</strong> {{ book.category }}</span>
+                      </div>
+
                       <!-- Book Description -->
                       {% if book.description %}
                         <div class="">

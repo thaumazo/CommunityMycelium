@@ -36,8 +36,16 @@
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ book.description|linebreaks }}</dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">URL</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ book.url}}</dd>
+                  <dt class="text-sm font-medium text-gray-500">Level</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ book.level }}</dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Category</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ book.category }}</dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Writing Prompt</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ book.writing_prompt|linebreaks }}</dd>
                 </div>
 
               </dl>
@@ -50,5 +58,44 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Content Pages -->
+  <div class="mt-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-2">Content Pages</h2>
+    <ul class="list-disc pl-5">
+      {% for content in book.contents.all %}
+        <li>
+          <strong>Page {{ content.page }}:</strong>
+          <span>{{ content.text|linebreaks }}</span>
+        </li>
+      {% empty %}
+        <li>No content pages added.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Comprehension Within -->
+  <div class="mt-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-2">Comprehension - Within</h2>
+    <ul class="list-disc pl-5">
+      {% for q in book.comprehension_within.all %}
+        <li>{{ q.question|linebreaks }}</li>
+      {% empty %}
+        <li>No comprehension (within) questions added.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Comprehension About -->
+  <div class="mt-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-2">Comprehension - About</h2>
+    <ul class="list-disc pl-5">
+      {% for q in book.comprehension_about.all %}
+        <li>{{ q.question|linebreaks }}</li>
+      {% empty %}
+        <li>No comprehension (about) questions added.</li>
+      {% endfor %}
+    </ul>
   </div>
 {% endblock %}
