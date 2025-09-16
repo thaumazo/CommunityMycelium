@@ -2,12 +2,18 @@ import os
 from pathlib import Path
 import environ
 
-# Initialize environment variables
-env = environ.Env()
-environ.Env.read_env()
-
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Media files
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
+# Initialize environment variables
+env = environ.Env()
+
+# Explicitly load .env from the mycelium directory
+environ.Env.read_env(env_file=BASE_DIR / ".env")
 
 # Core settings
 SECRET_KEY = env("SECRET_KEY", default="super-secret-key")
@@ -27,6 +33,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.students",
     "apps.books",
+    "apps.reading_sessions",
     "apps.communities",
     "apps.projects",
     "apps.meetings",

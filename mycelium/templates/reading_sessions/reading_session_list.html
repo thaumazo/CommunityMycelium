@@ -1,0 +1,16 @@
+<h2>Reading Sessions for {{ student.title }}</h2>
+<ul>
+  {% for session in sessions %}
+    <li>
+      <a href="{% url 'reading_session_detail' session.id %}">
+        {{ session.title }} ({{ session.date }})
+      </a>
+      {% if session.audio %}
+        <a href="{{ session.audio.url }}">Download Audio</a>
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>No sessions found.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'reading_session_create' student.id %}">Add New Session</a>

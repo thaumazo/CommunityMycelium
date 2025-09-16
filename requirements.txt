@@ -4,3 +4,4 @@ django-environ
 psycopg[binary]
 djangorestframework-simplejwt
 whitenoise
+requests

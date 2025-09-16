@@ -9,6 +9,7 @@ urlpatterns = [
     path("users/", include("apps.users.urls")),  # User management routes
     path("students/", include("apps.students.urls")),  # User management routes
     path("books/", include("apps.books.urls")),  # User management routes
+    path("reading_sessions/", include("apps.reading_sessions.urls")),
     path("meetings/", include("apps.meetings.urls")),
     path("communities/", include("apps.communities.urls")),
     path("projects/", include("apps.projects.urls")),
