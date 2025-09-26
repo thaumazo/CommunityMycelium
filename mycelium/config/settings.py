@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import environ
+import dj_database_url
 
 # Initialize environment variables
 env = environ.Env()
@@ -80,7 +81,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 DATABASES = {
-    "default": env.db(),  # Pulls from DATABASE_URL in .env
+    "default": dj_database_url.config(default=os.getenv("DATABASE_URL")),
 }
 
 # Password validation (simplified for dev)
