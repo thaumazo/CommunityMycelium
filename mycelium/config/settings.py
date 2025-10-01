@@ -3,9 +3,16 @@ from pathlib import Path
 import environ
 import dj_database_url
 
+# Base directory
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # Initialize environment variables
 env = environ.Env()
-environ.Env.read_env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,10 +86,13 @@ TEMPLATES = [
 # WSGI
 WSGI_APPLICATION = "config.wsgi.application"
 
+
 # Database
 DATABASES = {
-    "default": dj_database_url.config(default=os.getenv("DATABASE_URL")),
+    "default": dj_database_url.config(default=env("DATABASE_URL", default=None)),
 }
+
+print("DATABASE_URL loaded:", env("DATABASE_URL", default=None))
 
 # Password validation (simplified for dev)
 AUTH_PASSWORD_VALIDATORS = []
@@ -98,7 +108,11 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "../public_html/static")
+
+# Media files
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "../public_html/media")
 
 # WhiteNoise configuration
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

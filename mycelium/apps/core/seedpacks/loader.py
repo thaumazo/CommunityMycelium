@@ -11,7 +11,7 @@ def discover_seedpacks():
 
 def get_requires(path):
     try:
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             node = ast.parse(f.read(), filename=str(path))
         for item in node.body:
             if isinstance(item, ast.Assign):
