@@ -88,8 +88,14 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
+# Determine the database URL based on RUN_MODE
+if env("RUN_MODE") == "local":
+    DATABASE_URL = env("LOCAL_DATABASE_URL")
+else:
+    DATABASE_URL = env("CPANEL_DATABASE_URL")
+
 DATABASES = {
-    "default": dj_database_url.config(default=env("DATABASE_URL", default=None)),
+    "default": dj_database_url.config(default=DATABASE_URL),
 }
 
 print("DATABASE_URL loaded:", env("DATABASE_URL", default=None))

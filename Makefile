@@ -51,4 +51,7 @@ seed-all:
 
 scratch: clean migrate setup-groups seed-all
 
-.PHONY: clean migrate createsuperuser shell collectstatic setup-groups seed-users seed-meetings seed-tasks seed-all scratch
+local:
+	python mycelium/manage.py runserver
+
+.PHONY: clean migrate createsuperuser shell collectstatic setup-groups seed-users seed-meetings seed-tasks seed-all scratch local

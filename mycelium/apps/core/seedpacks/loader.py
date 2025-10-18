@@ -3,8 +3,17 @@ import ast
 import importlib.util
 from pathlib import Path
 from collections import defaultdict, deque
+import sys
 
 SEEDPACKS_DIR = Path(__file__).resolve().parents[3] / "seedpacks"
+
+def ensure_utf8_encoding():
+    if sys.getdefaultencoding() != 'utf-8':
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
+        sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
+
+ensure_utf8_encoding()
 
 def discover_seedpacks():
     return [p for p in SEEDPACKS_DIR.iterdir() if p.is_dir() and any(p.glob("seed_*.py"))]
