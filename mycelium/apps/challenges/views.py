@@ -14,7 +14,7 @@ def challenge_list_view(request):
     challenges = get_permitted_objects(request.user, "view", Challenge)
     
     # Pagination using helper function
-    challenges_page, pagination_data = paginate_queryset(challenges, request, per_page=10)
+    challenges_page, pagination_data = paginate_queryset(challenges, request, per_page=128)
     
     return render(request, "challenges/challenge_list.html", {
         "challenges": challenges_page,

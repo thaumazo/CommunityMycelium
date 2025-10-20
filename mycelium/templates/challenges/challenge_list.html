@@ -25,9 +25,14 @@
             <li class="hover:bg-gray-50 transition-colors duration-150">
               <div class="px-4 py-4 sm:px-6">
                 <div class="flex items-start gap-4">
-                  <!-- Challenge Icon -->
+                  <!-- Challenge Image -->
                   <div class="shrink-0">
-                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/folder-open.html' %}</span>
+                    {% if challenge.related_facet.image_path %}
+                      <img src="/static/{{ challenge.related_facet.image_path }}" alt="{{ challenge.related_facet.name }}" class="h-10 w-10 rounded-full object-cover">
+                    {% else %}
+                      <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-300">No Image</span>
+                    {% endif %}
+
                   </div>
 
                   <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
@@ -36,7 +41,7 @@
                       <!-- Challenge Title & Creator -->
                       <div class="">
                         <!-- Challenge Title -->
-                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'challenge_detail' challenge.pk %}" class="hover:text-indigo-900 hover:underline">{{ challenge.title }}</a></h3>
+                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'challenge_detail' challenge.pk %}" class="hover:text-indigo-900 hover:underline">{{ challenge.related_bioregion }}: {{ challenge.title }}</a></h3>
 
                       </div>
 
@@ -50,10 +55,6 @@
                       <!-- Challenge Level & Related Bioregion -->
                       <div class="">
                         <p class="text-sm text-gray-500">Level: {{ challenge.level }}</p>
-                        <p class="text-sm text-gray-500">Related Bioregion: {{ challenge.related_bioregion }}</p>
-                        <p class="text-sm text-gray-500">Location: {{ challenge.location }}</p>
-                        <p class="text-sm text-gray-500">Latitude: {{ challenge.latitude }}</p>
-                        <p class="text-sm text-gray-500">Longitude: {{ challenge.longitude }}</p>
                       </div>
 
                     </div>
