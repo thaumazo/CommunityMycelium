@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "apps.metacrisis_facets",
     "apps.capitals",
     "apps.bioregions",
+    "apps.challenges",
     "apps.meetings",
     "apps.hats",
     "apps.agreements",
