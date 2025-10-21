@@ -1,6 +1,6 @@
 from django import forms
 from apps.communities.models import Community
-from apps.hats.models import Hat
+from apps.relationships.models import Relationship
 from apps.socialroles.models import Socialrole
 from apps.maladaptives.models import Maladaptive
 from django.contrib.auth import get_user_model
@@ -97,11 +97,11 @@ class UserForm(forms.ModelForm):
         label="Communities",
     )
 
-    user_hats = forms.ModelMultipleChoiceField(
-        queryset=Hat.objects.all(),
+    user_relationships = forms.ModelMultipleChoiceField(
+        queryset=Relationship.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
         required=False,
-        label="Hats",
+        label="Relationships",
     )
 
     user_socialroles = forms.ModelMultipleChoiceField(
@@ -147,7 +147,7 @@ class UserForm(forms.ModelForm):
             "user_location",
             "invited_by",
             "user_communities",
-            "user_hats",
+            "user_relationships",
             "user_socialroles",
             "user_maladaptives",
             "linked_in",

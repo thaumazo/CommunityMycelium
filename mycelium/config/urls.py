@@ -16,8 +16,8 @@ urlpatterns = [
     path("capitals/", include("apps.capitals.urls")),
     path("bioregions/", include("apps.bioregions.urls")),
     path("challenges/", include("apps.challenges.urls")),
-    path("hats/", include("apps.hats.urls")),
-    path("agreements/", include("apps.agreements.urls")),
+    path("relationships/", include("apps.relationships.urls")),
+    path("resolutions/", include("apps.resolutions.urls")),
     path("tasks/", include("apps.tasks.urls")),
     path("acl/", include("apps.acl.urls")),  # Access Control List routes
 ]

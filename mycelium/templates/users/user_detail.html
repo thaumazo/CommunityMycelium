@@ -61,10 +61,10 @@
                   </dd>
                 </div>
                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Hats</dt>
+                  <dt class="text-sm font-medium text-gray-500">Relationships</dt>
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for hat in user.user_hats.all %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ hat.title }}</span>
+                    {% for relationship in user.user_relationships.all %}
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ relationship.title }}</span>
                     {% empty %}
                       <span class="text-gray-400">None</span>
                     {% endfor %}

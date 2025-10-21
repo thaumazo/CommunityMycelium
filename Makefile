@@ -6,7 +6,7 @@ DB_HOST=$(shell grep DATABASE_URL mycelium/.env | sed -E 's|.*@([^:/]+):.*|\1|')
 DB_NAME=$(shell grep DATABASE_URL mycelium/.env | sed -E 's|.*/([^?]+).*|\1|')
 
 clean:
-	rm -rf ../public_html/static/*
+#	rm -rf ../public_html/static/*
 	find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
 	find . -path "*/migrations/*.pyc"  -delete
 	find . -name "*.pyc" -delete
@@ -44,12 +44,15 @@ seed-meetings:
 seed-tasks:
 	python mycelium/manage.py seed_tasks
 
+seed-metacrisis_facets:
+	python mycelium/manage.py seed_metacrisis_facets
+
 seed-all:
 	python mycelium/manage.py print_seed_order | while read cmd; do \
 		echo "Running $$cmd..."; \
 	done
 
-scratch: clean migrate setup-groups seed-all
+scratch: migrate setup-groups seed-all
 
 local:
 	python mycelium/manage.py runserver

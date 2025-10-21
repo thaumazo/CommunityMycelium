@@ -19,7 +19,7 @@ class User(AbstractUser):
         "communities.Community", blank=True, related_name="users"
     )
 
-    user_hats = models.ManyToManyField("hats.Hat", blank=True, related_name="users")
+    user_relationships = models.ManyToManyField("relationships.Relationship", blank=True, related_name="users")
     user_socialroles = models.ManyToManyField("socialroles.Socialrole", blank=True, related_name="users")
     user_maladaptives = models.ManyToManyField("maladaptives.Maladaptive", blank=True, related_name="users")
 
