@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from ...models import Challenge
 
+REQUIRES = ['users', 'bioregions', 'metacrisis_facets']
+
 User = get_user_model()
 
 

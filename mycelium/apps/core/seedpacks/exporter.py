@@ -108,8 +108,19 @@ def export_seedpack(
     # Generate seed_<app>.py loaders
     for app_label in app_list:
         requires_line = ""
-        if requires_users and app_label != "users":
-            requires_line = "REQUIRES = ['users']\n\n"
+        app_seed_file = pack_dir / f"seed_{app_label}.py"
+
+        # Check if REQUIRES is defined in the app's management/commands/seed_<app>.py
+        app_command_file = Path(f"mycelium/apps/{app_label}/management/commands/seed_{app_label}.py")
+        if app_command_file.exists():
+            with app_command_file.open("r", encoding="utf-8") as f:
+                for line in f:
+                    if line.strip().startswith("REQUIRES"):
+                        requires_line = line.strip() + "\n\n"
+                        break
+        else:
+            requires_line = "REQUIRES = ['users']\n\n"  # Default fallback
+
         loader = (
             "from pathlib import Path\n"
             "from django.core.management import call_command\n"
@@ -127,7 +138,7 @@ def export_seedpack(
             "        call_command('loaddata', str(fixture))\n"
             "        self.stdout.write(self.style.SUCCESS('OK'))\n"
         )
-        (pack_dir / f"seed_{app_label}.py").write_text(loader, encoding="utf-8")
+        app_seed_file.write_text(loader, encoding="utf-8")
 
     # Manifest
     manifest = {
