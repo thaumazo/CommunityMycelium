@@ -1,0 +1,62 @@
+/* Ensure the tabs container is a flex container */
+.tabs-container {
+    display: flex;
+    justify-content: space-around; /* Space tabs evenly */
+    align-items: center; /* Align tabs vertically in the center */
+    border-bottom: 2px solid #ccc; /* Optional: Add a bottom border for styling */
+    padding: 10px 0;
+}
+
+/* Style individual tabs */
+.tab {
+    display: inline-block; /* Make tabs inline */
+    padding: 10px 20px;
+    margin: 0 5px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent; /* Optional: Add a border for hover effect */
+    border-radius: 5px; /* Optional: Rounded corners */
+    background-color: #f9f9f9; /* Optional: Background color */
+    transition: background-color 0.3s, border-color 0.3s; /* Smooth hover effect */
+}
+
+/* Hover effect for tabs */
+.tab:hover {
+    background-color: #e0e0e0;
+    border-color: #bbb;
+}
+
+/* Active tab styling */
+.tab.active {
+    background-color: #ddd;
+    border-color: #aaa;
+    font-weight: bold;
+}
+
+/* Style the tab list */
+.tab-list .tab {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    background-color: #f9f9f9;
+    margin-right: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+/* Active tab in the tab list */
+.tab-list .tab.active {
+    background-color: #fff;
+    border-color: #ddd;
+    border-bottom: 1px solid #fff;
+}
+
+/* Style the tab content */
+.tab-content {
+    display: none;
+}
+
+/* Tab content that is not hidden */
+.tab-content:not(.hidden) {
+    display: block;
+}

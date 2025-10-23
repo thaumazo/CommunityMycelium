@@ -2,8 +2,8 @@
 // ...
 
 // Our modules / classes
-import Navigation from "./modules/Navigation";
-import UserMenu from "./modules/UserMenu";
+import Navigation from "./modules/Navigation.js";
+import UserMenu from "./modules/UserMenu.js";
 
 const manifest = {
 	Navigation,

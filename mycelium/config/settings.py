@@ -112,14 +112,23 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = "/static/"
+if env("RUN_MODE") == "local":
+    STATIC_ROOT = os.path.join(BASE_DIR, "/static")
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, "../public_html/static")
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, "../public_html/static")
 
 # Media files
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "../public_html/media")
+
+if env("RUN_MODE") == "local":
+    MEDIA_ROOT = os.path.join(BASE_DIR, "/media")
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, "../public_html/media")
+
 
 # WhiteNoise configuration
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

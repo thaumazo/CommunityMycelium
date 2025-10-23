@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load user_tags %}
+{% load static %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -25,17 +26,79 @@
               </div>
             </div>
 
-            <div class="mt-6 border-t border-gray-200">
-              <dl class="divide-y divide-gray-200">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Created by</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ bioregion.created_by.username }}</dd>
+            <div class="mt-6">
+              <div class="tabs-container">
+                <ul class="tab-list">
+                  <li class="tab active" data-tab="details">Details</li>
+                  <li class="tab" data-tab="challenges">Challenges</li>
+                  <li class="tab" data-tab="doughnut">Doughnut Economics</li>
+                  <li class="tab" data-tab="people">People</li>
+                  <li class="tab" data-tab="organizations">Organizations</li>
+                  <li class="tab" data-tab="projects">Projects</li>
+                </ul>
+              </div>
+
+              <div class="tab-content" id="details">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Created by</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ bioregion.created_by.username }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Description</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ bioregion.description|linebreaks }}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="tab-content hidden" id="challenges">
+                <h2 class="text-lg leading-6 font-medium text-gray-900">Challenges</h2>
+                <div class="mt-4">
+                  <ul class="divide-y divide-gray-200">
+                    {% for challenge in bioregion.challenges.all %}
+                      <li class="py-4">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <h3 class="text-sm font-medium text-indigo-600">
+                              <a href="{% url 'challenge_detail' challenge.pk %}" class="hover:underline">{{ challenge.title }}</a>
+                            </h3>
+                            <p class="text-sm text-gray-500">Level: {{ challenge.level }}</p>
+                          </div>
+                          <div>
+                            {% can request.user 'change' challenge as check %}
+                            {% if check %}
+                              <a href="{% url 'challenge_edit' challenge.pk %}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                              <a href="{% url 'challenge_delete' challenge.pk %}" class="text-red-600 hover:text-red-900">Delete</a>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </li>
+                    {% empty %}
+                      <li class="py-4 text-center text-gray-500">No challenges found for this bioregion.</li>
+                    {% endfor %}
+                  </ul>
                 </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Description</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ bioregion.description|linebreaks }}</dd>
-                </div>
-              </dl>
+              </div>
+
+              <div class="tab-content hidden" id="doughnut">
+                <h2 class="text-lg leading-6 font-medium text-gray-900">Doughnut Economics</h2>
+                <p class="text-sm text-gray-500">Content for Doughnut Economics will go here.</p>
+              </div>
+
+              <div class="tab-content hidden" id="people">
+                <h2 class="text-lg leading-6 font-medium text-gray-900">People</h2>
+                <p class="text-sm text-gray-500">Content for People will go here.</p>
+              </div>
+
+              <div class="tab-content hidden" id="organizations">
+                <h2 class="text-lg leading-6 font-medium text-gray-900">Organizations</h2>
+                <p class="text-sm text-gray-500">Content for Organizations will go here.</p>
+              </div>
+
+              <div class="tab-content hidden" id="projects">
+                <h2 class="text-lg leading-6 font-medium text-gray-900">Projects</h2>
+                <p class="text-sm text-gray-500">Content for Projects will go here.</p>
+              </div>
             </div>
 
             <div class="mt-6 flex justify-end">
