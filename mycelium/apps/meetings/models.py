@@ -9,7 +9,7 @@ User = get_user_model()
 class Meeting(models.Model):
     title = models.CharField(max_length=255)
     start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    end_time = models.DateTimeField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     attending = models.ManyToManyField(
         User,

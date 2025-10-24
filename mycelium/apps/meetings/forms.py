@@ -8,7 +8,7 @@ class MeetingForm(forms.ModelForm):
         fields = ["title", "start_time", "end_time", "description", "attending", "url", "transcript"]
         widgets = {
             "start_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "end_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "end_time": forms.DateTimeInput(attrs={"type": "datetime-local", "required": False}),
             "description": forms.Textarea(attrs={"rows": 4}),
             "attending": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "url": forms.Textarea(attrs={"rows": 1}),

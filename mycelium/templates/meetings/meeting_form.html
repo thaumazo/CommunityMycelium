@@ -43,7 +43,7 @@
               <div>
                 <label for="{{ form.end_time.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.end_time.label }}</label>
                 <div class="mt-1">
-                  <input type="datetime-local" name="{{ form.end_time.html_name }}" id="{{ form.end_time.id_for_label }}" value="{{ form.end_time.value|date:'Y-m-d\TH:i'|default:'' }}" class="w-full" />
+                  <input type="datetime-local" name="{{ form.end_time.html_name }}" id="{{ form.end_time.id_for_label }}" value="{{ form.end_time.value|date:'Y-m-d\\TH:i'|default:'' }}" class="w-full" />
                 </div>
                 {% if form.end_time.errors %}
                   <div class="mt-1 text-sm text-red-600">{{ form.end_time.errors|join:', ' }}</div>
@@ -69,17 +69,15 @@
                 {% endif %}
               </div>
 
-              {% if meeting %}
-                <div>
-                  <label for="{{ form.transcript.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.transcript.label }}</label>
-                  <div class="mt-1">
-                    {{ form.transcript }}
-                  </div>
-                  {% if form.transcript.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.transcript.errors|join:", " }}</div>
-                  {% endif %}
+              <div>
+                <label for="{{ form.transcript.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.transcript.label }}</label>
+                <div class="mt-1">
+                  {{ form.transcript }}
                 </div>
-              {% endif %}
+                {% if form.transcript.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.transcript.errors|join:", " }}</div>
+                {% endif %}
+              </div>
 
               <div>
                 <label for="{{ form.attending.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.attending.label }}</label>
