@@ -18,6 +18,9 @@ class Meeting(models.Model):
         help_text="Users who are attending this meeting"
     )
     url = models.TextField(blank=True, null=True)
+    transcript = models.TextField(
+        blank=True, null=True, help_text="Optional transcript of the meeting"
+    )
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="meetings"
     )

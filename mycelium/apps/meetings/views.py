@@ -31,7 +31,7 @@ def meeting_detail_view(request, pk):
 @login_required
 def meeting_create_view(request):
     if not is_permitted(request.user, "add", "meetings.meeting"):
-        raise PermissionDenied
+        raise PermissionDenied("You do not have permission to add a meeting.")
 
     if request.method == "POST":
         form = MeetingForm(request.POST)
@@ -39,9 +39,9 @@ def meeting_create_view(request):
             meeting = form.save(commit=False)
             meeting.created_by = request.user
             meeting.save()
-            form.save_m2m()  # Save many-to-many relationships
-            messages.success(request, "Meeting created successfully!")
-            return redirect("meeting_list")
+            form.save_m2m()
+            messages.success(request, "Meeting created successfully.")
+            return redirect("meeting_detail", pk=meeting.pk)
     else:
         form = MeetingForm()
 
@@ -60,7 +60,7 @@ def meeting_edit_view(request, pk):
         form = MeetingForm(request.POST, instance=meeting)
         if form.is_valid():
             form.save()
-            messages.success(request, "Meeting updated successfully!")
+            messages.success(request, "Meeting updated successfully.")
             return redirect("meeting_detail", pk=meeting.pk)
     else:
         form = MeetingForm(instance=meeting)

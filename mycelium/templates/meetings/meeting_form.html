@@ -69,6 +69,18 @@
                 {% endif %}
               </div>
 
+              {% if meeting %}
+                <div>
+                  <label for="{{ form.transcript.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.transcript.label }}</label>
+                  <div class="mt-1">
+                    {{ form.transcript }}
+                  </div>
+                  {% if form.transcript.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.transcript.errors|join:", " }}</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+
               <div>
                 <label for="{{ form.attending.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.attending.label }}</label>
                 <div class="mt-1 space-y-2">
