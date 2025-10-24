@@ -1,9 +1,10 @@
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete, m2m_changed
 from django.dispatch import receiver
 from .models import Meeting
 from apps.acl.utils import grant_object_permission, revoke_object_permission
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 
 
 @receiver(post_save, sender=Meeting)
@@ -26,3 +27,15 @@ def delete_meeting_permissions(sender, instance, **kwargs):
     # Get all permissions for this meeting and delete them
     for permission in instance.permissions.all():
         revoke_object_permission(permission.user, instance, permission.action)
+
+
+@receiver(m2m_changed, sender=Meeting.attending.through)
+def grant_view_permission_to_attendees(sender, instance, action, pk_set, **kwargs):
+    """Grant view permissions to users listed as attending a meeting."""
+    if action in ["post_add", "post_remove"]:
+        for user_id in pk_set:
+            user = get_user_model().objects.get(pk=user_id)
+            if action == "post_add":
+                grant_object_permission(user, instance, "view")
+            elif action == "post_remove":
+                revoke_object_permission(user, instance, "view")
