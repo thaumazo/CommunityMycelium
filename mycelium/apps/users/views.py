@@ -20,7 +20,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                next_url = request.GET.get("next", "home")
+                next_url = request.GET.get("next", "core:home")
                 return redirect(next_url)
     else:
         form = LoginForm()
