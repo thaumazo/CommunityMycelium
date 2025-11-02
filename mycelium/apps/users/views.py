@@ -49,7 +49,7 @@ def user_list_view(request):
     users = get_permitted_objects(request.user, "view", User)
     
     # Pagination using helper function
-    users_page, pagination_data = paginate_queryset(users, request, per_page=10)
+    users_page, pagination_data = paginate_queryset(users, request, per_page=100)
     
     return render(request, "users/user_list.html", {
         "users": users_page,

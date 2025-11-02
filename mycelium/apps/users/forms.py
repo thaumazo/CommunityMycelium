@@ -1,4 +1,5 @@
 from django import forms
+from apps.bioregions.models import Bioregion
 from apps.communities.models import Community
 from apps.relationships.models import Relationship
 from apps.socialroles.models import Socialrole
@@ -90,6 +91,13 @@ class UserForm(forms.ModelForm):
         label="Invited by",
     )
 
+    user_bioregions = forms.ModelMultipleChoiceField(
+        queryset=Bioregion.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+        label="Bioregions",
+    )
+
     user_communities = forms.ModelMultipleChoiceField(
         queryset=Community.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
@@ -146,6 +154,7 @@ class UserForm(forms.ModelForm):
             "full_name",
             "user_location",
             "invited_by",
+            "user_bioregions",
             "user_communities",
             "user_relationships",
             "user_socialroles",

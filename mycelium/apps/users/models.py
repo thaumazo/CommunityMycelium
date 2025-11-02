@@ -15,6 +15,10 @@ class User(AbstractUser):
         related_name="invited_users",
     )
 
+    user_bioregions = models.ManyToManyField(
+        "bioregions.Bioregion", blank=True, related_name="users"
+    )
+
     user_communities = models.ManyToManyField(
         "communities.Community", blank=True, related_name="users"
     )

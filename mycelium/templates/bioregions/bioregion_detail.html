@@ -87,7 +87,24 @@
 
               <div class="tab-content hidden" id="people">
                 <h2 class="text-lg leading-6 font-medium text-gray-900">People</h2>
-                <p class="text-sm text-gray-500">Content for People will go here.</p>
+                <div class="mt-4">
+                  <ul class="divide-y divide-gray-200">
+                    {% for user in bioregion.users.all %}
+                      <li class="py-4">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <h3 class="text-sm font-medium text-indigo-600">
+                              <a href="{% url 'user_detail' user.pk %}" class="hover:underline">{{ user.get_full_name }}</a>
+                            </h3>
+                            <p class="text-sm text-gray-500">Location: {{ user.user_location }}</p>
+                          </div>
+                        </div>
+                      </li>
+                    {% empty %}
+                      <li class="py-4 text-center text-gray-500">No users found for this bioregion.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
               </div>
 
               <div class="tab-content hidden" id="organizations">
