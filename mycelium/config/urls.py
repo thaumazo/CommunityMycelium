@@ -5,7 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("apps.core.urls")),  # Core app handles main website pages
+    path("", include(("apps.pages.urls", "pages"), namespace="pages")),  # Serve home.md for root URL
+    path("core/", include("apps.core.urls")),  # Core app handles other website pages
     path("users/", include("apps.users.urls")),  # User management routes
     path("meetings/", include("apps.meetings.urls")),
     path("communities/", include("apps.communities.urls")),
