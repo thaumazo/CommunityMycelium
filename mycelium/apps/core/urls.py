@@ -1,6 +1,6 @@
 from django.urls import path
 from apps.core.views import seedpack_ui
-from apps.core.views.home import home_view  # ✅ correct import
+from apps.core.views.home import home_view  
 
 app_name = "core"
 

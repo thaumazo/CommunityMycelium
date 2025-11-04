@@ -20,6 +20,7 @@ urlpatterns = [
     path("resolutions/", include("apps.resolutions.urls")),
     path("tasks/", include("apps.tasks.urls")),
     path("acl/", include("apps.acl.urls")),  # Access Control List routes
+    path("pages/", include("apps.pages.urls")),  # Pages app routes
 ]
 
 # Serve static files in development
