@@ -144,3 +144,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Authentication settings
 LOGIN_URL = "login"
+
+# Add URL_OVERRIDE setting for local testing
+URL_OVERRIDE = env("URL_OVERRIDE", default=None)
