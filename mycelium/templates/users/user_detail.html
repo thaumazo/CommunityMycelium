@@ -119,6 +119,14 @@
                   <dt class="text-sm font-medium text-gray-500">Last Login</dt>
                   <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.last_login|date:'F j, Y' }}</dd>
                 </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">View Members</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.view_members|yesno:"Yes,No" }}</dd>
+                </div>
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">View Public</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.view_public|yesno:"Yes,No" }}</dd>
+                </div>
               </dl>
             </div>
 

@@ -41,3 +41,13 @@ class User(AbstractUser):
 
     def is_admin(self):
         return self.groups.filter(name="Admin").exists()
+
+    view_members = models.BooleanField(
+        default=False,
+        help_text="Indicates if the user can view members.",
+    )
+
+    view_public = models.BooleanField(
+        default=False,
+        help_text="Indicates if the user can view public content.",
+    )

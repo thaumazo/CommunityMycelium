@@ -72,6 +72,20 @@
                           <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Roles</span>
                         {% endfor %}
                       </div>
+
+                      <!-- View Members -->
+                      {% if user.view_members %}
+                      <div class="flex items-center gap-2">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Member Visible</span>
+                      </div>
+                      {% endif %}
+
+                      <!-- View Public -->
+                      {% if user.view_public %}
+                      <div class="flex items-center gap-2">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Public Visible</span>
+                      </div>
+                      {% endif %}
                     </div>
 
                     <!-- User Controls -->

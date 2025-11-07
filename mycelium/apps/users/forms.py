@@ -38,6 +38,20 @@ class RegisterForm(forms.ModelForm):
         widget=forms.PasswordInput(), label="Confirm Password", required=True
     )
 
+    view_members = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="View Members",
+        help_text="Check if the user can view members.",
+    )
+
+    view_public = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="View Public",
+        help_text="Check if the user can view public content.",
+    )
+
     class Meta:
         model = User
         fields = ["username", "email", "full_name"]
@@ -146,6 +160,20 @@ class UserForm(forms.ModelForm):
         label="Confirm Password",
     )
 
+    view_members = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="View Members",
+        help_text="Check if the user can view members.",
+    )
+
+    view_public = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="View Public",
+        help_text="Check if the user can view public content.",
+    )
+
     class Meta:
         model = User
         fields = [
@@ -192,11 +220,16 @@ class UserForm(forms.ModelForm):
         if pwd:
             user.set_password(pwd)
 
+        # Explicitly handle view_members and view_public fields
+        user.view_members = self.cleaned_data.get("view_members", user.view_members)
+        user.view_public = self.cleaned_data.get("view_public", user.view_public)
+
         if commit:
             user.save()
             self.save_m2m()
 
         return user
+
 
 class UserPasswordChangeForm(forms.Form):
     """Separate form for changing user passwords."""

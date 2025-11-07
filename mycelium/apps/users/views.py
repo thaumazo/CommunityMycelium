@@ -7,6 +7,7 @@ from .forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from apps.utils import dump
 from apps.utils.pagination import paginate_queryset
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -46,11 +47,24 @@ def register_view(request):
 @login_required
 def user_list_view(request):
     """View a list of all users."""
-    users = get_permitted_objects(request.user, "view", User)
-    
+    # Get users based on current permissions
+    permitted_users = get_permitted_objects(request.user, "view", User)
+
+    # Ensure permitted_users contains a list of IDs
+    permitted_users = User.objects.filter(pk__in=[user.pk for user in permitted_users])
+
+    # Include users with view_members or view_public set to True
+    additional_users = User.objects.filter(
+        Q(view_members=True) | Q(view_public=True)
+    )
+
+    # Combine both querysets and ensure no duplicates
+    users = permitted_users | additional_users
+    users = users.distinct()
+
     # Pagination using helper function
     users_page, pagination_data = paginate_queryset(users, request, per_page=100)
-    
+
     return render(request, "users/user_list.html", {
         "users": users_page,
         "pagination": pagination_data,
