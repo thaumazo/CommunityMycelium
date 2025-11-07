@@ -114,6 +114,13 @@
                   <div class="mb-4 border p-3 rounded bg-gray-50">
                     {{ form.non_field_errors }}
                     <div>
+                      <label class="block text-sm font-medium text-gray-700">Key Understanding</label>
+                      {{ form.keyUnderstanding }}
+                      {% if form.keyUnderstanding.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.keyUnderstanding.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                    <div>
                       <label class="block text-sm font-medium text-gray-700">Question</label>
                       {{ form.question }}
                       {% if form.question.errors %}
@@ -137,6 +144,13 @@
                 {% for form in about_formset %}
                   <div class="mb-4 border p-3 rounded bg-gray-50">
                     {{ form.non_field_errors }}
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700">Key Understanding</label>
+                      {{ form.keyUnderstanding }}
+                      {% if form.keyUnderstanding.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.keyUnderstanding.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
                     <div>
                       <label class="block text-sm font-medium text-gray-700">Question</label>
                       {{ form.question }}

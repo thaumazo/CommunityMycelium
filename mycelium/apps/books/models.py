@@ -36,8 +36,10 @@ class Content(models.Model):
 
 class ComprehensionWithin(models.Model):
     book = models.ForeignKey(Book, related_name='comprehension_within', on_delete=models.CASCADE)
+    keyUnderstanding = models.TextField()
     question = models.TextField()
 
 class ComprehensionAbout(models.Model):
     book = models.ForeignKey(Book, related_name='comprehension_about', on_delete=models.CASCADE)
+    keyUnderstanding = models.TextField()
     question = models.TextField()

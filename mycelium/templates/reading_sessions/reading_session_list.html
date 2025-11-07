@@ -1,16 +1,22 @@
-<h2>Reading Sessions for {{ student.title }}</h2>
-<ul>
-  {% for session in sessions %}
-    <li>
-      <a href="{% url 'reading_session_detail' session.id %}">
-        {{ session.title }} ({{ session.date }})
-      </a>
-      {% if session.audio %}
-        <a href="{{ session.audio.url }}">Download Audio</a>
-      {% endif %}
-    </li>
-  {% empty %}
-    <li>No sessions found.</li>
-  {% endfor %}
-</ul>
-<a href="{% url 'reading_session_create' student.id %}">Add New Session</a>
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-3xl mx-auto py-6">
+    <h2 class="text-xl font-bold mb-4">Reading Sessions for {{ student.title }}</h2>
+    <ul>
+      {% for session in sessions %}
+        <li class="mb-2">
+          <a href="{% url 'reading_session_detail' session.id %}" class="text-indigo-600 hover:underline">
+            {{ session.title }} ({{ session.date }})
+          </a>
+          {% if session.audio %}
+            <a href="{{ session.audio.url }}" class="bg-gray-600 text-white px-2 py-1 rounded hover:bg-gray-700 ml-2">Download Audio</a>
+          {% endif %}
+        </li>
+      {% empty %}
+        <li>No sessions found.</li>
+      {% endfor %}
+    </ul>
+    <a href="{% url 'reading_session_create' student.id %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4 inline-block">Add New Session</a>
+  </div>
+{% endblock %}

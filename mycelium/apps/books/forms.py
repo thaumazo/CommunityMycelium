@@ -32,6 +32,7 @@ class ComprehensionWithinForm(forms.ModelForm):
         model = ComprehensionWithin
         fields = ["question"]
         widgets = {
+            "keyUnderstanding": forms.Textarea(attrs={"rows": 2}),
             "question": forms.Textarea(attrs={"rows": 2}),
         }
 
@@ -40,9 +41,10 @@ class ComprehensionAboutForm(forms.ModelForm):
         model = ComprehensionAbout
         fields = ["question"]
         widgets = {
+            "keyUnderstanding": forms.Textarea(attrs={"rows": 2}),
             "question": forms.Textarea(attrs={"rows": 2}),
         }
 
-ContentFormSet = inlineformset_factory(Book, Content, form=ContentForm, extra=8, can_delete=True)
+ContentFormSet = inlineformset_factory(Book, Content, form=ContentForm, extra=17, can_delete=True)
 ComprehensionWithinFormSet = inlineformset_factory(Book, ComprehensionWithin, form=ComprehensionWithinForm, extra=4, can_delete=True)
 ComprehensionAboutFormSet = inlineformset_factory(Book, ComprehensionAbout, form=ComprehensionAboutForm, extra=4, can_delete=True)

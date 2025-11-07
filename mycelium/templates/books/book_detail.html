@@ -80,7 +80,10 @@
     <h2 class="text-lg font-semibold text-gray-900 mb-2">Comprehension - Within</h2>
     <ul class="list-disc pl-5">
       {% for q in book.comprehension_within.all %}
-        <li>{{ q.question|linebreaks }}</li>
+        <li>
+          <strong>Key Understanding:</strong> {{ q.keyUnderstanding|linebreaks }}<br>
+          <strong>Question:</strong> {{ q.question|linebreaks }}
+        </li>
       {% empty %}
         <li>No comprehension (within) questions added.</li>
       {% endfor %}
@@ -92,7 +95,10 @@
     <h2 class="text-lg font-semibold text-gray-900 mb-2">Comprehension - About</h2>
     <ul class="list-disc pl-5">
       {% for q in book.comprehension_about.all %}
-        <li>{{ q.question|linebreaks }}</li>
+        <li>
+          <strong>Key Understanding:</strong> {{ q.keyUnderstanding|linebreaks }}<br>
+          <strong>Question:</strong> {{ q.question|linebreaks }}
+        </li>
       {% empty %}
         <li>No comprehension (about) questions added.</li>
       {% endfor %}

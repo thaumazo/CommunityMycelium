@@ -1,6 +1,19 @@
-<h2>New Reading Session for {{ student.title }}</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+{% extends 'base.html' %}
+
+{% block content %}
+  <div style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
+    <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; text-align: center;">
+      New Reading Session for {{ student.title }}
+    </h2>
+    <form method="post" enctype="multipart/form-data" style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      {% csrf_token %}
+      <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        {{ form.as_p }}
+        <button type="submit"
+          style="background: #2563eb; color: #fff; padding: 0.75rem 2rem; border: none; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; margin-top: 1rem;">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
