@@ -175,4 +175,16 @@ def user_delete_view(request, pk):
 
 @login_required
 def user_character_view(request, pk):
-    return render(request, "users/user_character.html", {"user_id": pk})
+    try:
+        user_to_view = get_permitted_object(request.user, "view", User, pk)
+    except PermissionDenied:
+        user_to_view = User.objects.filter(
+            pk=pk
+        ).filter(
+            Q(view_members=True) | Q(view_public=True)
+        ).first()
+
+    if not user_to_view:
+        raise PermissionDenied
+
+    return render(request, "users/user_character.html", {"user": user_to_view})
