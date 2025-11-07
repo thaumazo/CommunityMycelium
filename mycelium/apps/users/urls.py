@@ -12,6 +12,8 @@ from .views import (
     logout_view,
     login_view,
     register_view,
+    # Character
+    user_character_view,
 )
 
 urlpatterns = [
@@ -28,4 +30,5 @@ urlpatterns = [
     path("logout/", logout_view, name="logout"),
     path("login/", login_view, name="login"),
     path("register/", register_view, name="register"),
+    path("<int:pk>/character/", user_character_view, name="user_character"),
 ]

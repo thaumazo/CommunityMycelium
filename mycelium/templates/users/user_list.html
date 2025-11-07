@@ -36,7 +36,7 @@
                       <!-- User Name & Email -->
                       <div class="">
                         <!-- User Name -->
-                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'user_detail' user.pk %}" class="hover:text-indigo-900 hover:underline">{{ user.full_name|default:user.username }}</a></h3>
+                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'user_character' user.pk %}" class="hover:text-indigo-900 hover:underline">{{ user.full_name|default:user.username }}</a></h3>
 
                         <!-- User Email -->
                         {% if user.email %}

@@ -171,3 +171,8 @@ def user_delete_view(request, pk):
 
     # Render the user confirmation delete page
     return render(request, "users/user_confirm_delete.html", {"user": user})
+
+
+@login_required
+def user_character_view(request, pk):
+    return render(request, "users/user_character.html", {"user_id": pk})
