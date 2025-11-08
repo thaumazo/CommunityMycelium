@@ -94,6 +94,12 @@
                 </a>
               </li>
               <li>
+                <a href="{% url 'bioregion_list' %}" class="{% active_class 'bioregion_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                  {% include '_icons/bioregion.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Bioregions</span>
+                </a>
+              </li>
+              <li>
                 <a href="{% url 'meeting_list' %}" class="{% active_class 'meeting_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/meetings.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Meetings</span>
@@ -105,6 +111,7 @@
                   <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
                 </a>
               </li>
+              {% if request.user.is_superuser %}
               <li>
                 <a href="{% url 'relationship_list' %}" class="{% active_class 'relationship_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/puzzle-piece.html' %}
@@ -115,12 +122,6 @@
                 <a href="{% url 'resolution_list' %}" class="{% active_class 'resolution_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/document-text.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Resolutions</span>
-                </a>
-              </li>
-              <li>
-                <a href="{% url 'bioregion_list' %}" class="{% active_class 'bioregion_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
-                  {% include '_icons/bioregion.html' %}
-                  <span class="flex-1 ms-3 whitespace-nowrap">Bioregions</span>
                 </a>
               </li>
               <li>
@@ -153,6 +154,7 @@
                   <span class="flex-1 ms-3 whitespace-nowrap">Permissions</span>
                 </a>
               </li>
+              {% endif %}
               {% if not request.user.is_authenticated %}
                 <li>
                   <a href="{% url 'login' %}" class="{% active_class 'login' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
@@ -171,6 +173,9 @@
           </div>
         </aside>
       {% endif %}
+
+
+
     </div>
     <div class="mt-16 {% if request.user.is_authenticated %}sm:ml-64{% endif %}">
       {% block content %}
