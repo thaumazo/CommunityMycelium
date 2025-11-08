@@ -25,6 +25,7 @@ class User(AbstractUser):
 
     user_relationships = models.ManyToManyField("relationships.Relationship", blank=True, related_name="users")
     user_socialroles = models.ManyToManyField("socialroles.Socialrole", blank=True, related_name="users")
+    user_metacrisis_facets = models.ManyToManyField("metacrisis_facets.Metacrisis_facet", blank=True, related_name="users")
     user_maladaptives = models.ManyToManyField("maladaptives.Maladaptive", blank=True, related_name="users")
 
     linked_in = models.URLField(blank=True, null=True)

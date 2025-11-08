@@ -3,6 +3,7 @@ from apps.bioregions.models import Bioregion
 from apps.communities.models import Community
 from apps.relationships.models import Relationship
 from apps.socialroles.models import Socialrole
+from apps.metacrisis_facets.models import Metacrisis_facet
 from apps.maladaptives.models import Maladaptive
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
@@ -133,6 +134,13 @@ class UserForm(forms.ModelForm):
         label="Social Roles",
     )
 
+    user_metacrisis_facets = forms.ModelMultipleChoiceField(
+        queryset=Metacrisis_facet.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+        label="Metacrisis Facets",
+    )
+
     user_maladaptives = forms.ModelMultipleChoiceField(
         queryset=Maladaptive.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
@@ -186,6 +194,7 @@ class UserForm(forms.ModelForm):
             "user_communities",
             "user_relationships",
             "user_socialroles",
+            "user_metacrisis_facets",
             "user_maladaptives",
             "linked_in",
             # password fields are not model fields; they’re above
