@@ -21,243 +21,283 @@
             <form method="post" class="space-y-6">
               {% csrf_token %}
 
-              <h4 class="text-lg font-medium text-gray-900">User Information</h4>
-
-              <div class="space-y-4">
-                <!-- Full Name -->
-                <div>
-                  <label for="{{ form.full_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                    {{ form.full_name.label }}
-                  </label>
-                  <div class="mt-1">
-                    {{ form.full_name }}
-                  </div>
-                  {% if form.full_name.help_text %}
-                    <p class="text-xs text-gray-500 mt-1">{{ form.full_name.help_text }}</p>
-                  {% endif %}
-                  {% if form.full_name.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.full_name.errors|join:', ' }}</div>
-                  {% endif %}
+              <div class="mt-6">
+                <div class="tabs-container">
+                  <ul class="tab-list">
+                    <li class="tab active" data-tab="account">Account</li>
+                    <li class="tab" data-tab="visibility">Visibility</li>
+                    <li class="tab" data-tab="connections">Connections</li>
+                    <li class="tab" data-tab="character">Character Class</li>
+                    <li class="tab" data-tab="pitfalls">Pitfalls</li>
+                    <li class="tab" data-tab="metacrisis">Metacrisis</li>
+                  </ul>
                 </div>
 
-                <!-- Username -->
-                <div>
-                  <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                    {{ form.username.label }}
-                  </label>
-                  <div class="mt-1">
-                    {{ form.username }}
-                  </div>
-                  {% if form.username.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.username.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <!-- Email -->
-                <div>
-                  <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                    {{ form.email.label }}
-                  </label>
-                  <div class="mt-1">
-                    {{ form.email }}
-                  </div>
-                  {% if form.email.help_text %}
-                    <p class="text-xs text-gray-500 mt-1">{{ form.email.help_text }}</p>
-                  {% endif %}
-                  {% if form.email.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.email.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <!-- LinkedIn -->
-                <div>
-                  <label for="{{ form.linked_in.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                    {{ form.linked_in.label }}
-                  </label>
-                  <div class="mt-1">
-                    {{ form.linked_in }}
-                  </div>
-                  {% if form.linked_in.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.linked_in.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <!-- Location -->
-                <div>
-                  <label for="{{ form.user_location.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                    {{ form.user_location.label }}
-                  </label>
-                  <div class="mt-1">
-                    {{ form.user_location }}
-                  </div>
-                  {% if form.user_location.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.user_location.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <!-- Invited by -->
-                <div>
-                  <label for="{{ form.invited_by.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                    {{ form.invited_by.label }}
-                  </label>
-                  <div class="mt-1">
-                    {{ form.invited_by }}
-                  </div>
-                  {% if form.invited_by.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.invited_by.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <div>
-                  <label for="{{ form.user_bioregions.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_bioregions.label }}</label>
-                  <div class="mt-1 space-y-2">
-                    {% for choice in form.user_bioregions %}
-                      <div class="flex items-center">
-                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                <!-- Account Tab -->
+                <div class="tab-content" id="account">
+                  <div class="space-y-4">
+                    <!-- Full Name -->
+                    <div>
+                      <label for="{{ form.full_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.full_name.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.full_name }}
                       </div>
-                    {% endfor %}
-                  </div>
-                  {% if form.user_bioregions.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.user_bioregions.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <div>
-                  <label for="{{ form.user_communities.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_communities.label }}</label>
-                  <div class="mt-1 space-y-2">
-                    {% for choice in form.user_communities %}
-                      <div class="flex items-center">
-                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
-                      </div>
-                    {% endfor %}
-                  </div>
-                  {% if form.user_communities.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.user_communities.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <div>
-                  <label for="{{ form.user_relationships.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_relationships.label }}</label>
-                  <div class="mt-1 space-y-2">
-                    {% for choice in form.user_relationships %}
-                      <div class="flex items-center">
-                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
-                      </div>
-                    {% endfor %}
-                  </div>
-                  {% if form.user_relationships.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.user_relationships.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <div>
-                  <label for="{{ form.user_socialroles.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_socialroles.label }}</label>
-                  <div class="mt-1 space-y-2">
-                    {% for choice in form.user_socialroles %}
-                      <div class="flex items-center">
-                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
-                      </div>
-                    {% endfor %}
-                  </div>
-                  {% if form.user_socialroles.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.user_socialroles.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <div>
-                  <label for="{{ form.user_metacrisis_facets.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_metacrisis_facets.label }}</label>
-                  <div class="mt-1 space-y-2">
-                    {% for choice in form.user_metacrisis_facets %}
-                      <div class="flex items-center">
-                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
-                      </div>
-                    {% endfor %}
-                  </div>
-                  {% if form.user_metacrisis_facets.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.user_metacrisis_facets.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <div>
-                  <label for="{{ form.user_maladaptives.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_maladaptives.label }}</label>
-                  <div class="mt-1 space-y-2">
-                    {% for choice in form.user_maladaptives %}
-                      <div class="flex items-center">
-                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                        <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
-                      </div>
-                    {% endfor %}
-                  </div>
-                  {% if form.user_maladaptives.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.user_maladaptives.errors|join:', ' }}</div>
-                  {% endif %}
-                </div>
-
-                <div>
-                  <label for="{{ form.view_members.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                    {{ form.view_members.label }}
-                  </label>
-                  <div class="mt-1">
-                    {{ form.view_members }}
-                  </div>
-                  {% if form.view_members.help_text %}
-                    <p class="text-xs text-gray-500 mt-1">{{ form.view_members.help_text }}</p>
-                  {% endif %}
-                  {% if form.view_members.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.view_members.errors|join:", " }}</div>
-                  {% endif %}
-                </div>
-
-                <div>
-                  <label for="{{ form.view_public.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                    {{ form.view_public.label }}
-                  </label>
-                  <div class="mt-1">
-                    {{ form.view_public }}
-                  </div>
-                  {% if form.view_public.help_text %}
-                    <p class="text-xs text-gray-500 mt-1">{{ form.view_public.help_text }}</p>
-                  {% endif %}
-                  {% if form.view_public.errors %}
-                    <div class="mt-1 text-sm text-red-600">{{ form.view_public.errors|join:", " }}</div>
-                  {% endif %}
-                </div>
-              </div>
-
-                <!-- Optional Password (admin create/edit) -->
-                <div class="pt-4 border-t border-gray-200">
-                  <h4 class="text-md font-medium text-gray-900">Password (optional)</h4>
-
-                  <div class="mt-4">
-                    <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                      {{ form.password.label }}
-                    </label>
-                    <div class="mt-1">
-                      {{ form.password }}
+                      {% if form.full_name.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ form.full_name.help_text }}</p>
+                      {% endif %}
+                      {% if form.full_name.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.full_name.errors|join:', ' }}</div>
+                      {% endif %}
                     </div>
-                    {% if form.password.help_text %}
-                      <p class="text-xs text-gray-500 mt-1">{{ form.password.help_text }}</p>
-                    {% endif %}
-                    {% if form.password.errors %}
-                      <div class="mt-1 text-sm text-red-600">{{ form.password.errors|join:', ' }}</div>
-                    {% endif %}
-                  </div>
 
-                  <div class="mt-4">
-                    <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-gray-700">
-                      {{ form.confirm_password.label }}
-                    </label>
-                    <div class="mt-1">
-                      {{ form.confirm_password }}
+                    <!-- Username -->
+                    <div>
+                      <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.username.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.username }}
+                      </div>
+                      {% if form.username.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.username.errors|join:', ' }}</div>
+                      {% endif %}
                     </div>
-                    {% if form.confirm_password.errors %}
-                      <div class="mt-1 text-sm text-red-600">{{ form.confirm_password.errors|join:', ' }}</div>
-                    {% endif %}
+
+                    <!-- Email -->
+                    <div>
+                      <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.email.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.email }}
+                      </div>
+                      {% if form.email.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ form.email.help_text }}</p>
+                      {% endif %}
+                      {% if form.email.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.email.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <!-- LinkedIn -->
+                    <div>
+                      <label for="{{ form.linked_in.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.linked_in.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.linked_in }}
+                      </div>
+                      {% if form.linked_in.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.linked_in.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+                      <label for="{{ form.user_location.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.user_location.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.user_location }}
+                      </div>
+                      {% if form.user_location.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.user_location.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <!-- Invited by -->
+                    <div>
+                      <label for="{{ form.invited_by.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.invited_by.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.invited_by }}
+                      </div>
+                      {% if form.invited_by.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.invited_by.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="pt-4 border-t border-gray-200">
+                      <h4 class="text-md font-medium text-gray-900 mb-4">Password (optional)</h4>
+
+                      <div class="space-y-4">
+                        <div>
+                          <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.password.label }}
+                          </label>
+                          <div class="mt-1">
+                            {{ form.password }}
+                          </div>
+                          {% if form.password.help_text %}
+                            <p class="text-xs text-gray-500 mt-1">{{ form.password.help_text }}</p>
+                          {% endif %}
+                          {% if form.password.errors %}
+                            <div class="mt-1 text-sm text-red-600">{{ form.password.errors|join:', ' }}</div>
+                          {% endif %}
+                        </div>
+
+                        <div>
+                          <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ form.confirm_password.label }}
+                          </label>
+                          <div class="mt-1">
+                            {{ form.confirm_password }}
+                          </div>
+                          {% if form.confirm_password.errors %}
+                            <div class="mt-1 text-sm text-red-600">{{ form.confirm_password.errors|join:', ' }}</div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Visibility Tab -->
+                <div class="tab-content hidden" id="visibility">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.view_members.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.view_members.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.view_members }}
+                      </div>
+                      {% if form.view_members.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ form.view_members.help_text }}</p>
+                      {% endif %}
+                      {% if form.view_members.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.view_members.errors|join:", " }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.view_public.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.view_public.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.view_public }}
+                      </div>
+                      {% if form.view_public.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ form.view_public.help_text }}</p>
+                      {% endif %}
+                      {% if form.view_public.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.view_public.errors|join:", " }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Connections Tab -->
+                <div class="tab-content hidden" id="connections">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.user_bioregions.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_bioregions.label }}</label>
+                      <div class="mt-1 space-y-2">
+                        {% for choice in form.user_bioregions %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.user_bioregions.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.user_bioregions.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.user_communities.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_communities.label }}</label>
+                      <div class="mt-1 space-y-2">
+                        {% for choice in form.user_communities %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.user_communities.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.user_communities.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.user_relationships.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_relationships.label }}</label>
+                      <div class="mt-1 space-y-2">
+                        {% for choice in form.user_relationships %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.user_relationships.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.user_relationships.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Character Class Tab -->
+                <div class="tab-content hidden" id="character">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.user_socialroles.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_socialroles.label }}</label>
+                      <div class="mt-1 space-y-2">
+                        {% for choice in form.user_socialroles %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.user_socialroles.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.user_socialroles.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Pitfalls Tab -->
+                <div class="tab-content hidden" id="pitfalls">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.user_maladaptives.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_maladaptives.label }}</label>
+                      <div class="mt-1 space-y-2">
+                        {% for choice in form.user_maladaptives %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.user_maladaptives.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.user_maladaptives.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Metacrisis Tab -->
+                <div class="tab-content hidden" id="metacrisis">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.user_metacrisis_facets.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_metacrisis_facets.label }}</label>
+                      <div class="mt-1 space-y-2">
+                        {% for choice in form.user_metacrisis_facets %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.user_metacrisis_facets.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.user_metacrisis_facets.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
               </div>

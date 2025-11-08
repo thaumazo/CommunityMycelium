@@ -12,7 +12,10 @@
         <div class="bg-white shadow sm:rounded-lg">
           <div class="px-4 py-5 sm:p-6">
             <div class="flex justify-between items-start">
-              <h1 class="text-2xl font-semibold text-gray-900">{{ user.username }}</h1>
+              <div class="space-y-2">
+                <h1 class="text-2xl font-semibold text-gray-900">{{ user.full_name|default:user.username }}</h1>
+                <p class="text-base text-gray-500">Details</p>
+              </div>
               {% can request.user 'change' user as check %}
               {% if check %}
                 <div class="flex items-center space-x-2">
@@ -22,122 +25,165 @@
               {% endif %}
             </div>
 
-            <div class="mt-6 border-t border-gray-200">
-              <dl class="divide-y divide-gray-200">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Email</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.email }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Full Name</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.full_name }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">LinkedIn</dt>
-                  <dd class="mt-1 text-sm text-indigo-600 sm:mt-0 sm:col-span-2">
-                    {% if user.linked_in %}
-                      <a href="{{ user.linked_in }}" target="_blank" class="hover:underline">{{ user.linked_in }}</a>
-                    {% else %}
-                      <span class="text-gray-400">Not provided</span>
-                    {% endif %}
-                  </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Location</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.user_location|default:'Not specified' }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Invited By</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.invited_by.full_name|default:'–' }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Bioregions</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for bioregion in user.user_bioregions.all %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ bioregion.title }}</span>
-                    {% empty %}
-                      <span class="text-gray-400">None</span>
-                    {% endfor %}
-                  </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Communities</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for community in user.user_communities.all %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ community.title }}</span>
-                    {% empty %}
-                      <span class="text-gray-400">None</span>
-                    {% endfor %}
-                  </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Relationships</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for relationship in user.user_relationships.all %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ relationship.title }}</span>
-                    {% empty %}
-                      <span class="text-gray-400">None</span>
-                    {% endfor %}
-                  </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Social Roles</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for socialrole in user.user_socialroles.all %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ socialrole.title }}</span>
-                    {% empty %}
-                      <span class="text-gray-400">None</span>
-                    {% endfor %}
-                  </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Metacrisis Facets</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for metacrisis_facet in user.user_metacrisis_facets.all %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ metacrisis_facet.title }}</span>
-                    {% empty %}
-                      <span class="text-gray-400">None</span>
-                    {% endfor %}
-                  </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Maladaptive Schemas</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for maladaptive in user.user_maladaptives.all %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ maladaptive.title }}</span>
-                    {% empty %}
-                      <span class="text-gray-400">None</span>
-                    {% endfor %}
-                  </dd>
-                </div>
+            <div class="mt-6">
+              <div class="tabs-container">
+                <ul class="tab-list">
+                  <li class="tab active" data-tab="account">Account</li>
+                  <li class="tab" data-tab="visibility">Visibility</li>
+                  <li class="tab" data-tab="connections">Connections</li>
+                  <li class="tab" data-tab="character">Character Class</li>
+                  <li class="tab" data-tab="pitfalls">Pitfalls</li>
+                  <li class="tab" data-tab="metacrisis">Metacrisis</li>
+                </ul>
+              </div>
 
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Access</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for group in user.groups.all %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ group.name }}</span>
-                    {% empty %}
-                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Roles</span>
-                    {% endfor %}
-                  </dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Date Joined</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.date_joined|date:'F j, Y' }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Last Login</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.last_login|date:'F j, Y' }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">View Members</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.view_members|yesno:"Yes,No" }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">View Public</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.view_public|yesno:"Yes,No" }}</dd>
-                </div>
-              </dl>
+              <!-- Account Tab -->
+              <div class="tab-content" id="account">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Username</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.username }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Email</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.email }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">LinkedIn</dt>
+                    <dd class="mt-1 text-sm text-indigo-600 sm:mt-0 sm:col-span-2">
+                      {% if user.linked_in %}
+                        <a href="{{ user.linked_in }}" target="_blank" class="hover:underline">{{ user.linked_in }}</a>
+                      {% else %}
+                        <span class="text-gray-400">Not provided</span>
+                      {% endif %}
+                    </dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Location</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.user_location|default:'Not specified' }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Invited By</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.invited_by.full_name|default:'–' }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Date Joined</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.date_joined|date:'F j, Y' }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Last Login</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.last_login|date:'F j, Y' }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Access</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for group in user.groups.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ group.name }}</span>
+                      {% empty %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">No Roles</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Visibility Tab -->
+              <div class="tab-content hidden" id="visibility">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">View Members</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.view_members|yesno:"Yes,No" }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">View Public</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.view_public|yesno:"Yes,No" }}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Connections Tab -->
+              <div class="tab-content hidden" id="connections">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Bioregions</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for bioregion in user.user_bioregions.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ bioregion.title }}</span>
+                      {% empty %}
+                        <span class="text-gray-400">None</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Communities</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for community in user.user_communities.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ community.title }}</span>
+                      {% empty %}
+                        <span class="text-gray-400">None</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Relationships</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for relationship in user.user_relationships.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ relationship.title }}</span>
+                      {% empty %}
+                        <span class="text-gray-400">None</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Character Class Tab -->
+              <div class="tab-content hidden" id="character">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Social Roles</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for socialrole in user.user_socialroles.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ socialrole.title }}</span>
+                      {% empty %}
+                        <span class="text-gray-400">None</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Pitfalls Tab -->
+              <div class="tab-content hidden" id="pitfalls">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Maladaptive Schemas</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for maladaptive in user.user_maladaptives.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ maladaptive.title }}</span>
+                      {% empty %}
+                        <span class="text-gray-400">None</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Metacrisis Tab -->
+              <div class="tab-content hidden" id="metacrisis">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Metacrisis Facets</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for metacrisis_facet in user.user_metacrisis_facets.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ metacrisis_facet.title }}</span>
+                      {% empty %}
+                        <span class="text-gray-400">None</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
             </div>
 
             <div class="mt-6 flex justify-end">
