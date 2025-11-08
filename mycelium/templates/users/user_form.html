@@ -159,35 +159,31 @@
                 <!-- Visibility Tab -->
                 <div class="tab-content hidden" id="visibility">
                   <div class="space-y-4">
-                    <div>
-                      <label for="{{ form.view_members.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    <div class="flex items-center">
+                      <input type="checkbox" name="view_members" id="{{ form.view_members.id_for_label }}" {% if form.instance.view_members %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                      <label for="{{ form.view_members.id_for_label }}" class="ml-2 block text-sm text-gray-900">
                         {{ form.view_members.label }}
                       </label>
-                      <div class="mt-1">
-                        {{ form.view_members }}
-                      </div>
-                      {% if form.view_members.help_text %}
-                        <p class="text-xs text-gray-500 mt-1">{{ form.view_members.help_text }}</p>
-                      {% endif %}
                       {% if form.view_members.errors %}
                         <div class="mt-1 text-sm text-red-600">{{ form.view_members.errors|join:", " }}</div>
                       {% endif %}
                     </div>
+                    {% if form.view_members.help_text %}
+                      <p class="text-xs text-gray-500">{{ form.view_members.help_text }}</p>
+                    {% endif %}
 
-                    <div>
-                      <label for="{{ form.view_public.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    <div class="flex items-center">
+                      <input type="checkbox" name="view_public" id="{{ form.view_public.id_for_label }}" {% if form.instance.view_public %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                      <label for="{{ form.view_public.id_for_label }}" class="ml-2 block text-sm text-gray-900">
                         {{ form.view_public.label }}
                       </label>
-                      <div class="mt-1">
-                        {{ form.view_public }}
-                      </div>
-                      {% if form.view_public.help_text %}
-                        <p class="text-xs text-gray-500 mt-1">{{ form.view_public.help_text }}</p>
-                      {% endif %}
                       {% if form.view_public.errors %}
                         <div class="mt-1 text-sm text-red-600">{{ form.view_public.errors|join:", " }}</div>
                       {% endif %}
                     </div>
+                    {% if form.view_public.help_text %}
+                      <p class="text-xs text-gray-500">{{ form.view_public.help_text }}</p>
+                    {% endif %}
                   </div>
                 </div>
 
