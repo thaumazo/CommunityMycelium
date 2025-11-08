@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -241,13 +242,22 @@
                 <div class="tab-content hidden" id="character">
                   <div class="space-y-4">
                     <div>
-                      <label for="{{ form.user_socialroles.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_socialroles.label }}</label>
-                      <div class="mt-1 space-y-2">
-                        {% for choice in form.user_socialroles %}
-                          <div class="flex items-center">
-                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
-                          </div>
+                      <label class="block text-sm font-medium text-gray-700 mb-4">{{ form.user_socialroles.label }}</label>
+                      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8 justify-items-center">
+                        {% for socialrole in form.fields.user_socialroles.queryset %}
+                          <label for="id_user_socialroles_{{ socialrole.pk }}" class="flex flex-col items-center text-center cursor-pointer max-w-[120px] relative" title="{{ socialrole.title }}{% if socialrole.description %} - {{ socialrole.description }}{% endif %}">
+                            <input type="checkbox" name="user_socialroles" value="{{ socialrole.pk }}" id="id_user_socialroles_{{ socialrole.pk }}" {% if socialrole in form.instance.user_socialroles.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
+                            {% if socialrole.image_path %}
+                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all mb-2" style="width: 80px; height: 80px; flex-shrink: 0; border-color: {% if socialrole in form.instance.user_socialroles.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <img src="{% static socialrole.image_path %}" alt="{{ socialrole.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                              </div>
+                            {% else %}
+                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all mb-2" style="width: 80px; height: 80px; border-color: {% if socialrole in form.instance.user_socialroles.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <span class="text-2xl text-gray-600 font-bold">{{ socialrole.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                            <span class="text-xs font-semibold text-gray-900 break-words w-full">{{ socialrole.title }}</span>
+                          </label>
                         {% endfor %}
                       </div>
                       {% if form.user_socialroles.errors %}
@@ -261,13 +271,22 @@
                 <div class="tab-content hidden" id="pitfalls">
                   <div class="space-y-4">
                     <div>
-                      <label for="{{ form.user_maladaptives.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_maladaptives.label }}</label>
-                      <div class="mt-1 space-y-2">
-                        {% for choice in form.user_maladaptives %}
-                          <div class="flex items-center">
-                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
-                          </div>
+                      <label class="block text-sm font-medium text-gray-700 mb-4">{{ form.user_maladaptives.label }}</label>
+                      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8 justify-items-center">
+                        {% for maladaptive in form.fields.user_maladaptives.queryset %}
+                          <label for="id_user_maladaptives_{{ maladaptive.pk }}" class="flex flex-col items-center text-center cursor-pointer max-w-[120px] relative" title="{{ maladaptive.title }}{% if maladaptive.description %} - {{ maladaptive.description }}{% endif %}">
+                            <input type="checkbox" name="user_maladaptives" value="{{ maladaptive.pk }}" id="id_user_maladaptives_{{ maladaptive.pk }}" {% if maladaptive in form.instance.user_maladaptives.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
+                            {% if maladaptive.image_path %}
+                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all mb-2" style="width: 80px; height: 80px; flex-shrink: 0; border-color: {% if maladaptive in form.instance.user_maladaptives.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <img src="{% static maladaptive.image_path %}" alt="{{ maladaptive.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                              </div>
+                            {% else %}
+                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all mb-2" style="width: 80px; height: 80px; border-color: {% if maladaptive in form.instance.user_maladaptives.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <span class="text-2xl text-gray-600 font-bold">{{ maladaptive.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                            <span class="text-xs font-semibold text-gray-900 break-words w-full">{{ maladaptive.title }}</span>
+                          </label>
                         {% endfor %}
                       </div>
                       {% if form.user_maladaptives.errors %}
@@ -281,13 +300,22 @@
                 <div class="tab-content hidden" id="metacrisis">
                   <div class="space-y-4">
                     <div>
-                      <label for="{{ form.user_metacrisis_facets.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.user_metacrisis_facets.label }}</label>
-                      <div class="mt-1 space-y-2">
-                        {% for choice in form.user_metacrisis_facets %}
-                          <div class="flex items-center">
-                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
-                          </div>
+                      <label class="block text-sm font-medium text-gray-700 mb-4">{{ form.user_metacrisis_facets.label }}</label>
+                      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8 justify-items-center">
+                        {% for metacrisis_facet in form.fields.user_metacrisis_facets.queryset %}
+                          <label for="id_user_metacrisis_facets_{{ metacrisis_facet.pk }}" class="flex flex-col items-center text-center cursor-pointer max-w-[120px] relative" title="{{ metacrisis_facet.title }}{% if metacrisis_facet.description %} - {{ metacrisis_facet.description }}{% endif %}">
+                            <input type="checkbox" name="user_metacrisis_facets" value="{{ metacrisis_facet.pk }}" id="id_user_metacrisis_facets_{{ metacrisis_facet.pk }}" {% if metacrisis_facet in form.instance.user_metacrisis_facets.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
+                            {% if metacrisis_facet.image_path %}
+                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all mb-2" style="width: 80px; height: 80px; flex-shrink: 0; border-color: {% if metacrisis_facet in form.instance.user_metacrisis_facets.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <img src="{% static metacrisis_facet.image_path %}" alt="{{ metacrisis_facet.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                              </div>
+                            {% else %}
+                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all mb-2" style="width: 80px; height: 80px; border-color: {% if metacrisis_facet in form.instance.user_metacrisis_facets.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <span class="text-2xl text-gray-600 font-bold">{{ metacrisis_facet.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                            <span class="text-xs font-semibold text-gray-900 break-words w-full">{{ metacrisis_facet.title }}</span>
+                          </label>
                         {% endfor %}
                       </div>
                       {% if form.user_metacrisis_facets.errors %}
