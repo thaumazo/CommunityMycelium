@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load user_tags %}
+{% load image_filters %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -28,7 +29,7 @@
                   <!-- Challenge Image -->
                   <div class="shrink-0">
                     {% if challenge.related_facet.image_path %}
-                      <img src="/static/{{ challenge.related_facet.image_path }}" alt="{{ challenge.related_facet.name }}" class="h-10 w-10 rounded-full object-cover">
+                      <img src="/static/{{ challenge.related_facet.image_path|thumbnail }}" alt="{{ challenge.related_facet.name }}" class="h-10 w-10 rounded-full object-cover">
                     {% else %}
                       <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-300">No Image</span>
                     {% endif %}

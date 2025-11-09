@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load user_tags %}
 {% load static %}
+{% load image_filters %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -37,7 +38,7 @@
                   <div class="flex flex-col items-center text-center group relative max-w-[120px]" title="{{ socialrole.title }}{% if socialrole.description %} - {{ socialrole.description }}{% endif %}">
                     {% if socialrole.image_path %}
                       <div class="overflow-hidden rounded-lg border-2 border-amber-600 hover:border-amber-800 transition-all cursor-pointer mb-2" style="width: 80px; height: 80px; flex-shrink: 0;">
-                        <img src="{% static socialrole.image_path %}" alt="{{ socialrole.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                        <img src="{% static socialrole.image_path|thumbnail %}" alt="{{ socialrole.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                       </div>
                     {% else %}
                       <div class="bg-amber-200 rounded-lg flex items-center justify-center border-2 border-amber-600 hover:border-amber-800 transition-all cursor-pointer mb-2" style="width: 80px; height: 80px;">
@@ -62,7 +63,7 @@
                   <div class="flex flex-col items-center text-center group relative max-w-[120px]" title="{{ metacrisis_facet.title }}{% if metacrisis_facet.description %} - {{ metacrisis_facet.description }}{% endif %}">
                     {% if metacrisis_facet.image_path %}
                       <div class="overflow-hidden rounded-lg border-2 border-amber-600 hover:border-amber-800 transition-all cursor-pointer mb-2" style="width: 80px; height: 80px; flex-shrink: 0;">
-                        <img src="{% static metacrisis_facet.image_path %}" alt="{{ metacrisis_facet.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                        <img src="{% static metacrisis_facet.image_path|thumbnail %}" alt="{{ metacrisis_facet.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                       </div>
                     {% else %}
                       <div class="bg-amber-200 rounded-lg flex items-center justify-center border-2 border-amber-600 hover:border-amber-800 transition-all cursor-pointer mb-2" style="width: 80px; height: 80px;">
@@ -87,7 +88,7 @@
                   <div class="flex flex-col items-center text-center group relative max-w-[120px]" title="{{ maladaptive.title }}{% if maladaptive.description %} - {{ maladaptive.description }}{% endif %}">
                     {% if maladaptive.image_path %}
                       <div class="overflow-hidden rounded-lg border-2 border-amber-600 hover:border-amber-800 transition-all cursor-pointer mb-2" style="width: 80px; height: 80px; flex-shrink: 0;">
-                        <img src="{% static maladaptive.image_path %}" alt="{{ maladaptive.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                        <img src="{% static maladaptive.image_path|thumbnail %}" alt="{{ maladaptive.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                       </div>
                     {% else %}
                       <div class="bg-amber-200 rounded-lg flex items-center justify-center border-2 border-amber-600 hover:border-amber-800 transition-all cursor-pointer mb-2" style="width: 80px; height: 80px;">
