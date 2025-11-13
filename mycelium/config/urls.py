@@ -5,6 +5,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # API routes
+    path("api/", include("apps.api.urls")),
+    # Web routes
     path("", include(("apps.pages.urls", "pages"), namespace="pages")),  # Serve home.md for root URL
     path("core/", include("apps.core.urls")),  # Core app handles other website pages
     path("users/", include("apps.users.urls")),  # User management routes
