@@ -33,13 +33,15 @@
                   <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
                     <!-- Meeting Details -->
                     <div class="flex flex-col space-y-2">
-                      <!-- Meeting Title & Creator -->
-                      <div class="">
+                      <!-- Meeting Title -->
+                      <div class="flex items-center gap-2">
                         <!-- Meeting Title -->
                         <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'meeting_detail' meeting.pk %}" class="hover:text-indigo-900 hover:underline">{{ meeting.title }}</a></h3>
-
-                        <!-- Meeting Creator -->
-                        <p class="text-sm text-gray-500">Created by {{ meeting.created_by.username }}</p>
+                        
+                        <!-- Watch Link -->
+                        {% if meeting.url %}
+                          <a href="{{ meeting.url }}" class="text-xs text-indigo-600 hover:text-indigo-900 hover:underline" target="_blank" rel="noopener noreferrer">(Watch)</a>
+                        {% endif %}
                       </div>
 
                       <!-- Meeting Description -->
@@ -63,16 +65,6 @@
                           <span>{{ meeting.attending.count }} attendee{{ meeting.attending.count|pluralize }}</span>
                         </div>
                       </div>
-
-                      <!-- Meeting URL -->
-                      {% if meeting.url %}
-                        <div class="flex flex-wrap items-center gap-y-2 gap-x-4 pb-2">
-                          <p class="text-sm text-indigo-600 flex items-start gap-1">
-                            <a href="{{ meeting.url }}" class="hover:underline" target="_blank" rel="noopener noreferrer">Meeting URL</a>
-                            {% include '_icons/arrow-up-right.html' %}
-                          </p>
-                        </div>
-                      {% endif %}
                     </div>
 
                     <!-- Meeting Controls -->

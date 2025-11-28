@@ -14,7 +14,7 @@ def meeting_list_view(request):
     meetings = get_permitted_objects(request.user, "view", Meeting)
     
     # Pagination using helper function
-    meetings_page, pagination_data = paginate_queryset(meetings, request, per_page=10)
+    meetings_page, pagination_data = paginate_queryset(meetings, request, per_page=50)
     
     return render(request, "meetings/meeting_list.html", {
         "meetings": meetings_page,
