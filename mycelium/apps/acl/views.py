@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
-from .models import ObjectPermission
+from .models import ObjectPermission, ModelPermission
 from .forms import ObjectPermissionForm, UserSelectForm
 from .utils import (
     get_permitted_content_types,
@@ -97,6 +97,11 @@ def acl_object_permission_form_step_2_view(
     # Get existing object-level permissions for this user on this object
     existing_object_permissions = object.permissions.filter(user=user)
 
+    # Get individual model-level permissions for this user on this model type
+    existing_model_permissions = ModelPermission.objects.filter(
+        user=user, content_type=content_type
+    )
+
     # Get group-level permissions
     group_permissions = []
     for group in user.groups.all():
@@ -150,6 +155,7 @@ def acl_object_permission_form_step_2_view(
             "user": user,
             "content_type": content_type,
             "existing_object_permissions": existing_object_permissions,
+            "existing_model_permissions": existing_model_permissions,
             "group_permissions": group_permissions,
         },
     )
