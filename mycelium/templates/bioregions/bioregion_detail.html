@@ -27,6 +27,7 @@
             </div>
 
             <div class="mt-6">
+              {% if user.is_authenticated %}
               <div class="tabs-container">
                 <ul class="tab-list">
                   <li class="tab active" data-tab="details">Details</li>
@@ -50,7 +51,24 @@
                   </div>
                 </dl>
               </div>
+              {% else %}
+              {# Anonymous users only see title and description #}
+              <div class="py-4">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Description</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ bioregion.description|linebreaks }}</dd>
+                  </div>
+                </dl>
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                  <p class="text-sm text-gray-700">
+                    <a href="{% url 'login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">Log in</a> to see related challenges and more details.
+                  </p>
+                </div>
+              </div>
+              {% endif %}
 
+              {% if user.is_authenticated %}
               <div class="tab-content hidden" id="challenges">
                 <h2 class="text-lg leading-6 font-medium text-gray-900">Challenges</h2>
                 <div class="mt-4">
@@ -89,17 +107,19 @@
                 <h2 class="text-lg leading-6 font-medium text-gray-900">People</h2>
                 <div class="mt-4">
                   <ul class="divide-y divide-gray-200">
-                    {% for user in bioregion.users.all %}
-                      <li class="py-4">
-                        <div class="flex items-center justify-between">
-                          <div>
-                            <h3 class="text-sm font-medium text-indigo-600">
-                              <a href="{% url 'user_detail' user.pk %}" class="hover:underline">{{ user.get_full_name }}</a>
-                            </h3>
-                            <p class="text-sm text-gray-500">Location: {{ user.user_location }}</p>
+                    {% for bioregion_user in bioregion.users.all %}
+                      {% if user.is_superuser or bioregion_user == user or user.is_authenticated and bioregion_user.view_members or not user.is_authenticated and bioregion_user.view_public %}
+                        <li class="py-4">
+                          <div class="flex items-center justify-between">
+                            <div>
+                              <h3 class="text-sm font-medium text-indigo-600">
+                                <a href="{% url 'user_detail' bioregion_user.pk %}" class="hover:underline">{{ bioregion_user.get_full_name }}</a>
+                              </h3>
+                              <p class="text-sm text-gray-500">Location: {{ bioregion_user.user_location }}</p>
+                            </div>
                           </div>
-                        </div>
-                      </li>
+                        </li>
+                      {% endif %}
                     {% empty %}
                       <li class="py-4 text-center text-gray-500">No users found for this bioregion.</li>
                     {% endfor %}
@@ -116,6 +136,7 @@
                 <h2 class="text-lg leading-6 font-medium text-gray-900">Projects</h2>
                 <p class="text-sm text-gray-500">Content for Projects will go here.</p>
               </div>
+              {% endif %}
             </div>
 
             <div class="mt-6 flex justify-end">

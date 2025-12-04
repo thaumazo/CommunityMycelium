@@ -14,9 +14,10 @@ def is_permitted(user, action, obj_or_string):
     Permission hierarchy:
     1. Self-permission (user accessing their own User object)
     2. Ownership (user created the object)
-    3. Model-level permission via groups (Django's built-in)
-    4. Model-level permission via ModelPermission (individual user)
-    5. Object-level permission via ObjectPermission (specific object)
+    3. Public access rules (bioregions, related challenges)
+    4. Model-level permission via groups (Django's built-in)
+    5. Model-level permission via ModelPermission (individual user)
+    6. Object-level permission via ObjectPermission (specific object)
     """
     # If the object is a string, it's a model name
     if isinstance(obj_or_string, str):
@@ -26,6 +27,20 @@ def is_permitted(user, action, obj_or_string):
         ).model_class()()
     else:
         obj = obj_or_string
+
+    # Public access rules for bioregions
+    from apps.bioregions.models import Bioregion
+    from apps.challenges.models import Challenge
+    
+    if isinstance(obj, Bioregion) and action == "view":
+        # Any authenticated user can view bioregions
+        if user.is_authenticated:
+            return True
+    
+    if isinstance(obj, Challenge) and action == "view":
+        # Any authenticated user can view challenges that have a related bioregion
+        if user.is_authenticated and obj.related_bioregion:
+            return True
 
     # If the object is a user, and it's the current user
     if isinstance(obj, User) and obj == user:
@@ -156,10 +171,23 @@ def get_permitted_objects(user, action, model_class):
     Get all objects of a given model that a user has permission to perform an action on.
     
     Returns objects the user has access to via:
+    - Public access rules (bioregions, related challenges)
     - Model-level permissions (group-based)
     - Model-level permissions (individual user via ModelPermission)
     - Object-level permissions (specific instances via ObjectPermission)
     """
+    from apps.bioregions.models import Bioregion
+    from apps.challenges.models import Challenge
+    
+    # Public access rules
+    if model_class == Bioregion and action == "view" and user.is_authenticated:
+        # All authenticated users can view all bioregions
+        return list(model_class.objects.all())
+    
+    if model_class == Challenge and action == "view" and user.is_authenticated:
+        # All authenticated users can view challenges with a related bioregion
+        return list(model_class.objects.filter(related_bioregion__isnull=False))
+    
     permitted_objects_by_model_permission = []
     permitted_objects_by_individual_model_permission = []
     permitted_objects_by_object_permission = []

@@ -9,9 +9,12 @@ from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 
 
-@login_required
 def bioregion_list_view(request):
-    bioregions = get_permitted_objects(request.user, "view", Bioregion)
+    if request.user.is_authenticated:
+        bioregions = get_permitted_objects(request.user, "view", Bioregion)
+    else:
+        # Anonymous users can see all bioregions (title/description only in template)
+        bioregions = Bioregion.objects.all()
     
     # Pagination using helper function
     bioregions_page, pagination_data = paginate_queryset(bioregions, request, per_page=10)
@@ -22,9 +25,17 @@ def bioregion_list_view(request):
     })
 
 
-@login_required
 def bioregion_detail_view(request, pk):
-    bioregion = get_permitted_object(request.user, "view", Bioregion, pk)
+    if request.user.is_authenticated:
+        bioregion = get_permitted_object(request.user, "view", Bioregion, pk)
+    else:
+        # Anonymous users can see bioregion title/description
+        try:
+            bioregion = Bioregion.objects.get(pk=pk)
+        except Bioregion.DoesNotExist:
+            from django.http import Http404
+            raise Http404
+    
     return render(request, "bioregions/bioregion_detail.html", {"bioregion": bioregion})
 
 
