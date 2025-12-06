@@ -45,7 +45,7 @@ def bioregion_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
-        form = BioregionForm(request.POST)
+        form = BioregionForm(request.POST, request.FILES)
         if form.is_valid():
             bioregion = form.save(commit=False)
             bioregion.created_by = request.user
@@ -68,7 +68,7 @@ def bioregion_edit_view(request, pk):
     bioregion = get_permitted_object(request.user, "change", Bioregion, pk)
 
     if request.method == "POST":
-        form = BioregionForm(request.POST, instance=bioregion)
+        form = BioregionForm(request.POST, request.FILES, instance=bioregion)
         if form.is_valid():
             form.save()
             messages.success(request, "Bioregion updated successfully!")

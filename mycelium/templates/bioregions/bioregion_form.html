@@ -17,7 +17,7 @@
               {% endif %}
             </div>
 
-            <form method="post" class="space-y-6">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
               {% csrf_token %}
 
               <div>
@@ -37,6 +37,25 @@
                 </div>
                 {% if form.description.errors %}
                   <div class="mt-1 text-sm text-red-600">{{ form.description.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.picture.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.picture.label }}</label>
+                {% if bioregion.picture_thumbnail %}
+                  <div class="mt-2 mb-2">
+                    <img src="{{ bioregion.picture_thumbnail.url }}" alt="Current picture" class="w-32 h-32 rounded-lg border-2 border-gray-300 object-cover">
+                    <p class="text-xs text-gray-500 mt-1">Current image</p>
+                  </div>
+                {% endif %}
+                <div class="mt-1">
+                  {{ form.picture }}
+                </div>
+                {% if form.picture.help_text %}
+                  <p class="text-xs text-gray-500 mt-1">{{ form.picture.help_text }}</p>
+                {% endif %}
+                {% if form.picture.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.picture.errors|join:', ' }}</div>
                 {% endif %}
               </div>
 

@@ -13,9 +13,18 @@
         <div class="bg-white shadow sm:rounded-lg">
           <div class="px-4 py-5 sm:p-6">
             <div class="flex justify-between items-start">
-              <div class="space-y-2">
-                <h1 class="text-2xl font-semibold text-gray-900">{{ bioregion.title }}</h1>
-                <p class="text-base text-gray-500">Details</p>
+              <div class="flex items-start space-x-4 flex-1">
+                {% if bioregion.picture_thumbnail %}
+                  <img src="{{ bioregion.picture_thumbnail.url }}" alt="{{ bioregion.title }}" 
+                       class="w-24 h-24 rounded-lg border-2 border-gray-300 object-cover flex-shrink-0">
+                {% elif bioregion.picture %}
+                  <img src="{{ bioregion.picture.url }}" alt="{{ bioregion.title }}" 
+                       class="w-24 h-24 rounded-lg border-2 border-gray-300 object-cover flex-shrink-0">
+                {% endif %}
+                <div class="space-y-2">
+                  <h1 class="text-2xl font-semibold text-gray-900">{{ bioregion.title }}</h1>
+                  <p class="text-base text-gray-500">Details</p>
+                </div>
               </div>
               <div class="flex items-center space-x-2">
                 {% can request.user 'change' bioregion as check %}

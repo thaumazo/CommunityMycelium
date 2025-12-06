@@ -18,6 +18,19 @@ class Bioregion(models.Model):
         related_name="child_regions",
     )
 
+    picture = models.ImageField(
+        upload_to='bioregion_pictures/',
+        blank=True,
+        null=True,
+        help_text="Representative image for this bioregion"
+    )
+    picture_thumbnail = models.ImageField(
+        upload_to='bioregion_pictures/thumbnails/',
+        blank=True,
+        null=True,
+        editable=False,
+        help_text="Automatically generated thumbnail"
+    )
 
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="bioregions"
