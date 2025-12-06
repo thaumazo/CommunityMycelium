@@ -25,9 +25,15 @@
             <li class="hover:bg-gray-50 transition-colors duration-150">
               <div class="px-4 py-4 sm:px-6">
                 <div class="flex items-start gap-4">
-                  <!-- Community Icon -->
+                  <!-- Community Icon/Picture -->
                   <div class="shrink-0">
-                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500">{% include '_icons/chat-bubbles.html' %}</span>
+                    {% if community.picture_thumbnail %}
+                      <img src="{{ community.picture_thumbnail.url }}" alt="{{ community.title }}" class="h-10 w-10 rounded-full object-cover border-2 border-indigo-200" />
+                    {% elif community.picture %}
+                      <img src="{{ community.picture.url }}" alt="{{ community.title }}" class="h-10 w-10 rounded-full object-cover border-2 border-indigo-200" />
+                    {% else %}
+                      <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500">{% include '_icons/chat-bubbles.html' %}</span>
+                    {% endif %}
                   </div>
 
                   <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">

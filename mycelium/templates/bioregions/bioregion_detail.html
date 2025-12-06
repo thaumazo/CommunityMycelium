@@ -164,8 +164,38 @@
               </div>
 
               <div class="tab-content hidden" id="organizations">
-                <h2 class="text-lg leading-6 font-medium text-gray-900">Organizations</h2>
-                <p class="text-sm text-gray-500">Content for Organizations will go here.</p>
+                <h2 class="text-lg leading-6 font-medium text-gray-900 mb-4">Communities</h2>
+                <div class="bg-white overflow-hidden">
+                  <ul class="divide-y divide-gray-200">
+                    {% for community in communities %}
+                      <li class="py-4">
+                        <div class="flex items-start gap-4">
+                          <div class="shrink-0">
+                            {% if community.picture_thumbnail %}
+                              <img src="{{ community.picture_thumbnail.url }}" alt="{{ community.title }}" class="w-10 h-10 rounded-full object-cover border-2 border-indigo-200" />
+                            {% elif community.picture %}
+                              <img src="{{ community.picture.url }}" alt="{{ community.title }}" class="w-10 h-10 rounded-full object-cover border-2 border-indigo-200" />
+                            {% else %}
+                              <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <span class="text-sm font-semibold text-indigo-600">{{ community.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-indigo-600">
+                              <a href="{% url 'community_detail' community.pk %}" class="hover:text-indigo-900 hover:underline">{{ community.title }}</a>
+                            </h3>
+                            {% if community.description %}
+                              <p class="text-sm text-gray-500 mt-1">{{ community.description|truncatewords:20 }}</p>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </li>
+                    {% empty %}
+                      <li class="py-4 text-center text-gray-500">No communities found.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
               </div>
 
               <div class="tab-content hidden" id="projects">

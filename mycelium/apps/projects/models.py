@@ -21,6 +21,16 @@ class Project(models.Model):
     )
     permissions = GenericRelation(ObjectPermission)
 
+    view_members = models.BooleanField(
+        default=False,
+        help_text="Authenticated members can view this project.",
+    )
+
+    view_public = models.BooleanField(
+        default=False,
+        help_text="Public (unauthenticated) users can view this project.",
+    )
+
     def __str__(self):
         return self.title
 

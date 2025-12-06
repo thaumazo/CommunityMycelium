@@ -12,9 +12,22 @@
         <div class="bg-white shadow sm:rounded-lg">
           <div class="px-4 py-5 sm:p-6">
             <div class="flex justify-between items-start">
-              <div class="space-y-2">
-                <h1 class="text-2xl font-semibold text-gray-900">{{ community.title }}</h1>
-                <p class="text-base text-gray-500">Details</p>
+              <div class="flex items-center space-x-4">
+                {% if community.picture_thumbnail %}
+                  <img src="{{ community.picture_thumbnail.url }}" alt="{{ community.title }}" class="w-24 h-24 rounded-lg object-cover" />
+                {% elif community.picture %}
+                  <img src="{{ community.picture.url }}" alt="{{ community.title }}" class="w-24 h-24 rounded-lg object-cover" />
+                {% else %}
+                  <div class="w-24 h-24 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-12 h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                {% endif %}
+                <div class="space-y-2">
+                  <h1 class="text-2xl font-semibold text-gray-900">{{ community.title }}</h1>
+                  <p class="text-base text-gray-500">Details</p>
+                </div>
               </div>
               <div class="flex items-center space-x-2">
                 {% can request.user 'change' community as check %}
@@ -25,29 +38,78 @@
               </div>
             </div>
 
-            <div class="mt-6 border-t border-gray-200">
-              <dl class="divide-y divide-gray-200">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Created by</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ community.created_by.username }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Description</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ community.description|linebreaks }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">URL</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ community.url }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Members</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for member in community.members.all %}
-                      {{ member.username }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                  </dd>
-                </div>
-              </dl>
+            <div class="mt-6">
+              <div class="tabs-container">
+                <ul class="tab-list">
+                  <li class="tab active" data-tab="details">Details</li>
+                  <li class="tab" data-tab="visibility">Visibility</li>
+                  <li class="tab" data-tab="connections">Connections</li>
+                </ul>
+              </div>
+
+              <!-- Details Tab -->
+              <div class="tab-content" id="details">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Created by</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ community.created_by.username }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Description</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ community.description|linebreaks }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">URL</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% if community.url %}
+                        <a href="{{ community.url }}" target="_blank" class="text-indigo-600 hover:underline">{{ community.url }}</a>
+                      {% else %}
+                        <span class="text-gray-400">Not provided</span>
+                      {% endif %}
+                    </dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Members</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for member in community.members.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ member.username }}</span>
+                      {% empty %}
+                        <span class="text-gray-400">None</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Visibility Tab -->
+              <div class="tab-content hidden" id="visibility">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">View Members</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ community.view_members|yesno:"Yes,No" }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">View Public</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ community.view_public|yesno:"Yes,No" }}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Connections Tab -->
+              <div class="tab-content hidden" id="connections">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Bioregions</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for bioregion in community.bioregions.all %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ bioregion.title }}</span>
+                      {% empty %}
+                        <span class="text-gray-400">None</span>
+                      {% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
             </div>
 
             <div class="mt-6 flex justify-end">

@@ -31,6 +31,8 @@ def is_permitted(user, action, obj_or_string):
     # Public access rules for bioregions
     from apps.bioregions.models import Bioregion
     from apps.challenges.models import Challenge
+    from apps.communities.models import Community
+    from apps.projects.models import Project
     
     if isinstance(obj, Bioregion) and action == "view":
         # Any authenticated user can view bioregions
@@ -45,6 +47,48 @@ def is_permitted(user, action, obj_or_string):
     # If the object is a user, and it's the current user
     if isinstance(obj, User) and obj == user:
         return True
+    
+    # Visibility rules for users
+    if isinstance(obj, User) and action == "view":
+        # Superusers can see everyone
+        if user.is_superuser:
+            return True
+        # Authenticated members can see users with view_members=True
+        if user.is_authenticated and obj.view_members:
+            return True
+        # Public users can see users with view_public=True
+        if obj.view_public:
+            return True
+    
+    # Visibility rules for communities
+    if isinstance(obj, Community) and action == "view":
+        # Creator can always see their own community
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Superusers can see all communities
+        if user.is_superuser:
+            return True
+        # Authenticated members can see communities with view_members=True
+        if user.is_authenticated and obj.view_members:
+            return True
+        # Public users can see communities with view_public=True
+        if obj.view_public:
+            return True
+    
+    # Visibility rules for projects
+    if isinstance(obj, Project) and action == "view":
+        # Creator can always see their own project
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Superusers can see all projects
+        if user.is_superuser:
+            return True
+        # Authenticated members can see projects with view_members=True
+        if user.is_authenticated and obj.view_members:
+            return True
+        # Public users can see projects with view_public=True
+        if obj.view_public:
+            return True
     
     # First, if the object is owned by the user, they can always perform the action
     if hasattr(obj, "created_by") and obj.created_by == user:
@@ -172,12 +216,15 @@ def get_permitted_objects(user, action, model_class):
     
     Returns objects the user has access to via:
     - Public access rules (bioregions, related challenges)
+    - Visibility flags (users, communities, projects with view_members/view_public)
     - Model-level permissions (group-based)
     - Model-level permissions (individual user via ModelPermission)
     - Object-level permissions (specific instances via ObjectPermission)
     """
     from apps.bioregions.models import Bioregion
     from apps.challenges.models import Challenge
+    from apps.communities.models import Community
+    from apps.projects.models import Project
     
     # Public access rules
     if model_class == Bioregion and action == "view" and user.is_authenticated:
@@ -187,6 +234,49 @@ def get_permitted_objects(user, action, model_class):
     if model_class == Challenge and action == "view" and user.is_authenticated:
         # All authenticated users can view challenges with a related bioregion
         return list(model_class.objects.filter(related_bioregion__isnull=False))
+    
+    # Visibility rules for users, communities, and projects
+    if model_class == User and action == "view":
+        if user.is_superuser:
+            # Superusers can see everyone
+            return list(model_class.objects.all())
+        elif user.is_authenticated:
+            # Authenticated users can see themselves + view_members users + view_public users
+            from django.db.models import Q
+            return list(model_class.objects.filter(
+                Q(id=user.id) | Q(view_members=True) | Q(view_public=True)
+            ).distinct())
+        else:
+            # Unauthenticated users can only see view_public users
+            return list(model_class.objects.filter(view_public=True))
+    
+    if model_class == Community and action == "view":
+        if user.is_superuser:
+            # Superusers can see all communities
+            return list(model_class.objects.all())
+        elif user.is_authenticated:
+            # Authenticated users can see their own + view_members communities + view_public communities
+            from django.db.models import Q
+            return list(model_class.objects.filter(
+                Q(created_by=user) | Q(view_members=True) | Q(view_public=True)
+            ).distinct())
+        else:
+            # Unauthenticated users can only see view_public communities
+            return list(model_class.objects.filter(view_public=True))
+    
+    if model_class == Project and action == "view":
+        if user.is_superuser:
+            # Superusers can see all projects
+            return list(model_class.objects.all())
+        elif user.is_authenticated:
+            # Authenticated users can see their own + view_members projects + view_public projects
+            from django.db.models import Q
+            return list(model_class.objects.filter(
+                Q(created_by=user) | Q(view_members=True) | Q(view_public=True)
+            ).distinct())
+        else:
+            # Unauthenticated users can only see view_public projects
+            return list(model_class.objects.filter(view_public=True))
     
     permitted_objects_by_model_permission = []
     permitted_objects_by_individual_model_permission = []

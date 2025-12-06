@@ -38,7 +38,7 @@ def community_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
-        form = CommunityForm(request.POST)
+        form = CommunityForm(request.POST, request.FILES)
         if form.is_valid():
             community = form.save(commit=False)
             community.created_by = request.user
@@ -61,7 +61,7 @@ def community_edit_view(request, pk):
     community = get_permitted_object(request.user, "change", Community, pk)
 
     if request.method == "POST":
-        form = CommunityForm(request.POST, instance=community)
+        form = CommunityForm(request.POST, request.FILES, instance=community)
         if form.is_valid():
             form.save()
             messages.success(request, "Community updated successfully!")

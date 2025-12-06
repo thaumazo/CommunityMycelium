@@ -36,7 +36,20 @@ def bioregion_detail_view(request, pk):
             from django.http import Http404
             raise Http404
     
-    return render(request, "bioregions/bioregion_detail.html", {"bioregion": bioregion})
+    # Get communities connected to this bioregion
+    from apps.communities.models import Community
+    if request.user.is_authenticated:
+        from apps.acl.utils import get_permitted_objects
+        all_communities = get_permitted_objects(request.user, "view", Community)
+        # Filter to only communities connected to this bioregion
+        communities = [c for c in all_communities if bioregion in c.bioregions.all()]
+    else:
+        communities = Community.objects.filter(bioregions=bioregion)
+    
+    return render(request, "bioregions/bioregion_detail.html", {
+        "bioregion": bioregion,
+        "communities": communities
+    })
 
 
 @login_required
