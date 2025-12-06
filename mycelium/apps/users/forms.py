@@ -154,6 +154,12 @@ class UserForm(forms.ModelForm):
         label="LinkedIn URL",
     )
 
+    picture = forms.ImageField(
+        required=False,
+        label="Profile Picture",
+        help_text="Upload a profile picture (will be automatically resized)",
+    )
+
     # NEW: optional password fields (for admin create/edit)
     password = forms.CharField(
         widget=forms.PasswordInput(),
@@ -197,7 +203,8 @@ class UserForm(forms.ModelForm):
             "user_metacrisis_facets",
             "user_maladaptives",
             "linked_in",
-            # password fields are not model fields; they’re above
+            "picture",
+            # password fields are not model fields; they're above
         ]
         widgets = {
             "username": forms.TextInput(),

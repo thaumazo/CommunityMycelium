@@ -6,3 +6,4 @@ djangorestframework-simplejwt
 whitenoise
 dj-database-url
 PyMySQL
+Pillow

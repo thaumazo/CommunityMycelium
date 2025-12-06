@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "apps.acl",
     "apps.utils",
     "apps.api",
+    # Megachart knowledge graph system
+    "apps.megachart",
 ]
 
 # Custom user model
@@ -133,7 +135,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = "/media/"
 
 if env("RUN_MODE") == "local":
-    MEDIA_ROOT = os.path.join(BASE_DIR, "/media")
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 else:
     MEDIA_ROOT = os.path.join(BASE_DIR, "../public_html/media")
 

@@ -16,7 +16,20 @@
           <!-- Header -->
           <div class="bg-amber-800 text-amber-50 px-6 py-4">
             <div class="flex justify-between items-center">
-              <h1 class="text-3xl font-bold tracking-wide">{{ user.full_name|default:user.username }}</h1>
+              <div class="flex items-center space-x-4">
+                {% if user.picture_thumbnail %}
+                  <img src="{{ user.picture_thumbnail.url }}" alt="{{ user.full_name|default:user.username }}" 
+                       class="w-16 h-16 rounded-full border-2 border-amber-200 object-cover">
+                {% elif user.picture %}
+                  <img src="{{ user.picture.url }}" alt="{{ user.full_name|default:user.username }}" 
+                       class="w-16 h-16 rounded-full border-2 border-amber-200 object-cover">
+                {% else %}
+                  <div class="w-16 h-16 rounded-full border-2 border-amber-200 bg-amber-600 flex items-center justify-center">
+                    <span class="text-2xl font-bold text-amber-50">{{ user.full_name|default:user.username|first|upper }}</span>
+                  </div>
+                {% endif %}
+                <h1 class="text-3xl font-bold tracking-wide">{{ user.full_name|default:user.username }}</h1>
+              </div>
               {% can request.user 'change' user as check %}
               {% if check %}
                 <div class="flex items-center space-x-2">

@@ -25,8 +25,10 @@ urlpatterns = [
     path("tasks/", include("apps.tasks.urls")),
     path("acl/", include("apps.acl.urls")),  # Access Control List routes
     path("pages/", include("apps.pages.urls")),  # Pages app routes
+    path("megachart/", include("apps.megachart.urls")),  # Knowledge graph system
 ]
 
-# Serve static files in development
+# Serve static and media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

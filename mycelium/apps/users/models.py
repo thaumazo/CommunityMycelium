@@ -30,6 +30,20 @@ class User(AbstractUser):
 
     linked_in = models.URLField(blank=True, null=True)
 
+    picture = models.ImageField(
+        upload_to='user_pictures/',
+        blank=True,
+        null=True,
+        help_text="Profile picture"
+    )
+    picture_thumbnail = models.ImageField(
+        upload_to='user_pictures/thumbnails/',
+        blank=True,
+        null=True,
+        editable=False,
+        help_text="Automatically generated thumbnail"
+    )
+
     # Remove first_name and last_name from the model
     first_name = None
     last_name = None

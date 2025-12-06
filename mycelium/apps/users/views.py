@@ -79,7 +79,7 @@ def user_create_view(request):
 
     if request.method == "POST":
         # ✅ was RegisterForm
-        form = UserForm(request.POST)
+        form = UserForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()  # commit=True, so M2M will save
             messages.success(request, "User created successfully.")
@@ -112,7 +112,7 @@ def user_edit_view(request, pk):
     # If the request method is POST, update the user's details
     if request.method == "POST":
         # Update the user's details
-        form = UserForm(request.POST, instance=user)
+        form = UserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, "User updated successfully.")
