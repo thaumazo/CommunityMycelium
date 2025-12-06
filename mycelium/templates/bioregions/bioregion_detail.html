@@ -85,11 +85,25 @@
                     {% for challenge in bioregion.challenges.all %}
                       <li class="py-4">
                         <div class="flex items-center justify-between">
-                          <div>
-                            <h3 class="text-sm font-medium text-indigo-600">
-                              <a href="{% url 'challenge_detail' challenge.pk %}" class="hover:underline">{{ challenge.title }}</a>
-                            </h3>
-                            <p class="text-sm text-gray-500">Level: {{ challenge.level }}</p>
+                          <div class="flex items-start space-x-3 flex-1">
+                            {% if challenge.related_facet and challenge.related_facet.image_path %}
+                              {% load image_filters %}
+                              <div class="flex-shrink-0">
+                                <img src="{% static challenge.related_facet.image_path|thumbnail %}" 
+                                     alt="{{ challenge.related_facet.title }}" 
+                                     class="w-12 h-12 object-contain"
+                                     title="{{ challenge.related_facet.title }}">
+                              </div>
+                            {% endif %}
+                            <div class="flex-1 min-w-0">
+                              <h3 class="text-sm font-medium text-indigo-600">
+                                <a href="{% url 'challenge_detail' challenge.pk %}" class="hover:underline">{{ challenge.title }}</a>
+                              </h3>
+                              <p class="text-sm text-gray-500">Level: {{ challenge.level }}</p>
+                              {% if challenge.description %}
+                                <p class="mt-1 text-sm text-gray-600 prose prose-sm max-w-none">{{ challenge.description|linebreaks }}</p>
+                              {% endif %}
+                            </div>
                           </div>
                           <div>
                             {% can request.user 'change' challenge as check %}

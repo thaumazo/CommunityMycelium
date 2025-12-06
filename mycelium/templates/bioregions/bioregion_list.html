@@ -27,7 +27,15 @@
                 <div class="flex items-start gap-4">
                   <!-- Bioregion Icon -->
                   <div class="shrink-0">
-                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/folder-open.html' %}</span>
+                    {% if bioregion.picture_thumbnail %}
+                      <img src="{{ bioregion.picture_thumbnail.url }}" alt="{{ bioregion.title }}" 
+                           class="h-10 w-10 rounded-full object-cover border-2 border-green-500">
+                    {% elif bioregion.picture %}
+                      <img src="{{ bioregion.picture.url }}" alt="{{ bioregion.title }}" 
+                           class="h-10 w-10 rounded-full object-cover border-2 border-green-500">
+                    {% else %}
+                      <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-500">{% include '_icons/folder-open.html' %}</span>
+                    {% endif %}
                   </div>
 
                   <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
