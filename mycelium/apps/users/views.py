@@ -173,16 +173,23 @@ def user_delete_view(request, pk):
     return render(request, "users/user_confirm_delete.html", {"user": user})
 
 
-@login_required
 def user_character_view(request, pk):
-    try:
-        user_to_view = get_permitted_object(request.user, "view", User, pk)
-    except PermissionDenied:
-        user_to_view = User.objects.filter(
-            pk=pk
-        ).filter(
-            Q(view_members=True) | Q(view_public=True)
-        ).first()
+    """View a user's character sheet. Public if user has view_public=True."""
+    user_to_view = None
+    
+    if request.user.is_authenticated:
+        # Authenticated users: try permission check first, then fallback to visibility flags
+        try:
+            user_to_view = get_permitted_object(request.user, "view", User, pk)
+        except (PermissionDenied, User.DoesNotExist):
+            user_to_view = User.objects.filter(
+                pk=pk
+            ).filter(
+                Q(view_members=True) | Q(view_public=True)
+            ).first()
+    else:
+        # Unauthenticated users: only see public profiles
+        user_to_view = User.objects.filter(pk=pk, view_public=True).first()
 
     if not user_to_view:
         raise PermissionDenied

@@ -3,5 +3,36 @@
 {% block content %}
   <div class="prose max-w-none mx-auto px-4 sm:px-6 lg:px-8 py-6">
     {{ content|safe }}
+    
+    {% if public_users %}
+      <div class="not-prose mt-12 pt-8 border-t border-gray-200">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-6">🌍 Public Members</h2>
+        <p class="text-base text-gray-600 mb-6">These changemakers have chosen to make their profiles visible to the public.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {% for user in public_users %}
+            <a href="{% url 'user_character' user.pk %}" class="block p-4 border border-gray-200 rounded-lg hover:border-indigo-500 hover:shadow-md transition-all">
+              <div class="flex items-center space-x-3">
+                {% if user.picture_thumbnail %}
+                  <img src="{{ user.picture_thumbnail.url }}" alt="{{ user.full_name|default:user.username }}" class="w-12 h-12 rounded-full object-cover border-2 border-gray-200" />
+                {% elif user.picture %}
+                  <img src="{{ user.picture.url }}" alt="{{ user.full_name|default:user.username }}" class="w-12 h-12 rounded-full object-cover border-2 border-gray-200" />
+                {% else %}
+                  <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center border-2 border-gray-200">
+                    <span class="text-lg font-semibold text-indigo-600">{{ user.full_name|default:user.username|first|upper }}</span>
+                  </div>
+                {% endif %}
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-base font-semibold text-gray-900 truncate">{{ user.full_name|default:user.username }}</h3>
+                  {% if user.user_location %}
+                    <p class="text-sm text-gray-500 truncate">{{ user.user_location }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
   </div>
 {% endblock %}

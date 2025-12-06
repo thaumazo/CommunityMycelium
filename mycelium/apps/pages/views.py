@@ -48,5 +48,12 @@ def public_markdown_page(request, slug):
     context = {
         'content': html_content,
     }
+    
+    # Add public users list for people page
+    if slug == 'people':
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        public_users = User.objects.filter(view_public=True).order_by('username')
+        context['public_users'] = public_users
 
     return render(request, 'pages/page.html', context)

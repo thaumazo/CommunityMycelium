@@ -34,6 +34,18 @@ def is_permitted(user, action, obj_or_string):
     from apps.communities.models import Community
     from apps.projects.models import Project
     
+    # Handle anonymous users - check public visibility rules only
+    if not user.is_authenticated:
+        # Anonymous users can only view objects with view_public=True
+        if isinstance(obj, User) and action == "view" and hasattr(obj, 'view_public'):
+            return obj.view_public
+        if isinstance(obj, Community) and action == "view" and hasattr(obj, 'view_public'):
+            return obj.view_public
+        if isinstance(obj, Project) and action == "view" and hasattr(obj, 'view_public'):
+            return obj.view_public
+        # Anonymous users cannot perform any other actions
+        return False
+    
     if isinstance(obj, Bioregion) and action == "view":
         # Any authenticated user can view bioregions
         if user.is_authenticated:
