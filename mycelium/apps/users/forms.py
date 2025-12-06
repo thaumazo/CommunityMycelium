@@ -153,6 +153,13 @@ class UserForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "w-full"}),
         label="LinkedIn URL",
     )
+    
+    bio = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"class": "w-full", "rows": 4}),
+        label="Biography",
+        help_text="Tell us about yourself",
+    )
 
     picture = forms.ImageField(
         required=False,
@@ -203,6 +210,7 @@ class UserForm(forms.ModelForm):
             "user_metacrisis_facets",
             "user_maladaptives",
             "linked_in",
+            "bio",
             "picture",
             # password fields are not model fields; they're above
         ]

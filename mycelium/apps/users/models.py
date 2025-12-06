@@ -29,6 +29,11 @@ class User(AbstractUser):
     user_maladaptives = models.ManyToManyField("maladaptives.Maladaptive", blank=True, related_name="users")
 
     linked_in = models.URLField(blank=True, null=True)
+    
+    bio = models.TextField(
+        blank=True,
+        help_text="User biography or description"
+    )
 
     picture = models.ImageField(
         upload_to='user_pictures/',

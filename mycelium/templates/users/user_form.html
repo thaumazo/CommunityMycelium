@@ -95,6 +95,22 @@
                       {% endif %}
                     </div>
 
+                    <!-- Biography -->
+                    <div>
+                      <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.bio.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.bio }}
+                      </div>
+                      {% if form.bio.help_text %}
+                        <p class="mt-1 text-sm text-gray-500">{{ form.bio.help_text }}</p>
+                      {% endif %}
+                      {% if form.bio.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.bio.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
                     <!-- Location -->
                     <div>
                       <label for="{{ form.user_location.id_for_label }}" class="block text-sm font-medium text-gray-700">

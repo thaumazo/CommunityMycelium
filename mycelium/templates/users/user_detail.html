@@ -63,6 +63,12 @@
                     <dt class="text-sm font-medium text-gray-500">Location</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.user_location|default:'Not specified' }}</dd>
                   </div>
+                  {% if user.bio %}
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm font-medium text-gray-500">Biography</dt>
+                      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 prose prose-sm">{{ user.bio|linebreaks }}</dd>
+                    </div>
+                  {% endif %}
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Invited By</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.invited_by.full_name|default:'–' }}</dd>
