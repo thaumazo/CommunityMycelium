@@ -134,11 +134,24 @@
                       {% if user.is_superuser or bioregion_user == user or user.is_authenticated and bioregion_user.view_members or not user.is_authenticated and bioregion_user.view_public %}
                         <li class="py-4">
                           <div class="flex items-center justify-between">
-                            <div>
-                              <h3 class="text-sm font-medium text-indigo-600">
-                                <a href="{% url 'user_detail' bioregion_user.pk %}" class="hover:underline">{{ bioregion_user.get_full_name }}</a>
-                              </h3>
-                              <p class="text-sm text-gray-500">Location: {{ bioregion_user.user_location }}</p>
+                            <div class="flex items-center space-x-3">
+                              {% if bioregion_user.picture_thumbnail %}
+                                <img src="{{ bioregion_user.picture_thumbnail.url }}" alt="{{ bioregion_user.get_full_name }}" 
+                                     class="w-10 h-10 rounded-full border-2 border-gray-300 object-cover flex-shrink-0">
+                              {% elif bioregion_user.picture %}
+                                <img src="{{ bioregion_user.picture.url }}" alt="{{ bioregion_user.get_full_name }}" 
+                                     class="w-10 h-10 rounded-full border-2 border-gray-300 object-cover flex-shrink-0">
+                              {% else %}
+                                <div class="w-10 h-10 rounded-full border-2 border-gray-300 bg-indigo-500 flex items-center justify-center flex-shrink-0">
+                                  <span class="text-sm font-bold text-white">{{ bioregion_user.get_full_name|first|upper }}</span>
+                                </div>
+                              {% endif %}
+                              <div>
+                                <h3 class="text-sm font-medium text-indigo-600">
+                                  <a href="{% url 'user_detail' bioregion_user.pk %}" class="hover:underline">{{ bioregion_user.get_full_name }}</a>
+                                </h3>
+                                <p class="text-sm text-gray-500">Location: {{ bioregion_user.user_location }}</p>
+                              </div>
                             </div>
                           </div>
                         </li>

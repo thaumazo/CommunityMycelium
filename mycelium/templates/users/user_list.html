@@ -27,7 +27,15 @@
                 <div class="flex items-start gap-4">
                   <!-- User Avatar -->
                   <div class="shrink-0">
-                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-500"><span class="text-lg font-medium leading-none text-white">{{ user.username|first|upper }}</span></span>
+                    {% if user.picture_thumbnail %}
+                      <img src="{{ user.picture_thumbnail.url }}" alt="{{ user.full_name|default:user.username }}" 
+                           class="h-10 w-10 rounded-full object-cover border-2 border-gray-300">
+                    {% elif user.picture %}
+                      <img src="{{ user.picture.url }}" alt="{{ user.full_name|default:user.username }}" 
+                           class="h-10 w-10 rounded-full object-cover border-2 border-gray-300">
+                    {% else %}
+                      <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-500 border-2 border-gray-300"><span class="text-lg font-medium leading-none text-white">{{ user.username|first|upper }}</span></span>
+                    {% endif %}
                   </div>
 
                   <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">
