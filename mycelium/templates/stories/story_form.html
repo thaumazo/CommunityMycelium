@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="space-y-2 mb-6">
+            {% if story %}
+              <h1 class="text-2xl font-semibold text-gray-900">{{ story.title }}</h1>
+              <h2 class="text-lg text-gray-500">Edit</h2>
+            {% else %}
+              <h1 class="text-2xl font-semibold text-gray-900">Create Story</h1>
+            {% endif %}
+          </div>
+
+          <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+              <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.title.label }}</label>
+              <div class="mt-1">
+                <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="w-full" required />
+              </div>
+              {% if form.title.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.title.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.text_content.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.text_content.label }}</label>
+              <div class="mt-1">
+                <textarea name="{{ form.text_content.html_name }}" id="{{ form.text_content.id_for_label }}" rows="8" class="w-full">{{ form.text_content.value|default:'' }}</textarea>
+              </div>
+              {% if form.text_content.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.text_content.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-4">Visibility Settings</label>
+              <div class="space-y-4">
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <input type="checkbox" name="{{ form.view_members.html_name }}" id="{{ form.view_members.id_for_label }}" {% if form.view_members.value %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                  </div>
+                  <div class="ml-3">
+                    <label for="{{ form.view_members.id_for_label }}" class="font-medium text-gray-900">
+                      {{ form.view_members.label }}
+                    </label>
+                    {% if form.view_members.help_text %}
+                      <p class="text-sm text-gray-500">{{ form.view_members.help_text }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <input type="checkbox" name="{{ form.view_public.html_name }}" id="{{ form.view_public.id_for_label }}" {% if form.view_public.value %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                  </div>
+                  <div class="ml-3">
+                    <label for="{{ form.view_public.id_for_label }}" class="font-medium text-gray-900">
+                      {{ form.view_public.label }}
+                    </label>
+                    {% if form.view_public.help_text %}
+                      <p class="text-sm text-gray-500">{{ form.view_public.help_text }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% if attach_to_type and attach_to_id %}
+              <div class="bg-blue-50 p-4 rounded-lg">
+                <p class="text-sm text-blue-700">
+                  This story will be attached to: {{ attach_to_type }}
+                </p>
+              </div>
+            {% endif %}
+
+            <div class="flex justify-end space-x-3">
+              <a href="{% if story %}{% url 'story_detail' story.pk %}{% else %}{% url 'story_list' %}{% endif %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
+              <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                {% if story %}Save Changes{% else %}Create Story{% endif %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

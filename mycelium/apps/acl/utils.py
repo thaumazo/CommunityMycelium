@@ -36,12 +36,15 @@ def is_permitted(user, action, obj_or_string):
     
     # Handle anonymous users - check public visibility rules only
     if not user.is_authenticated:
+        from apps.stories.models import Story
         # Anonymous users can only view objects with view_public=True
         if isinstance(obj, User) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
         if isinstance(obj, Community) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
         if isinstance(obj, Project) and action == "view" and hasattr(obj, 'view_public'):
+            return obj.view_public
+        if isinstance(obj, Story) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
         # Anonymous users cannot perform any other actions
         return False
@@ -99,6 +102,22 @@ def is_permitted(user, action, obj_or_string):
         if user.is_authenticated and obj.view_members:
             return True
         # Public users can see projects with view_public=True
+        if obj.view_public:
+            return True
+    
+    # Visibility rules for stories
+    from apps.stories.models import Story
+    if isinstance(obj, Story) and action == "view":
+        # Creator can always see their own story
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Superusers can see all stories
+        if user.is_superuser:
+            return True
+        # Authenticated members can see stories with view_members=True
+        if user.is_authenticated and obj.view_members:
+            return True
+        # Public users can see stories with view_public=True
         if obj.view_public:
             return True
     
@@ -288,6 +307,21 @@ def get_permitted_objects(user, action, model_class):
             ).distinct())
         else:
             # Unauthenticated users can only see view_public projects
+            return list(model_class.objects.filter(view_public=True))
+    
+    from apps.stories.models import Story
+    if model_class == Story and action == "view":
+        if user.is_superuser:
+            # Superusers can see all stories
+            return list(model_class.objects.all())
+        elif user.is_authenticated:
+            # Authenticated users can see their own + view_members stories + view_public stories
+            from django.db.models import Q
+            return list(model_class.objects.filter(
+                Q(created_by=user) | Q(view_members=True) | Q(view_public=True)
+            ).distinct())
+        else:
+            # Unauthenticated users can only see view_public stories
             return list(model_class.objects.filter(view_public=True))
     
     permitted_objects_by_model_permission = []

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-2xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <h1 class="text-2xl font-semibold text-gray-900 mb-2">Add Media</h1>
+          <p class="text-sm text-gray-500 mb-6">To: {{ story.title }}</p>
+
+          <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+              <label for="{{ form.media_type.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.media_type.label }}</label>
+              <div class="mt-1">
+                <select name="{{ form.media_type.html_name }}" id="{{ form.media_type.id_for_label }}" class="w-full" onchange="toggleMediaFields(this.value)">
+                  {% for value, label in form.media_type.field.choices %}
+                    <option value="{{ value }}" {% if form.media_type.value == value %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              {% if form.media_type.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.media_type.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div id="image-field" style="display: none;">
+              <label for="{{ form.file.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.file.label }}</label>
+              <div class="mt-1">
+                <input type="file" name="{{ form.file.html_name }}" id="{{ form.file.id_for_label }}" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+              </div>
+              <p class="mt-1 text-sm text-gray-500">Upload an image file</p>
+              {% if form.file.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.file.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div id="url-field" style="display: none;">
+              <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.url.label }}</label>
+              <div class="mt-1">
+                <input type="url" name="{{ form.url.html_name }}" id="{{ form.url.id_for_label }}" value="{{ form.url.value|default:'' }}" class="w-full" placeholder="https://www.youtube.com/watch?v=..." />
+              </div>
+              <p class="mt-1 text-sm text-gray-500">Paste a YouTube or Vimeo video URL</p>
+              {% if form.url.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.url.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.caption.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.caption.label }}</label>
+              <div class="mt-1">
+                <textarea name="{{ form.caption.html_name }}" id="{{ form.caption.id_for_label }}" rows="3" class="w-full">{{ form.caption.value|default:'' }}</textarea>
+              </div>
+              {% if form.caption.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.caption.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.order.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.order.label }}</label>
+              <div class="mt-1">
+                <input type="number" name="{{ form.order.html_name }}" id="{{ form.order.id_for_label }}" value="{{ form.order.value|default:'0' }}" class="w-full" />
+              </div>
+              <p class="mt-1 text-sm text-gray-500">Lower numbers appear first</p>
+              {% if form.order.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.order.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div class="flex justify-end space-x-3">
+              <a href="{% url 'story_detail' story.pk %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
+              <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add Media</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleMediaFields(type) {
+      const imageField = document.getElementById('image-field');
+      const urlField = document.getElementById('url-field');
+      
+      if (type === 'image') {
+        imageField.style.display = 'block';
+        urlField.style.display = 'none';
+      } else if (type === 'video_url') {
+        imageField.style.display = 'none';
+        urlField.style.display = 'block';
+      }
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const mediaTypeSelect = document.querySelector('select[name="{{ form.media_type.html_name }}"]');
+      toggleMediaFields(mediaTypeSelect.value);
+    });
+  </script>
+{% endblock %}

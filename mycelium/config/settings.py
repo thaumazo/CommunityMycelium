@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "apps.resolutions",
     "apps.tasks",
     "apps.acl",
+    "apps.stories",
     "apps.utils",
     "apps.api",
     # Megachart knowledge graph system
