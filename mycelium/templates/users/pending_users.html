@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      {% include '_components/object_nav.html' %}
+
+      <div class="max-w-4xl mx-auto">
+        {% include '_components/messages.html' %}
+
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="flex justify-between items-start mb-6">
+              <div>
+                <h1 class="text-2xl font-semibold text-gray-900">Pending User Registrations</h1>
+                <p class="mt-1 text-sm text-gray-500">Users awaiting approval to access the system</p>
+              </div>
+            </div>
+
+            {% if pending_users %}
+              <div class="space-y-4">
+                {% for user in pending_users %}
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                      <div class="flex-1">
+                        <h3 class="text-lg font-medium text-gray-900">{{ user.username }}</h3>
+                        <dl class="mt-2 space-y-1">
+                          <div class="flex">
+                            <dt class="text-sm font-medium text-gray-500 w-32">Full Name:</dt>
+                            <dd class="text-sm text-gray-900">{{ user.full_name|default:"Not provided" }}</dd>
+                          </div>
+                          <div class="flex">
+                            <dt class="text-sm font-medium text-gray-500 w-32">Email:</dt>
+                            <dd class="text-sm text-gray-900">{{ user.email }}</dd>
+                          </div>
+                          <div class="flex">
+                            <dt class="text-sm font-medium text-gray-500 w-32">Registered:</dt>
+                            <dd class="text-sm text-gray-900">{{ user.date_joined|date:"F d, Y g:i A" }}</dd>
+                          </div>
+                        </dl>
+                      </div>
+                      <div class="flex space-x-2 ml-4">
+                        <a href="{% url 'approve_user' user.pk %}" class="inline-flex items-center px-3 py-2 border border-green-600 text-sm font-medium rounded-md text-green-600 bg-white hover:bg-green-50">
+                          Approve
+                        </a>
+                        <a href="{% url 'reject_user' user.pk %}" class="inline-flex items-center px-3 py-2 border border-red-600 text-sm font-medium rounded-md text-red-600 bg-white hover:bg-red-50">
+                          Reject
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No pending registrations</h3>
+                <p class="mt-1 text-sm text-gray-500">All user registrations have been processed.</p>
+              </div>
+            {% endif %}
+
+            <div class="mt-6">
+              <a href="{% url 'user_list' %}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">← Back to Users</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

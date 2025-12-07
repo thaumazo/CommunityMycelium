@@ -30,13 +30,39 @@ def login_view(request):
 
 
 def register_view(request):
+    from django.conf import settings
+    
+    # Check registration mode
+    registration_mode = settings.REGISTRATION_MODE
+    
+    if registration_mode == "closed":
+        messages.error(request, "Self-registration is disabled. Please contact an administrator to create an account.")
+        return redirect("login")
+    
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(
-                request, "Registration successful! Please log in with your new account."
-            )
+            user = form.save(commit=False)
+            
+            # Set approval status based on registration mode
+            if registration_mode == "approval":
+                user.is_approved = False
+                user.is_active = False  # Disable login until approved
+            else:  # open mode
+                user.is_approved = True
+                user.is_active = True
+            
+            user.save()
+            form.save_m2m()
+            
+            if registration_mode == "approval":
+                messages.success(
+                    request, "Registration submitted! Your account is pending approval by an administrator."
+                )
+            else:
+                messages.success(
+                    request, "Registration successful! Please log in with your new account."
+                )
             return redirect("login")
     else:
         # ✅ was: form = UserForm()
@@ -280,3 +306,51 @@ def user_character_view(request, pk):
         "user": user_to_view,
         "story_attachments": story_attachments,
     })
+
+
+@login_required
+def pending_users_view(request):
+    """View list of users pending approval (superuser only)."""
+    if not request.user.is_superuser:
+        raise PermissionDenied
+    
+    pending_users = User.objects.filter(is_approved=False, is_active=False).order_by('-date_joined')
+    
+    return render(request, "users/pending_users.html", {
+        "pending_users": pending_users,
+    })
+
+
+@login_required
+def approve_user_view(request, pk):
+    """Approve a pending user (superuser only)."""
+    if not request.user.is_superuser:
+        raise PermissionDenied
+    
+    user = User.objects.get(pk=pk)
+    
+    if request.method == "POST":
+        user.is_approved = True
+        user.is_active = True
+        user.save()
+        messages.success(request, f"User {user.username} has been approved and can now log in.")
+        return redirect("pending_users")
+    
+    return render(request, "users/approve_user.html", {"user_to_approve": user})
+
+
+@login_required
+def reject_user_view(request, pk):
+    """Reject a pending user (superuser only)."""
+    if not request.user.is_superuser:
+        raise PermissionDenied
+    
+    user = User.objects.get(pk=pk)
+    
+    if request.method == "POST":
+        username = user.username
+        user.delete()
+        messages.success(request, f"User registration for {username} has been rejected and deleted.")
+        return redirect("pending_users")
+    
+    return render(request, "users/reject_user.html", {"user_to_reject": user})

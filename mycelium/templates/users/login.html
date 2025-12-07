@@ -52,10 +52,12 @@
         </div>
       </form>
 
-      <p class="mt-10 text-center text-sm/6 text-gray-500">
-        Not a member?
-        <a href="{% url 'register' %}" class="font-semibold text-indigo-600 hover:text-indigo-500">Create an account</a>
-      </p>
+      {% if REGISTRATION_MODE != 'closed' %}
+        <p class="mt-10 text-center text-sm/6 text-gray-500">
+          Not a member?
+          <a href="{% url 'register' %}" class="font-semibold text-indigo-600 hover:text-indigo-500">Create an account</a>
+        </p>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 {% load active_nav %}
+{% load user_tags %}
 
 <!DOCTYPE html>
 <html lang="en" class="h-full">
@@ -154,6 +155,17 @@
                 </a>
               </li>
               {% if request.user.is_superuser %}
+              <li>
+                <a href="{% url 'pending_users' %}" class="{% active_class 'pending_users' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                  {% include '_icons/users.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Pending Users</span>
+                  {% with pending_count=request.user|get_pending_users_count %}
+                    {% if pending_count > 0 %}
+                      <span class="inline-flex items-center justify-center w-5 h-5 ms-2 text-xs font-semibold text-white bg-red-500 rounded-full">{{ pending_count }}</span>
+                    {% endif %}
+                  {% endwith %}
+                </a>
+              </li>
               <li>
                 <a href="{% url 'relationship_list' %}" class="{% active_class 'relationship_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/puzzle-piece.html' %}

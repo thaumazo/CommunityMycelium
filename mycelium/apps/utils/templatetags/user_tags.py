@@ -1,6 +1,8 @@
 from django import template
 from apps.acl.utils import is_permitted
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 register = template.Library()
 
 
@@ -66,3 +68,25 @@ def youtube_embed(url):
     
     # Return original URL if no match (might be Vimeo or other)
     return url
+
+
+@register.filter
+def get_pending_users_count(user):
+    """Get count of users pending approval (for superuser badge).
+    Usage: {{ request.user|get_pending_users_count }}
+    """
+    if not user.is_superuser:
+        return 0
+    
+    return User.objects.filter(is_approved=False, is_active=False).count()
+
+
+@register.filter
+def get_pending_users_count(user):
+    """Get count of pending user registrations (superuser only).
+    Usage: {{ request.user|get_pending_users_count }}
+    """
+    if not user.is_authenticated or not user.is_superuser:
+        return 0
+    
+    return User.objects.filter(is_approved=False, is_active=False).count()

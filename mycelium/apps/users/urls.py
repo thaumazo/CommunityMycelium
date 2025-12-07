@@ -14,6 +14,10 @@ from .views import (
     register_view,
     # Character
     user_character_view,
+    # Approval
+    pending_users_view,
+    approve_user_view,
+    reject_user_view,
 )
 
 urlpatterns = [
@@ -31,4 +35,7 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("register/", register_view, name="register"),
     path("<int:pk>/character/", user_character_view, name="user_character"),
+    path("pending/", pending_users_view, name="pending_users"),
+    path("<int:pk>/approve/", approve_user_view, name="approve_user"),
+    path("<int:pk>/reject/", reject_user_view, name="reject_user"),
 ]

@@ -90,6 +90,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "config.context_processors.site_settings",
+                "apps.users.context_processors.registration_mode",
             ],
         },
     },
@@ -183,3 +184,7 @@ SIMPLE_JWT = {
 
 # Add URL_OVERRIDE setting for local testing
 URL_OVERRIDE = env("URL_OVERRIDE", default=None)
+
+# Registration mode settings
+# Options: 'open' (anyone can sign up), 'approval' (sign up requires approval), 'closed' (only admins can create users)
+REGISTRATION_MODE = env("REGISTRATION_MODE", default="open")

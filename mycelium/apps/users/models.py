@@ -71,3 +71,8 @@ class User(AbstractUser):
         default=False,
         help_text="Indicates if the user can view public content.",
     )
+
+    is_approved = models.BooleanField(
+        default=True,
+        help_text="Indicates if the user has been approved by a superuser.",
+    )
