@@ -33,12 +33,44 @@ def story_detail_view(request, pk):
 @login_required
 def story_create_view(request):
     """Create a new story."""
-    if not is_permitted(request.user, "add", "stories.story"):
-        raise PermissionDenied
+    # Authenticated users can always create stories (the question is whether they can attach them)
     
     # Check if we're attaching to a specific object
     attach_to_type = request.GET.get('attach_to_type')
     attach_to_id = request.GET.get('attach_to_id')
+    
+    # If attaching to an object, verify the user has permission to change that object
+    attachment_target = None
+    if attach_to_type and attach_to_id:
+        try:
+            app_label, model_name = attach_to_type.split('.')
+            content_type = ContentType.objects.get(
+                app_label=app_label,
+                model=model_name
+            )
+            model_class = content_type.model_class()
+            attachment_target = model_class.objects.get(pk=attach_to_id)
+            
+            # Check if user has permission to change the attachment target
+            if not is_permitted(request.user, "change", attachment_target):
+                messages.error(request, "You don't have permission to attach stories to this object.")
+                raise PermissionDenied
+        except (ContentType.DoesNotExist, model_class.DoesNotExist) as e:
+            messages.error(request, f"Attachment target not found: {e}")
+            raise PermissionDenied
+        except ValueError as e:
+            messages.error(request, f"Invalid attachment type format: {e}")
+            raise PermissionDenied
+        except PermissionDenied:
+            # Re-raise permission denied without wrapping
+            raise
+        except Exception as e:
+            # Log unexpected errors but don't expose details to user
+            print(f"Unexpected error in story_create_view: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
+            messages.error(request, "An error occurred while processing the attachment target.")
+            raise PermissionDenied
     
     if request.method == "POST":
         form = StoryForm(request.POST)
@@ -48,17 +80,13 @@ def story_create_view(request):
             story.save()
             
             # If attaching to a specific object, create the attachment
-            if attach_to_type and attach_to_id:
+            if attachment_target:
                 try:
-                    app_label, model_name = attach_to_type.split('.')
-                    content_type = ContentType.objects.get(
-                        app_label=app_label,
-                        model=model_name
-                    )
+                    content_type = ContentType.objects.get_for_model(attachment_target)
                     StoryAttachment.objects.create(
                         story=story,
                         content_type=content_type,
-                        object_id=attach_to_id
+                        object_id=attachment_target.pk
                     )
                 except Exception as e:
                     print(f"Error creating attachment: {e}")

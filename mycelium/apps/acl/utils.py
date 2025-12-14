@@ -121,6 +121,20 @@ def is_permitted(user, action, obj_or_string):
         if obj.view_public:
             return True
     
+    # ACL rules for through models (user-specific relationships)
+    from apps.socialroles.models import UserSocialrole
+    from apps.metacrisis_facets.models import UserMetacrisisFacet
+    from apps.maladaptives.models import UserMaladaptive
+    
+    # Users can change their own user-specific relationship instances
+    if isinstance(obj, (UserSocialrole, UserMetacrisisFacet, UserMaladaptive)):
+        # User owns this relationship
+        if hasattr(obj, "user") and obj.user == user:
+            return True
+        # Superusers can change any relationship
+        if user.is_superuser:
+            return True
+    
     # First, if the object is owned by the user, they can always perform the action
     if hasattr(obj, "created_by") and obj.created_by == user:
         return True

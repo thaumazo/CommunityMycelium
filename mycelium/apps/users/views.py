@@ -203,6 +203,9 @@ def user_character_view(request, pk):
     """View a user's character sheet. Public if user has view_public=True."""
     from apps.stories.models import Story, StoryAttachment
     from django.contrib.contenttypes.models import ContentType
+    from apps.socialroles.models import UserSocialrole
+    from apps.metacrisis_facets.models import UserMetacrisisFacet
+    from apps.maladaptives.models import UserMaladaptive
     
     user_to_view = None
     
@@ -223,24 +226,17 @@ def user_character_view(request, pk):
     if not user_to_view:
         raise PermissionDenied
 
+    # Get through model instances (user-specific relationships)
+    user_socialroles = UserSocialrole.objects.filter(user=user_to_view).select_related('socialrole')
+    user_metacrisis_facets = UserMetacrisisFacet.objects.filter(user=user_to_view).select_related('metacrisis_facet')
+    user_maladaptives = UserMaladaptive.objects.filter(user=user_to_view).select_related('maladaptive')
+    
     # Get stories attached to this user's character elements
     story_attachments = {}
     
-    # Get all facets, roles, and maladaptives for this user
-    facets = user_to_view.user_metacrisis_facets.all()
-    roles = user_to_view.user_socialroles.all()
-    maladaptives = user_to_view.user_maladaptives.all()
-    
-    # For each element, get attached stories that user can view
-    for facet in facets:
-        ct = ContentType.objects.get_for_model(facet)
-        attachments = StoryAttachment.objects.filter(
-            content_type=ct,
-            object_id=facet.id
-        ).select_related('story', 'story__created_by')
-        
-        # Filter by visibility
-        visible_stories = []
+    # Helper function to filter stories by visibility
+    def get_visible_attachments(attachments):
+        visible = []
         for attachment in attachments:
             story = attachment.story
             if request.user.is_authenticated:
@@ -248,63 +244,55 @@ def user_character_view(request, pk):
                     story.view_members or 
                     story.view_public or 
                     request.user.is_superuser):
-                    visible_stories.append(attachment)
+                    visible.append(attachment)
             else:
                 if story.view_public:
-                    visible_stories.append(attachment)
-        
-        if visible_stories:
-            story_attachments[f'metacrisis_facet_{facet.id}'] = visible_stories
+                    visible.append(attachment)
+        return visible
     
-    for role in roles:
-        ct = ContentType.objects.get_for_model(role)
+    # Get stories for social roles (attached to UserSocialrole instances)
+    for user_socialrole in user_socialroles:
+        ct = ContentType.objects.get_for_model(user_socialrole)
         attachments = StoryAttachment.objects.filter(
             content_type=ct,
-            object_id=role.id
+            object_id=user_socialrole.id
         ).select_related('story', 'story__created_by')
         
-        visible_stories = []
-        for attachment in attachments:
-            story = attachment.story
-            if request.user.is_authenticated:
-                if (story.created_by == request.user or 
-                    story.view_members or 
-                    story.view_public or 
-                    request.user.is_superuser):
-                    visible_stories.append(attachment)
-            else:
-                if story.view_public:
-                    visible_stories.append(attachment)
-        
+        visible_stories = get_visible_attachments(attachments)
         if visible_stories:
-            story_attachments[f'socialrole_{role.id}'] = visible_stories
+            # Key by socialrole id for template compatibility
+            story_attachments[f'socialrole_{user_socialrole.socialrole.id}'] = visible_stories
     
-    for maladaptive in maladaptives:
-        ct = ContentType.objects.get_for_model(maladaptive)
+    # Get stories for metacrisis facets (attached to UserMetacrisisFacet instances)
+    for user_facet in user_metacrisis_facets:
+        ct = ContentType.objects.get_for_model(user_facet)
         attachments = StoryAttachment.objects.filter(
             content_type=ct,
-            object_id=maladaptive.id
+            object_id=user_facet.id
         ).select_related('story', 'story__created_by')
         
-        visible_stories = []
-        for attachment in attachments:
-            story = attachment.story
-            if request.user.is_authenticated:
-                if (story.created_by == request.user or 
-                    story.view_members or 
-                    story.view_public or 
-                    request.user.is_superuser):
-                    visible_stories.append(attachment)
-            else:
-                if story.view_public:
-                    visible_stories.append(attachment)
-        
+        visible_stories = get_visible_attachments(attachments)
         if visible_stories:
-            story_attachments[f'maladaptive_{maladaptive.id}'] = visible_stories
+            story_attachments[f'metacrisis_facet_{user_facet.metacrisis_facet.id}'] = visible_stories
+    
+    # Get stories for maladaptives (attached to UserMaladaptive instances)
+    for user_maladaptive in user_maladaptives:
+        ct = ContentType.objects.get_for_model(user_maladaptive)
+        attachments = StoryAttachment.objects.filter(
+            content_type=ct,
+            object_id=user_maladaptive.id
+        ).select_related('story', 'story__created_by')
+        
+        visible_stories = get_visible_attachments(attachments)
+        if visible_stories:
+            story_attachments[f'maladaptive_{user_maladaptive.maladaptive.id}'] = visible_stories
 
     return render(request, "users/user_character.html", {
         "user": user_to_view,
         "story_attachments": story_attachments,
+        "user_socialroles": user_socialroles,
+        "user_metacrisis_facets": user_metacrisis_facets,
+        "user_maladaptives": user_maladaptives,
     })
 
 
