@@ -7,3 +7,6 @@ whitenoise
 dj-database-url
 PyMySQL
 Pillow
+google-auth-oauthlib
+google-api-python-client
+cryptography

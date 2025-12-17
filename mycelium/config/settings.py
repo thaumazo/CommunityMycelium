@@ -188,3 +188,8 @@ URL_OVERRIDE = env("URL_OVERRIDE", default=None)
 # Registration mode settings
 # Options: 'open' (anyone can sign up), 'approval' (sign up requires approval), 'closed' (only admins can create users)
 REGISTRATION_MODE = env("REGISTRATION_MODE", default="open")
+
+# Google OAuth settings
+GOOGLE_OAUTH_CLIENT_ID = env("GOOGLE_OAUTH_CLIENT_ID", default="")
+GOOGLE_OAUTH_CLIENT_SECRET = env("GOOGLE_OAUTH_CLIENT_SECRET", default="")
+GOOGLE_OAUTH_ENCRYPTION_KEY = env("GOOGLE_OAUTH_ENCRYPTION_KEY", default="")

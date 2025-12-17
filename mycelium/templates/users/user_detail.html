@@ -111,6 +111,44 @@
               <!-- Connections Tab -->
               <div class="tab-content hidden" id="connections">
                 <dl class="divide-y divide-gray-200">
+                  <!-- Google Integration -->
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Google Integration</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% if user.google_auth %}
+                        <div class="flex items-center space-x-2">
+                          <svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                          </svg>
+                          <span class="text-green-700 font-medium">Connected</span>
+                          <span class="text-gray-500 text-xs">(Drive & YouTube access)</span>
+                        </div>
+                        {% can request.user 'change' user as check %}
+                        {% if check %}
+                          <form method="post" action="{% url 'google_auth_disconnect' %}" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit" class="text-xs text-red-600 hover:text-red-800 underline">
+                              Disconnect Google Account
+                            </button>
+                          </form>
+                        {% endif %}
+                      {% else %}
+                        <div class="flex items-center space-x-2">
+                          <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                          </svg>
+                          <span class="text-gray-500">Not connected</span>
+                        </div>
+                        {% can request.user 'change' user as check %}
+                        {% if check %}
+                          <a href="{% url 'google_auth_start' %}" class="mt-2 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-indigo-600 hover:bg-indigo-700">
+                            Connect Google Account
+                          </a>
+                        {% endif %}
+                      {% endif %}
+                    </dd>
+                  </div>
+                  
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Bioregions</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">

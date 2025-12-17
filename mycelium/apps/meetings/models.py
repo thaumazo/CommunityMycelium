@@ -18,6 +18,16 @@ class Meeting(models.Model):
         help_text="Users who are attending this meeting"
     )
     url = models.TextField(blank=True, null=True)
+    youtube_url = models.URLField(
+        blank=True, null=True, help_text="YouTube video URL for this meeting"
+    )
+    transcript_gdrive_url = models.URLField(
+        blank=True, null=True, help_text="Google Drive URL for meeting transcript"
+    )
+    transcript_gdrive_folder_id = models.CharField(
+        max_length=255, blank=True, null=True,
+        help_text="Google Drive folder ID containing meeting transcripts"
+    )
     transcript = models.TextField(
         blank=True, null=True, help_text="Optional transcript of the meeting"
     )

@@ -91,3 +91,35 @@ class User(AbstractUser):
         default=True,
         help_text="Indicates if the user has been approved by a superuser.",
     )
+
+
+class UserGoogleAuth(models.Model):
+    """Store Google OAuth credentials for a user."""
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="google_auth"
+    )
+    access_token = models.TextField(
+        help_text="Encrypted Google OAuth access token"
+    )
+    refresh_token = models.TextField(
+        blank=True, null=True,
+        help_text="Encrypted Google OAuth refresh token"
+    )
+    token_expiry = models.DateTimeField(
+        blank=True, null=True,
+        help_text="When the access token expires"
+    )
+    scopes = models.TextField(
+        help_text="Space-separated list of granted OAuth scopes"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Google Auth for {self.user.username}"
+
+    class Meta:
+        verbose_name = "User Google Authentication"
+        verbose_name_plural = "User Google Authentications"

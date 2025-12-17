@@ -19,6 +19,12 @@ from .views import (
     approve_user_view,
     reject_user_view,
 )
+from .views.google_auth import (
+    google_auth_start,
+    google_auth_callback,
+    google_auth_disconnect,
+    google_drive_browser,
+)
 
 urlpatterns = [
     path("", user_list_view, name="user_list"),
@@ -38,4 +44,9 @@ urlpatterns = [
     path("pending/", pending_users_view, name="pending_users"),
     path("<int:pk>/approve/", approve_user_view, name="approve_user"),
     path("<int:pk>/reject/", reject_user_view, name="reject_user"),
+    # Google OAuth
+    path("google/auth/start/", google_auth_start, name="google_auth_start"),
+    path("google/auth/callback/", google_auth_callback, name="google_auth_callback"),
+    path("google/auth/disconnect/", google_auth_disconnect, name="google_auth_disconnect"),
+    path("google/drive/browse/", google_drive_browser, name="google_drive_browser"),
 ]

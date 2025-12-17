@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from .forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
+from ..forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from apps.utils import dump
 from apps.utils.pagination import paginate_queryset
