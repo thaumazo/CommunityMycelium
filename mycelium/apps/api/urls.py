@@ -7,11 +7,23 @@ from .views import (
     api_logout,
     api_user_me,
     UserViewSet,
+    BioregionViewSet,
+    ChallengeViewSet,
+    CommunityViewSet,
+    ProjectViewSet,
+    TaskViewSet,
+    StoryViewSet,
 )
 
 # Create a router for viewsets
 router = DefaultRouter()
 router.register(r"users", UserViewSet, basename="user")
+router.register(r"bioregions", BioregionViewSet, basename="bioregion")
+router.register(r"challenges", ChallengeViewSet, basename="challenge")
+router.register(r"communities", CommunityViewSet, basename="community")
+router.register(r"projects", ProjectViewSet, basename="project")
+router.register(r"tasks", TaskViewSet, basename="task")
+router.register(r"stories", StoryViewSet, basename="story")
 
 urlpatterns = [
     # Authentication endpoints

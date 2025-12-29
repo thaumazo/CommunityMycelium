@@ -1,7 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from apps.bioregions.models import Bioregion
+from apps.challenges.models import Challenge
 from apps.communities.models import Community
+from apps.projects.models import Project
+from apps.tasks.models import Task
+from apps.stories.models import Story
 from apps.relationships.models import Relationship
 from apps.socialroles.models import Socialrole
 from apps.metacrisis_facets.models import Metacrisis_facet
@@ -118,5 +122,282 @@ class UserDetailSerializer(UserSerializer):
                 "id": obj.invited_by.id,
                 "username": obj.invited_by.username,
                 "full_name": obj.invited_by.full_name,
+            }
+        return None
+
+class BioregionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Bioregion model.
+    """
+    created_by_detail = serializers.SerializerMethodField()
+    parent_region_detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Bioregion
+        fields = [
+            "id",
+            "title",
+            "description",
+            "parent_region",
+            "parent_region_detail",
+            "picture",
+            "picture_thumbnail",
+            "created_by",
+            "created_by_detail",
+        ]
+        read_only_fields = ["id", "picture_thumbnail"]
+
+    def get_created_by_detail(self, obj):
+        if obj.created_by:
+            return {
+                "id": obj.created_by.id,
+                "username": obj.created_by.username,
+                "full_name": obj.created_by.full_name,
+            }
+        return None
+
+    def get_parent_region_detail(self, obj):
+        if obj.parent_region:
+            return {
+                "id": obj.parent_region.id,
+                "title": obj.parent_region.title,
+            }
+        return None
+
+
+class CommunitySerializer(serializers.ModelSerializer):
+    """
+    Serializer for Community model.
+    """
+    created_by_detail = serializers.SerializerMethodField()
+    members_detail = serializers.SerializerMethodField()
+    bioregions_detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Community
+        fields = [
+            "id",
+            "title",
+            "description",
+            "members",
+            "members_detail",
+            "bioregions",
+            "bioregions_detail",
+            "url",
+            "picture",
+            "picture_thumbnail",
+            "created_by",
+            "created_by_detail",
+            "view_members",
+            "view_public",
+        ]
+        read_only_fields = ["id", "picture_thumbnail"]
+
+    def get_created_by_detail(self, obj):
+        if obj.created_by:
+            return {
+                "id": obj.created_by.id,
+                "username": obj.created_by.username,
+                "full_name": obj.created_by.full_name,
+            }
+        return None
+
+    def get_members_detail(self, obj):
+        return [
+            {
+                "id": m.id,
+                "username": m.username,
+                "full_name": m.full_name,
+            }
+            for m in obj.members.all()
+        ]
+
+    def get_bioregions_detail(self, obj):
+        return [
+            {
+                "id": b.id,
+                "title": b.title,
+            }
+            for b in obj.bioregions.all()
+        ]
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Project model.
+    """
+    created_by_detail = serializers.SerializerMethodField()
+    members_detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Project
+        fields = [
+            "id",
+            "title",
+            "description",
+            "members",
+            "members_detail",
+            "url",
+            "created_by",
+            "created_by_detail",
+            "view_members",
+            "view_public",
+        ]
+        read_only_fields = ["id"]
+
+    def get_created_by_detail(self, obj):
+        if obj.created_by:
+            return {
+                "id": obj.created_by.id,
+                "username": obj.created_by.username,
+                "full_name": obj.created_by.full_name,
+            }
+        return None
+
+    def get_members_detail(self, obj):
+        return [
+            {
+                "id": m.id,
+                "username": m.username,
+                "full_name": m.full_name,
+            }
+            for m in obj.members.all()
+        ]
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Task model.
+    """
+    created_by_detail = serializers.SerializerMethodField()
+    assigned_to_detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Task
+        fields = [
+            "id",
+            "title",
+            "due_date",
+            "description",
+            "status",
+            "created_by",
+            "created_by_detail",
+            "assigned_to",
+            "assigned_to_detail",
+        ]
+        read_only_fields = ["id"]
+
+    def get_created_by_detail(self, obj):
+        if obj.created_by:
+            return {
+                "id": obj.created_by.id,
+                "username": obj.created_by.username,
+                "full_name": obj.created_by.full_name,
+            }
+        return None
+
+    def get_assigned_to_detail(self, obj):
+        return [
+            {
+                "id": u.id,
+                "username": u.username,
+                "full_name": u.full_name,
+            }
+            for u in obj.assigned_to.all()
+        ]
+
+
+class StorySerializer(serializers.ModelSerializer):
+    """
+    Serializer for Story model.
+    """
+    created_by_detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Story
+        fields = [
+            "id",
+            "title",
+            "text_content",
+            "created_by",
+            "created_by_detail",
+            "view_members",
+            "view_public",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def get_created_by_detail(self, obj):
+        if obj.created_by:
+            return {
+                "id": obj.created_by.id,
+                "username": obj.created_by.username,
+                "full_name": obj.created_by.full_name,
+            }
+        return None
+
+
+
+class ChallengeSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Challenge model.
+    """
+    created_by_detail = serializers.SerializerMethodField()
+    related_bioregion_detail = serializers.SerializerMethodField()
+    related_facet_detail = serializers.SerializerMethodField()
+    parent_region_detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Challenge
+        fields = [
+            "id",
+            "title",
+            "description",
+            "parent_region",
+            "parent_region_detail",
+            "related_facet",
+            "related_facet_detail",
+            "related_bioregion",
+            "related_bioregion_detail",
+            "level",
+            "location",
+            "latitude",
+            "longitude",
+            "created_by",
+            "created_by_detail",
+        ]
+        read_only_fields = ["id"]
+
+    def get_created_by_detail(self, obj):
+        if obj.created_by:
+            return {
+                "id": obj.created_by.id,
+                "username": obj.created_by.username,
+                "full_name": obj.created_by.full_name,
+            }
+        return None
+
+    def get_related_bioregion_detail(self, obj):
+        if obj.related_bioregion:
+            return {
+                "id": obj.related_bioregion.id,
+                "title": obj.related_bioregion.title,
+            }
+        return None
+
+    def get_related_facet_detail(self, obj):
+        if obj.related_facet:
+            return {
+                "id": obj.related_facet.id,
+                "name": obj.related_facet.title,
+            }
+        return None
+
+    def get_parent_region_detail(self, obj):
+        if obj.parent_region:
+            return {
+                "id": obj.parent_region.id,
+                "title": obj.parent_region.title,
             }
         return None
