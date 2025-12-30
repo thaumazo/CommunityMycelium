@@ -11,7 +11,7 @@ class BioregionForm(forms.ModelForm):
     
     class Meta:
         model = Bioregion
-        fields = ["title", "description", "parent_region", "picture"]
+        fields = ["title", "description", "parent_region", "picture", "location", "latitude", "longitude", "radius_km"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
         }

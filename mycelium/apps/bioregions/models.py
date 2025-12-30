@@ -32,6 +32,30 @@ class Bioregion(models.Model):
         help_text="Automatically generated thumbnail"
     )
 
+    location = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Location or address of this bioregion"
+    )
+    latitude = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text="Latitude coordinate"
+    )
+    longitude = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text="Longitude coordinate"
+    )
+    radius_km = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="Radius of the bioregion in kilometers"
+    )
+
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="bioregions"
     )

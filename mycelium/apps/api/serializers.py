@@ -142,6 +142,10 @@ class BioregionSerializer(serializers.ModelSerializer):
             "parent_region_detail",
             "picture",
             "picture_thumbnail",
+            "location",
+            "latitude",
+            "longitude",
+            "radius_km",
             "created_by",
             "created_by_detail",
         ]

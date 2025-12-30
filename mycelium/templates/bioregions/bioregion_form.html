@@ -41,6 +41,16 @@
               </div>
 
               <div>
+                <label for="{{ form.parent_region.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.parent_region.label }}</label>
+                <div class="mt-1">
+                  {{ form.parent_region }}
+                </div>
+                {% if form.parent_region.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.parent_region.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
                 <label for="{{ form.picture.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.picture.label }}</label>
                 {% if bioregion.picture_thumbnail %}
                   <div class="mt-2 mb-2">
@@ -56,6 +66,51 @@
                 {% endif %}
                 {% if form.picture.errors %}
                   <div class="mt-1 text-sm text-red-600">{{ form.picture.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.location.label }}</label>
+                <div class="mt-1">
+                  <input type="text" name="{{ form.location.html_name }}" id="{{ form.location.id_for_label }}" value="{{ form.location.value|default:'' }}" class="w-full" />
+                </div>
+                {% if form.location.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.location.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <label for="{{ form.latitude.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.latitude.label }}</label>
+                  <div class="mt-1">
+                    <input type="text" name="{{ form.latitude.html_name }}" id="{{ form.latitude.id_for_label }}" value="{{ form.latitude.value|default:'' }}" class="w-full" />
+                  </div>
+                  {% if form.latitude.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.latitude.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
+
+                <div>
+                  <label for="{{ form.longitude.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.longitude.label }}</label>
+                  <div class="mt-1">
+                    <input type="text" name="{{ form.longitude.html_name }}" id="{{ form.longitude.id_for_label }}" value="{{ form.longitude.value|default:'' }}" class="w-full" />
+                  </div>
+                  {% if form.longitude.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.longitude.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div>
+                <label for="{{ form.radius_km.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.radius_km.label }}</label>
+                <div class="mt-1">
+                  <input type="number" step="0.01" name="{{ form.radius_km.html_name }}" id="{{ form.radius_km.id_for_label }}" value="{{ form.radius_km.value|default:'' }}" class="w-full" />
+                </div>
+                {% if form.radius_km.help_text %}
+                  <p class="text-xs text-gray-500 mt-1">{{ form.radius_km.help_text }}</p>
+                {% endif %}
+                {% if form.radius_km.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.radius_km.errors|join:', ' }}</div>
                 {% endif %}
               </div>
 
