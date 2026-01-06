@@ -37,15 +37,15 @@
             
             {% if request.get_host == 'metachrysalis.org' or URL_OVERRIDE == 'metachrysalis.org' %}
               {# Metachrysalis-specific links #}
-              <a href="/pages/about-metachrysalis" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">About</a>
+              <a href="/pages/people" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">People</a>
+              <a href="/pages/communities" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Communities</a>
+              <a href="/pages/projects" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+
             {% elif request.get_host == 'fraserlowland.org' or URL_OVERRIDE == 'fraserlowland.org' %}
               {# Fraser Lowland-specific links #}
               <a href="/pages/localism" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Localism</a>
             {% endif %}
             
-            <a href="/pages/people" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">People</a>
-            <a href="/pages/communities" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Communities</a>
-            <a href="/pages/projects" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Projects</a>
 
             {% if request.user.is_authenticated %}
               <div data-module="UserMenu">
