@@ -1,37 +1,91 @@
-# Join Us For A 3 Month Adventure #
-We are hosting a 3 month pilot project, where nominees and applicants will be invited to join a community with in-person gatherings, online workshops, a discord and a range of quests designed to help each emergent leader and changemaker who participates gather more momentum and support for their work. 8 Judges will help choose up to 32 members to  participate in several in-person intensives designed to build further support and capacity, and up to 8 of those people will receive $2500 to work on a month long project of their own design. 
+# Join Us for a 3-Month Adventure
 
-As part of the community, all participants will have opportunities to do the following:
+We’re hosting a **three-month pilot** that brings together emergent leaders and changemakers from across the Fraser Lowland.
 
-- Building a "Character Sheet" that tells who they are as a changemaker
+Nominees and applicants will be invited into a shared community with:
 
-- Participating in "Party Building", opportunities to meet other changemakers and find potential collaborators or supports for their work
+- In-person gatherings
+- Online workshops
+- A Discord space for connection
+- Gameful “quests” designed to help participants build momentum and support for their work
 
-- "Mapping", where we analyze the Fraser Lowland through the lens of 8 facets of the Metacrisis, learning about challenges & opportunities that are part of our region.
+Eight domain judges will help select **up to 32 participants** to take part in deeper, in-person intensives focused on collaboration and capacity-building. From this group, **up to 8 people will receive $2,500** to support a one-month project of their own design. 
 
-- Project brainstorming, where we work together to help flesh out potential game "moves" - real world projects that we then carry out
+Thanks to the generous support of Thaumazo's donors and the Localism Fund, these funds will be provided via Ethereum.
 
-- Making "moves" in the game, carrying out projects alone or with others that help build a stronger, more equitable region.
+---
 
-- "Celebration", where we share the stories and documentation from our moves
+## What Participation Looks Like
 
-- Quests, workshops and other experiences designed to connect & deepen our work as changemakers and our understanding of a Bioregional approach, Regenerative work, and the Metacrisis as an important lens.
+As part of the community, participants will have opportunities to:
 
+- **Create a Character Sheet**  
+  Share who you are as a changemaker—your story, values, skills, and lived experience.
 
-Here's our timeline:
+- **Build a Party**  
+  Meet other changemakers, find collaborators, and discover sources of mutual support.
 
-### January: Inviting Changemakers ###
-Throughout January we're accepting nominations and applications for changemakers across 8 domains working to make things better. All accepted applicants will have the opportunity to join a community dedicated to supporting the work of emergent leaders working on Regeneration, Resilience and Relief work across the Fraser Lowland. 
+- **Map the Region**  
+  Explore the Fraser Lowland through eight facets of the Metacrisis, identifying shared challenges and opportunities.
 
-### February: Building Community, Playing Metachrysalis ###
-By the start of February, 8 judges (one for each "Metacrisis" domain) will be helping choose a total of 32 people to work more deeply together to explore the challenges and opportunities in our region, and how their work intersects. They will review the character sheets and proposed projects of participants wishing to engage in this deeper invitation.
+- **Brainstorm Projects**  
+  Develop ideas for meaningful “moves”—real-world actions that respond to local needs.
 
-That group of 32 will participate in several in-person Metachrysalis sessions, then work together to choose 6-8 members to each receive $2500 in funding to "make a move" - a month-long initiative of their own design that helps make our land, people, and systems stronger, more transparent, and more equitable.
+- **Make Moves**  
+  Carry out projects individually or together that help strengthen our land, communities, and systems.
 
-### March: Doing Projects and Sharing Stories ###
-Throughout March those members will have support in running their projects, and will share back the details of what they've done, how, and the stories of impact their work has had.
+- **Celebrate and Reflect**  
+  Share stories, documentation, and learnings from what you’ve done.
 
-At the end of March funded members will share presentations about their project. 
+- **Join Quests and Workshops**  
+  Participate in experiences designed to deepen connection, skill-building, and understanding of bioregional, regenerative, and resilience-focused work.
 
-### Beyond March: Growing the Community ###
-**After March** the community will continue to grow, building support for the people involved and their work. 
+---
+
+## Timeline
+
+### January — Inviting Changemakers
+Throughout January, we’ll accept **nominations and applications** from people working across eight domains to make life better in the Fraser Lowland.
+
+All accepted applicants are invited into the broader community space, focused on supporting emergent leaders engaged in **regeneration, resilience, and relief** work. You'll be introduced both to other participants and to mentors, judges and other members of the Metachrysalis community. 
+
+Thanks to a partnership with the **Design School for Regenerating Earth**, you'll also be invited into their Metachrysalis Community Space, with a chance to connect with Bioregional Regenerators from around the world.
+
+---
+
+### February — Building Community & Playing Metachrysalis
+By early February, eight judges (one for each Metacrisis domain) will help select **32 participants** to engage more deeply.
+
+This group will:
+
+- Take part in in-person Metachrysalis sessions
+- Explore how their work intersects across domains
+- Review character sheets and proposed projects together
+
+Using a **sociocratic decision-making process**, the group will then select **6–8 participants** to each receive **$2,500** to support a one-month project—an intentional “move” designed to strengthen our region.
+
+---
+
+### March — Doing Projects & Sharing Stories
+Throughout March, funded participants will receive support as they carry out their projects. 
+
+They’ll document:
+
+- What they did
+- How they did it
+- What changed as a result
+
+At the end of the month, funded participants will share presentations reflecting on their work and its impact.
+
+NOTE: Other participants also wanting to do a March-long project will also receive logistical and promotional support.
+
+---
+
+### Beyond March — Growing the Community
+After March, the community continues.
+
+Connections, collaborations, and mutual support will keep growing—supporting both the people involved and the work they’re doing across the Fraser Lowland.
+We're hoping to build regional support for this work, including more funds to flow towards additional members of the community.
+
+## Apply And/Or Nominate ##
+You can apply yourself, or an emergent leader or changemaker you know <a href="https://docs.google.com/forms/d/e/1FAIpQLSfynUm56nDRB5nyriZ7Avktso_YlgXh-0ttFxZC2C8UYJJihw/viewform?usp=dialog" target="_blank">here</a>
