@@ -1,20 +1,19 @@
-# What Is the Metachrysalis Changemaker Community?
+# What is Metachrysalis?
 
-Metachrysalis is a **community of practice** for people doing meaningful, place-based work in the Fraser Lowland.
+Metachrysalis helps local changemakers and emergent leaders (often those not funded and backed by traditional organizations) come together, share their stories, and do the work of helping their regions thrive.
 
-We focus on people who:
-- Are already taking action
-- Often work outside formal institutions
-- Are strengthening community, resilience, and regeneration in practical ways
+On the surface it sometimes looks like a game. In reality, it's a combination of processes, tools, and a growing community of people focused on "Bioregional Regeneration".
 
-Rather than asking people to compete for funding, we **bring them into relationship**—with each other, with shared challenges, and with the place they live.
+It includes a set of elements (sometimes used as Cards) to facilitate discussion and organization around:
 
-### What we’re building
-- A connected community of changemakers across domains
-- A shared language for understanding complex challenges
-- Practical support for projects ready to move forward
-- Long-term relationships that outlast the funding cycle
+- The Metacrisis
+- The roles and ways that different changemakers work
+- 8 types of important resources (the "Permaculture Capitals") we work to increase equitable access to
+- Opportunities and Challenges in each region Metachrysalis is being used.
 
-This is not a pitch competition.
+These elements are used to make "Character Sheets" helping participants understand who each other are and what their areas of focus and skill are, to build supportive community, and to bring forward new projects and collaborations and share the stories of what was done and how.
 
-It’s an invitation into a **shared experiment in collective care, courage, and coordination**.
+While the Localism project is only running from January to March, it's just the start of a deeper, long-term community being brought together.
+
+If you are in the Fraser Lowland or want to support the land and people of this area, you're welcome to apply and participate here. If you're interested in Metachrysalis but focused on a different region, you may want to visit Metachrysalis.org.
+
