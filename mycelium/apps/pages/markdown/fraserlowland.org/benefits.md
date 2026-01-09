@@ -10,20 +10,6 @@ Metachrysalis is designed to nourish *people*, not just projects. Participation 
  
 ---
 
-![image info](../../../../static/img/capitals/01_financial_80.png)
-### **Financial Capital**
-
-*Resources to act, not just ideas.*
-
-* Access to **$2,500 in direct project funding** for selected participants, delivered transparently via Ethereum
-* Experience working with **emergent funding models** tied to values, trust, and community accountability
-* Increased visibility that can unlock **future funding, partnerships, or paid opportunities**
-* Practical understanding of how capital can flow in regenerative, place-based ways
-
-> *Not charity. Not extraction. Capital as nourishment.*
-
----
-
 ![image info](../../../../static/img/capitals/02_material_80.png)
 ### **Material Capital**
 
@@ -108,6 +94,20 @@ Metachrysalis is designed to nourish *people*, not just projects. Participation 
 * Opportunities for reflection, awe, grief, and hope—held in community
 * Recognition of changemaking as **a path of becoming**, not just producing
 * Support for showing up as a whole human, not a role or résumé
+
+---
+
+![image info](../../../../static/img/capitals/01_financial_80.png)
+### **Financial Capital**
+
+*Resources to act, not just ideas.*
+
+* Access to **$2,500 in direct project funding** for selected participants, delivered transparently via Ethereum
+* Experience working with **emergent funding models** tied to values, trust, and community accountability
+* Increased visibility that can unlock **future funding, partnerships, or paid opportunities**
+* Practical understanding of how capital can flow in regenerative, place-based ways
+
+> *Not charity. Not extraction. Capital as nourishment.*
 
 ---
 
