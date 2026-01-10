@@ -3,7 +3,11 @@
 **Benefits Across the Eight Permaculture Capitals**
 
 Metachrysalis is designed to nourish *people*, not just projects. Participation supports you across multiple forms of wealth recognizing that real regenerative work draws strength from many sources at once.
- 
+
+When you join the Metachrysalis community, you're not just getting funding. You're becoming part of a network that supports your work in multiple ways.
+
+We think about support through eight different types of resources - what permaculture designers call "capitals." Below, you'll see what each one means and what it looks like in practice for you.
+
 ---
 
 ![image info](../../../../static/img/capitals/02_material_80.png)
@@ -11,9 +15,9 @@ Metachrysalis is designed to nourish *people*, not just projects. Participation 
 
 *Tools, infrastructure, and tangible support.*
 
-* Access to **platforms, templates, and digital infrastructure** (Discord, documentation tools, community systems)
-* Logistical and promotional support for March projects
-* Exposure to **local tools, spaces, and material resources** through peer connection
+* Access to online spaces, templates and tools (Discord, documentation tools, community systems)
+* Help and support for your projects (particularly for those doing March-long projects, but also beyond these)
+* Connections to local spaces, resources, and tools through other participants.
 
 ---
 
