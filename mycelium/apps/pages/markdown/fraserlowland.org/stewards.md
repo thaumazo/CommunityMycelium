@@ -1,4 +1,10 @@
-# Judges
+# Domains and Stewards
+
+The term "Metacrisis" points not just to the deep integration between the problems facing our planet, but to them having underlying origins. In the Metachrysalis framework, we look at 8 domains or facets of specific challenge as part of the Metacrisis. We're honoured to have the following stewards working with us to help select community members to participate in a deeper, more intensive process between now and the end of March.
+
+Below, learn a bit more about the stewards and the domains they're focused on.
+
+---
 
 ![image info](../../../../static/img/people/ollie2.png)
 ## Ollie Rankin

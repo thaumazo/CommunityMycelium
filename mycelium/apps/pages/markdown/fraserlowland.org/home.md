@@ -40,5 +40,5 @@ This is the **region** we call home, part of the **Cascadia Bioregion**
 **Changemaker nominations and applications are now open.**
 
 - → <a href="https://docs.google.com/forms/d/e/1FAIpQLSfynUm56nDRB5nyriZ7Avktso_YlgXh-0ttFxZC2C8UYJJihw/viewform?usp=dialog" target="_blank">Apply or nominate a changemaker</a>   
-- → Learn about the eight domains and meet the judges (Coming Soon)
+- → [Learn about the eight domains and meet the stewards](/pages/stewards)
 - → [Learn more about Metachrysalis](/pages/metachrysalis) 
