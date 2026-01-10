@@ -1,5 +1,6 @@
 # Judges
 
+![image info](../../../../static/img/people/ollie2.png)
 ## Ollie Rankin
 
 **Domain Steward:** Extinction Edge → Resilient Renaissance
@@ -12,6 +13,7 @@ As Co-Founder and President of United Humans, Ollie focuses on rethinking the �
 
 As a Metachrysalis Judge, Ollie listens for projects and people who are engaging seriously with existential risk—not from fear or abstraction, but from responsibility and imagination. He is especially drawn to work that helps societies adapt to rapid change, builds resilient systems across technology and ecology, and invites more people into shaping humane, just, and life-affirming futures.
 
+![image info](../../../../static/img/people/faizan2.png)
 ## Faizan Abbasi
 
 **Domain Steward:** Fragile Web → Interwoven Harmony
@@ -24,11 +26,12 @@ Faizan’s orientation is deeply relational and pragmatic: resilience isn’t a 
 
 As a Metachrysalis Judge, Faizan listens for changemakers who strengthen the “mesh” of the Fraser Lowland: projects that build redundancy, mutual aid, trustworthy coordination, and cross-domain collaboration—so local disruptions don’t become domino effects, and interdependence becomes a source of shared stability and care.
 
-## Kristin Kozar
+![image info](../../../../static/img/people/kristin2.png)
+## Kristin Wilson (Kozar)
 
 **Domain Steward:** Truth Tornado → Shared Light
 
-Kristin Kozar is a leader, researcher, and community advocate working at the heart of one of the most important truth-and-trust challenges of our time: how societies repair shared understanding when history has been distorted, records have been withheld, and knowledge systems have been built to exclude.
+Kristin Wilson (Kozar) is a leader, researcher, and community advocate working at the heart of one of the most important truth-and-trust challenges of our time: how societies repair shared understanding when history has been distorted, records have been withheld, and knowledge systems have been built to exclude.
 
 A proud member of the Hwlitsum First Nation, Kristin served as Executive Director of UBC’s Indian Residential School History and Dialogue Centre, where her work sits at the intersection of truth-telling, record stewardship, and relationship-building. She is currently completing a PhD at UBC iSchool focused on Indigenous Data Sovereignty and the ethical, governance, and justice dimensions of residential school records—work grounded in the principle that Indigenous Peoples have inherent rights to autonomy over their data, stories, and knowledge systems.
 
@@ -36,6 +39,7 @@ Kristin brings deep experience in policy development, strategic partnerships, an
 
 As a Metachrysalis Judge, Kristin listens for changemakers who strengthen the conditions for Shared Light: transparency with integrity, truth with cultural safety, and knowledge practices that build trust across difference. She is especially drawn to work that restores access, protects lived experience from extraction, and creates pathways for collective decision-making rooted in accountability, respect, and repair.
 
+![image info](../../../../static/img/people/beverly2.png)
 ## Beverly Aarons
 
 **Domain Steward:** Soul Split → Cultural Wholeness
@@ -48,6 +52,7 @@ Alongside her creative practice, Beverly has spent years building real-world com
 
 As a Metachrysalis Judge, Beverly listens for projects and people who mend the “soul split” not through slogans, but through story, ritual, play, and relationship—work that rebuilds belonging, strengthens community bonds, and helps diverse people recover purpose, continuity, and cultural wholeness in the places they call home.
 
+![image info](../../../../static/img/people/elyes2.png)
 ## Elyes Mkacher
 
 **Domain Steward:** Earth Erosion → Regenerative Abundance
@@ -60,6 +65,7 @@ Elyes is also deeply involved with the Design School for Regenerating Earth, whe
 
 As a Metachrysalis Judge, Elyes listens for projects that move beyond extraction and mitigation toward true regenerative abundance—work that restores biodiversity, strengthens local ecological governance, and helps communities become capable stewards of the living systems that sustain them.
 
+![image info](../../../../static/img/people/jessi2.png)
 ## Jessi Maness
 
 **Domain Steward:** Power Pyramid → Equitable Commons
@@ -72,6 +78,7 @@ Jessi understands inequality not as an abstract problem, but as something that s
 
 As a Metachrysalis Judge, Jessi listens for projects that redistribute capacity and agency—work that strengthens commons-based systems, empowers disenfranchised people, and transforms relief and recovery into pathways toward lasting equity, resilience, and shared ownership of our collective future.
 
+![image info](../../../../static/img/people/saeed2.png)
 ## Saeed Dyanatkar
 
 **Domain Steward:** Tech Tsunami → Tech Symphony
@@ -84,6 +91,7 @@ Saeed brings a deeply ethical orientation to technological change. He is attenti
 
 As a Metachrysalis Judge, Saeed listens for projects that help turn the Tech Tsunami into a Tech Symphony: initiatives that align innovation with public good, protect human agency and privacy, and use technology to expand learning, wellbeing, creativity, and collective capacity—especially in ways that institutions and communities can sustain over time.
 
+![image info](../../../../static/img/people/soudeh2.png)
 ## Soudeh Jamshidian
 
 **Domain Steward:** Leadership Lapse → Adaptive Stewardship
