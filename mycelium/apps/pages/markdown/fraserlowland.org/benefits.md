@@ -1,7 +1,3 @@
-Below is a **participant-facing framing** you can use directly on a web page. It orients benefits through the **eight permaculture capitals** while staying grounded, non-extractive, and aligned with Metachrysalis’ ethos.
-
----
-
 ## What You Gain by Participating
 
 **Benefits Across the Eight Permaculture Capitals**
