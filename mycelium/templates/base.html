@@ -32,7 +32,14 @@
             {% endif %}
             <a href="{% url 'core:home' %}" class="flex ms-2 md:me-24"><span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Mycelium</span></a>
           </div>
-          <div class="flex items-center gap-2">
+          <!-- Mobile menu toggle button -->
+          <button id="topnav-toggle" type="button" class="sm:hidden inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+            <span class="sr-only">Open menu</span>
+            <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+            </svg>
+          </button>
+          <div class="hidden sm:flex items-center gap-2">
             <a href="/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Home</a>
             
             {% if request.get_host == 'metachrysalis.org' or URL_OVERRIDE == 'metachrysalis.org' %}
@@ -120,6 +127,29 @@
           </div>
         </div>
       </nav>
+
+      <!-- Mobile dropdown menu -->
+      <div id="topnav-menu" class="sm:hidden hidden absolute top-16 left-0 w-full bg-white border-b border-gray-200 shadow z-40">
+        <div class="px-3 py-3">
+          <ul class="space-y-1">
+            <li><a href="/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Home</a></li>
+            {% if request.get_host == 'metachrysalis.org' or URL_OVERRIDE == 'metachrysalis.org' %}
+              <li><a href="/pages/people" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">People</a></li>
+              <li><a href="/pages/communities" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Communities</a></li>
+              <li><a href="/pages/projects" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Projects</a></li>
+            {% elif request.get_host == 'fraserlowland.org' or URL_OVERRIDE == 'fraserlowland.org' %}
+              <li><a href="/pages/metachrysalis" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Metachrysalis</a></li>
+              <li><a href="/pages/benefits" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Member Benefits</a></li>
+              <li><a href="/pages/localism" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Localism</a></li>
+              <li><a href="/pages/stewards" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Stewards</a></li>
+              <li><a href="/pages/nominate_apply" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Apply / Nominate</a></li>
+            {% endif %}
+            {% if not request.user.is_authenticated %}
+              <li><a href="{% url 'login' %}" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Login</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
 
       {% if request.user.is_authenticated %}
         <aside data-menu id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform bg-white border-r border-gray-200 sm:translate-x-0 -translate-x-full" aria-label="Sidebar">
@@ -254,6 +284,18 @@
 
     <script type="module" src="{% static 'js/src/main.js' %}"></script>
     <script src="{% static 'js/tabs.js' %}"></script>
+    <script>
+      // Toggle mobile navigation menu
+      document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('topnav-toggle');
+        const menu = document.getElementById('topnav-menu');
+        if (toggleBtn && menu) {
+          toggleBtn.addEventListener('click', function() {
+            menu.classList.toggle('hidden');
+          });
+        }
+      });
+    </script>
     
     {% if request.get_host == 'metachrysalis.org' or URL_OVERRIDE == 'metachrysalis.org' %}
     <!-- Donate Button Modal Script -->
