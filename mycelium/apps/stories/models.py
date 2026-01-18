@@ -53,6 +53,39 @@ class Story(models.Model):
     def __str__(self):
         return f"{self.title} by {self.created_by.username}"
 
+    def get_youtube_embed_url(self):
+        """Return a robust YouTube embed URL for the story's youtube_url.
+        Supports watch URLs (v=ID), youtu.be short URLs, and existing embed URLs.
+        Uses youtube-nocookie domain for better privacy.
+        """
+        url = getattr(self, "youtube_url", None)
+        if not url:
+            return None
+
+        import re
+        u = url.strip()
+
+        # Already in embed format
+        embed_match = re.search(r"/embed/([^?&]+)", u)
+        if embed_match:
+            video_id = embed_match.group(1)
+            return f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&modestbranding=1"
+
+        # Standard watch URL
+        watch_match = re.search(r"[?&]v=([^&]+)", u)
+        if watch_match:
+            video_id = watch_match.group(1)
+            return f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&modestbranding=1"
+
+        # Short youtu.be URL
+        short_match = re.search(r"youtu\.be/([^?&]+)", u)
+        if short_match:
+            video_id = short_match.group(1)
+            return f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&modestbranding=1"
+
+        # For other platforms or unrecognized formats, return original URL
+        return url
+
 
 class StoryMedia(models.Model):
     """
@@ -136,6 +169,14 @@ class StoryMedia(models.Model):
         
         # Return original URL if no match (might be Vimeo or other)
         return url
+
+    def get_embed_url(self):
+        """Return an embed-safe URL based on stored url.
+        Handles existing non-embedded YouTube URLs and leaves other platforms unchanged.
+        """
+        if not self.url:
+            return None
+        return self._convert_to_embed_url(self.url)
     
     def get_watch_url(self):
         """Get the original watch URL for linking (not embedding)."""
