@@ -124,3 +124,13 @@ As an educator at institutions including Vancouver Island University, UBC, and S
 
 As a Metachrysalis Judge, Soudeh listens for projects and people who embody Adaptive Stewardship—work that strengthens governance from the ground up, practices power-sharing with integrity, and treats leadership as an ongoing responsibility to people, place, and future generations rather than a position of control.
 
+---
+
+This pilot is held by a diverse group of stewards who bring deep knowledge, lived experience, and connections across the Fraser Lowland and beyond.
+Each steward focuses on one domain of community and ecological work - from building resilient systems and restoring ecosystems to strengthening governance and weaving cultural belonging. Together, they help ensure we're finding people who would truly benefit from and contribute to this community.
+
+**What stewards do:**
+
+ Stewards review applications and nominations in January, looking for people whose work aligns with their domain and who would meaningfully engage in the deeper collaborative process. They bring both expertise and care to this selection, understanding that some of the most important changemakers might not fit traditional categories or think of themselves as "leaders."
+
+Ready to apply →

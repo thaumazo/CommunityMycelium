@@ -50,11 +50,12 @@
 
             {% elif request.get_host == 'fraserlowland.org' or URL_OVERRIDE == 'fraserlowland.org' %}
               {# Fraser Lowland-specific links #}
-              <a href="/pages/metachrysalis" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Metachrysalis</a>
+              <a href="/pages/about" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">About</a>
               <a href="/pages/benefits" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Member Benefits</a>
-              <a href="/pages/localism" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Localism</a>
               <a href="/pages/stewards" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Stewards</a>
-              <a href="/pages/nominate_apply" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Apply / Nominate</a>
+              <a href="/pages/nominate" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Nominate</a>
+              <a href="/pages/apply" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Apply</a>
+              <a href="/pages/faq" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">FAQ</a>
             {% endif %}
             
 
@@ -138,11 +139,12 @@
               <li><a href="/pages/communities" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Communities</a></li>
               <li><a href="/pages/projects" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Projects</a></li>
             {% elif request.get_host == 'fraserlowland.org' or URL_OVERRIDE == 'fraserlowland.org' %}
-              <li><a href="/pages/metachrysalis" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Metachrysalis</a></li>
+              <li><a href="/pages/about" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">About</a></li>
               <li><a href="/pages/benefits" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Member Benefits</a></li>
-              <li><a href="/pages/localism" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Localism</a></li>
               <li><a href="/pages/stewards" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Stewards</a></li>
-              <li><a href="/pages/nominate_apply" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Apply / Nominate</a></li>
+              <li><a href="/pages/nominate" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Nominate</a></li>
+              <li><a href="/pages/apply" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Apply</a></li>
+              <li><a href="/pages/faq" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">FAQ</a></li>
             {% endif %}
             {% if not request.user.is_authenticated %}
               <li><a href="{% url 'login' %}" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Login</a></li>

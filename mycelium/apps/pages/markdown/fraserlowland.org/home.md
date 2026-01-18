@@ -1,44 +1,39 @@
-![image info](../../../../static/img/misc/Metachrysalis_Image_Small.png)
+![image info](../../../../static/img/misc/fraserlowland.org/WebTop.png)
 
-# Metachrysalis Changemaker Community
-## Growing the Fraser Lowland from the inside out
+## Building Community Across the Fraser Lowland
 
-Across the Fraser Lowland, people are quietly doing work that matters.
+Something is stirring across the Fraser Lowland - from Hope through Greater Vancouver to Bellingham. People are growing food, restoring ecosystems, creating gathering spaces, teaching skills, and weaving networks of care. Often quietly, often without much support, always with intention.
 
-They’re building mutual aid networks, restoring ecosystems, mentoring youth, creating spaces of belonging, experimenting with new ways of solving old problems. Often without funding. Often without recognition. Almost always without institutional backing.
+What if these efforts could see each other? What if the people doing this work could learn together, support each other, and discover what becomes possible when we're not working alone?
 
-**Metachrysalis** exists to build community among these changemakers and local leaders—to help them find each other, learn together, and strengthen the fabric of this place. Together we'll build a network of support that includes but goes beyond financial support. Those joining the Metachrysalis community will have chances to meet and collaborate with changemakers from other regions around the world.
+**Localism is a three-month pilot bringing together people who are already making change in the Fraser Lowland**. This is not: a startup accelerator, a pitch contest, a leaderboard, a hustle-culture productivity engine. It's an experiment in what happens when we prioritize relationships and learning alongside action - when we build community, not just react to crisis.
 
+## Get Involved
 
-This is a **bioregional, community-powered initiative** rooted in the Fraser Lowland, designed to support emergent leadership and seed practical projects that help our region thrive.
+There are two ways to participate:
 
-### What makes this different?
-- **Bioregional focus** — informed by the work of the *Design School for Regenerating Earth* and *Regenerate Cascadia*, we focus on our local region, defined both ecologically and culturally by the people who live there.
+### Nominate Someone
 
-- **Metacrisis-informed** — the most pressing challenges currently facing humanity are deeply interconnected parts of a whole. Our approach spans work across ecological, social, technological, and governance challenges.
+Know someone doing meaningful community work? Someone who might not think of themselves as a "leader" but shows up consistently with care and integrity?
 
-- **Gameful by design** — The Metachrysalis framework uses game design principles to help us work effectively with complexity, focus on what's important to us as individuals and a region, and to make collaboration and community building both fun and effective. 
+Your nomination can open doors for people already making a difference.
 
-- **Community-first** — connection comes before competition, and while some will receive funding, all will have opportunities to build support, community, momentum and growth of their work. We center human relationship and a non-transactional, non-extractive connection.
-
-# The Fraser Lowland
-## Where we live, and why it matters
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSfynUm56nDRB5nyriZ7Avktso_YlgXh-0ttFxZC2C8UYJJihw/viewform?usp=dialog" target="_blank">**Nominate Someone →**</a>   
 
 
-![image info](../../../../static/img/misc/fraserlowland.org/FraserLowland_Low.png)
+### Apply Yourself
 
-Ask a child to draw a boundary around the main region on this image and they'll easily pick out the Fraser Lowland. 
+Already doing work to strengthen your community? Interested in connecting with others across the region who share your commitment to long-term change?
 
-The Fraser Lowland is the low-lying, fertile region stretching from the Fraser River delta through the Lower Mainland. It is shaped by water, wetlands, forests, and mountains — and by thousands of years of Indigenous stewardship, followed by waves of settlement, industry, and migration.
+We'd love to hear from you.
 
-It is one of the most ecologically rich and culturally diverse regions in North America. It is also a place under pressure: rapid growth, ecological strain, housing precarity, climate risk, and widening social divides all converge here.
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSfynUm56nDRB5nyriZ7Avktso_YlgXh-0ttFxZC2C8UYJJihw/viewform?usp=dialog" target="_blank">**Apply to participate →**</a>   
 
-This is the **region** we call home, part of the **Cascadia Bioregion**
+You can nominate one or more people AND apply yourself - both doors are open. 
 
----
+Not sure which path is right? Learn more:
 
-**Changemaker nominations and applications are now open.**
-
-- → <a href="https://docs.google.com/forms/d/e/1FAIpQLSfynUm56nDRB5nyriZ7Avktso_YlgXh-0ttFxZC2C8UYJJihw/viewform?usp=dialog" target="_blank">Apply or nominate a changemaker</a>   
-- → [Learn about the eight domains and meet the stewards](/pages/stewards)
-- → [Learn more about Metachrysalis](/pages/metachrysalis) 
+- [About this project →](/pages/about)
+- [What participants gain →](/pages/benefits)
+- [Who's involved →](/pages/stewards) <!--Add Admin and Mentors soon -->
+- [Questions we Hear →](/pages/faq)
