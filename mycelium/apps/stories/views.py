@@ -9,7 +9,6 @@ from .models import Story, StoryMedia, StoryAttachment
 from .forms import StoryForm, StoryMediaForm
 
 
-@login_required
 def story_list_view(request):
     """View a list of all stories the user has access to."""
     stories = get_permitted_objects(request.user, "view", Story)
@@ -23,7 +22,6 @@ def story_list_view(request):
     })
 
 
-@login_required
 def story_detail_view(request, pk):
     """View a story's details."""
     story = get_permitted_object(request.user, "view", Story, pk)
