@@ -21,6 +21,21 @@ class Project(models.Model):
     )
     permissions = GenericRelation(ObjectPermission)
 
+    # Capitals relationships
+    capitals_in = models.ManyToManyField(
+        "capitals.Capital",
+        blank=True,
+        related_name="projects_in",
+        help_text="Capitals that this project takes in or uses"
+    )
+    
+    capitals_out = models.ManyToManyField(
+        "capitals.Capital",
+        blank=True,
+        related_name="projects_out",
+        help_text="Capitals that this project produces or outputs"
+    )
+
     view_members = models.BooleanField(
         default=False,
         help_text="Authenticated members can view this project.",

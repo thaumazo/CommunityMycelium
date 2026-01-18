@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load image_filters %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -25,6 +27,8 @@
                   <ul class="tab-list">
                     <li class="tab active" data-tab="description">Description</li>
                     <li class="tab" data-tab="visibility">Visibility</li>
+                    <li class="tab" data-tab="capitals-in">Capitals In</li>
+                    <li class="tab" data-tab="capitals-out">Capitals Out</li>
                   </ul>
                 </div>
 
@@ -106,6 +110,74 @@
                     {% if form.view_public.help_text %}
                       <p class="text-xs text-gray-500">{{ form.view_public.help_text }}</p>
                     {% endif %}
+                  </div>
+                </div>
+
+                <!-- Capitals In Tab -->
+                <div class="tab-content hidden" id="capitals-in">
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-4">{{ form.capitals_in.label }}</label>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for capital in form.fields.capitals_in.queryset %}
+                          <label for="id_capitals_in_{{ capital.pk }}" class="flex items-start cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                            <input type="checkbox" name="capitals_in" value="{{ capital.pk }}" id="id_capitals_in_{{ capital.pk }}" {% if capital in form.instance.capitals_in.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
+                            {% if capital.image_path %}
+                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if capital in form.instance.capitals_in.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                              </div>
+                            {% else %}
+                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if capital in form.instance.capitals_in.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <span class="text-2xl text-gray-600 font-bold">{{ capital.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                            <div class="ml-4 flex-1">
+                              <div class="font-semibold text-gray-900">{{ capital.title }}</div>
+                              {% if capital.description %}
+                                <div class="text-sm text-gray-600 mt-1">{{ capital.description }}</div>
+                              {% endif %}
+                            </div>
+                          </label>
+                        {% endfor %}
+                      </div>
+                      {% if form.capitals_in.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.capitals_in.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Capitals Out Tab -->
+                <div class="tab-content hidden" id="capitals-out">
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-4">{{ form.capitals_out.label }}</label>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for capital in form.fields.capitals_out.queryset %}
+                          <label for="id_capitals_out_{{ capital.pk }}" class="flex items-start cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                            <input type="checkbox" name="capitals_out" value="{{ capital.pk }}" id="id_capitals_out_{{ capital.pk }}" {% if capital in form.instance.capitals_out.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
+                            {% if capital.image_path %}
+                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if capital in form.instance.capitals_out.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                              </div>
+                            {% else %}
+                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if capital in form.instance.capitals_out.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <span class="text-2xl text-gray-600 font-bold">{{ capital.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                            <div class="ml-4 flex-1">
+                              <div class="font-semibold text-gray-900">{{ capital.title }}</div>
+                              {% if capital.description %}
+                                <div class="text-sm text-gray-600 mt-1">{{ capital.description }}</div>
+                              {% endif %}
+                            </div>
+                          </label>
+                        {% endfor %}
+                      </div>
+                      {% if form.capitals_out.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.capitals_out.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
               </div>

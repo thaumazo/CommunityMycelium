@@ -1,5 +1,6 @@
 from django import forms
 from .models import Project
+from apps.capitals.models import Capital
 
 
 class ProjectForm(forms.ModelForm):
@@ -17,9 +18,25 @@ class ProjectForm(forms.ModelForm):
         help_text="Check if public (unauthenticated) users can view this project.",
     )
     
+    capitals_in = forms.ModelMultipleChoiceField(
+        queryset=Capital.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+        label="Capitals In",
+        help_text="Select capitals that this project takes in or uses"
+    )
+    
+    capitals_out = forms.ModelMultipleChoiceField(
+        queryset=Capital.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+        label="Capitals Out",
+        help_text="Select capitals that this project produces or outputs"
+    )
+    
     class Meta:
         model = Project
-        fields = ["title", "description", "members", "url", "view_members", "view_public"]
+        fields = ["title", "description", "members", "url", "view_members", "view_public", "capitals_in", "capitals_out"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
             "members": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
