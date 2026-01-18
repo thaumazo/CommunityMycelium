@@ -37,11 +37,12 @@
 
           <!-- YouTube Video -->
           {% if story.youtube_url %}
-            <div class="mb-6">
-              <div class="bg-gray-900 rounded-lg overflow-hidden">
+            <div class="mb-6 max-w-md">
+              <div class="bg-gray-900 rounded-lg overflow-hidden" style="width: 500px;">
                 <div class="relative" style="padding-bottom: 56.25%; height: 0;">
                   <iframe 
                     src="{{ story.get_youtube_embed_url }}" 
+                    title="YouTube video player"
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                     referrerpolicy="strict-origin-when-cross-origin"
@@ -66,7 +67,7 @@
                       {% endif %}
                     {% elif media.media_type == 'video_url' %}
                       {% if media.url %}
-                        <div class="bg-gray-900 rounded-lg overflow-hidden">
+                        <div class="bg-gray-900 rounded-lg overflow-hidden" style="width:500px;">
                           <div class="relative" style="padding-bottom: 56.25%; height: 0;">
                             <iframe 
                               width="640" 

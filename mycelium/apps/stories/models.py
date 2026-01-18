@@ -56,35 +56,47 @@ class Story(models.Model):
     def get_youtube_embed_url(self):
         """Return a robust YouTube embed URL for the story's youtube_url.
         Supports watch URLs (v=ID), youtu.be short URLs, and existing embed URLs.
-        Uses youtube-nocookie domain for better privacy.
+        Preserves query parameters like si= for proper embedding.
         """
         url = getattr(self, "youtube_url", None)
         if not url:
             return None
 
         import re
+        from urllib.parse import urlparse, parse_qs, urlencode
+        
         u = url.strip()
 
-        # Already in embed format
-        embed_match = re.search(r"/embed/([^?&]+)", u)
-        if embed_match:
-            video_id = embed_match.group(1)
-            return f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&modestbranding=1"
+        # Already in embed format - return as is
+        if "/embed/" in u:
+            return u
 
-        # Standard watch URL
-        watch_match = re.search(r"[?&]v=([^&]+)", u)
-        if watch_match:
-            video_id = watch_match.group(1)
-            return f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&modestbranding=1"
-
+        # Parse URL to extract video ID and preserve parameters
+        parsed = urlparse(u)
+        query_params = parse_qs(parsed.query)
+        
+        video_id = None
+        
+        # Standard watch URL (youtube.com/watch?v=ID)
+        if 'v' in query_params:
+            video_id = query_params['v'][0]
+            # Remove 'v' from params since it's now in the path
+            del query_params['v']
         # Short youtu.be URL
-        short_match = re.search(r"youtu\.be/([^?&]+)", u)
-        if short_match:
-            video_id = short_match.group(1)
-            return f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&modestbranding=1"
-
+        elif 'youtu.be' in parsed.netloc:
+            video_id = parsed.path.lstrip('/')
+        
+        if video_id:
+            # Build embed URL preserving other params like si=
+            embed_url = f"https://www.youtube.com/embed/{video_id}"
+            if query_params:
+                # Flatten query params back to string
+                params_str = urlencode({k: v[0] for k, v in query_params.items()})
+                embed_url += f"?{params_str}"
+            return embed_url
+        
         # For other platforms or unrecognized formats, return original URL
-        return url
+        return u
 
 
 class StoryMedia(models.Model):
@@ -145,27 +157,39 @@ class StoryMedia(models.Model):
         super().save(*args, **kwargs)
     
     def _convert_to_embed_url(self, url):
-        """Convert YouTube URL to embed format."""
+        """Convert YouTube URL to embed format, preserving parameters."""
         import re
+        from urllib.parse import urlparse, parse_qs, urlencode
         
         if not url:
             return url
         
-        # Already in embed format - leave as is
-        if '/embed/' in url:
-            return url
+        u = url.strip()
+        
+        # Already in embed format - return as is
+        if '/embed/' in u:
+            return u
+        
+        # Parse URL
+        parsed = urlparse(u)
+        query_params = parse_qs(parsed.query)
+        
+        video_id = None
         
         # Extract video ID from watch?v= format
-        watch_match = re.search(r'[?&]v=([^&]+)', url)
-        if watch_match:
-            video_id = watch_match.group(1)
-            return f'https://www.youtube.com/embed/{video_id}'
-        
+        if 'v' in query_params:
+            video_id = query_params['v'][0]
+            del query_params['v']
         # Extract video ID from youtu.be format
-        short_match = re.search(r'youtu\.be/([^?&]+)', url)
-        if short_match:
-            video_id = short_match.group(1)
-            return f'https://www.youtube.com/embed/{video_id}'
+        elif 'youtu.be' in parsed.netloc:
+            video_id = parsed.path.lstrip('/')
+        
+        if video_id:
+            embed_url = f'https://www.youtube.com/embed/{video_id}'
+            if query_params:
+                params_str = urlencode({k: v[0] for k, v in query_params.items()})
+                embed_url += f'?{params_str}'
+            return embed_url
         
         # Return original URL if no match (might be Vimeo or other)
         return url
