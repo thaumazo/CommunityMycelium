@@ -121,13 +121,13 @@
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {% for capital in form.fields.capitals_in.queryset %}
                           <label for="id_capitals_in_{{ capital.pk }}" class="flex items-start cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                            <input type="checkbox" name="capitals_in" value="{{ capital.pk }}" id="id_capitals_in_{{ capital.pk }}" {% if capital in form.instance.capitals_in.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
+                            <input type="checkbox" name="capitals_in" value="{{ capital.pk }}" id="id_capitals_in_{{ capital.pk }}" {% if form.instance.pk and capital.id in form.fields.capitals_in.initial %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
                             {% if capital.image_path %}
-                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if capital in form.instance.capitals_in.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals_in.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
                                 <img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                               </div>
                             {% else %}
-                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if capital in form.instance.capitals_in.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals_in.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
                                 <span class="text-2xl text-gray-600 font-bold">{{ capital.title|first|upper }}</span>
                               </div>
                             {% endif %}
@@ -155,13 +155,13 @@
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {% for capital in form.fields.capitals_out.queryset %}
                           <label for="id_capitals_out_{{ capital.pk }}" class="flex items-start cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                            <input type="checkbox" name="capitals_out" value="{{ capital.pk }}" id="id_capitals_out_{{ capital.pk }}" {% if capital in form.instance.capitals_out.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
+                            <input type="checkbox" name="capitals_out" value="{{ capital.pk }}" id="id_capitals_out_{{ capital.pk }}" {% if form.instance.pk and capital.id in form.fields.capitals_out.initial %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
                             {% if capital.image_path %}
-                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if capital in form.instance.capitals_out.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals_out.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
                                 <img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                               </div>
                             {% else %}
-                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if capital in form.instance.capitals_out.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals_out.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
                                 <span class="text-2xl text-gray-600 font-bold">{{ capital.title|first|upper }}</span>
                               </div>
                             {% endif %}

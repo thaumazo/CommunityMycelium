@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
-from .models import Project
+from .models import Project, ProjectCapitalIn, ProjectCapitalOut
 from .forms import ProjectForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
@@ -24,8 +24,67 @@ def project_list_view(request):
 
 @login_required
 def project_detail_view(request, pk):
+    from apps.stories.models import Story, StoryAttachment
+    from django.contrib.contenttypes.models import ContentType
+    from django.db.models import Q
+    
     project = get_permitted_object(request.user, "view", Project, pk)
-    return render(request, "projects/project_detail.html", {"project": project})
+    
+    # Get through model instances for capitals
+    project_capitals_in = ProjectCapitalIn.objects.filter(project=project).select_related('capital')
+    project_capitals_out = ProjectCapitalOut.objects.filter(project=project).select_related('capital')
+    
+    # Get stories attached to project capital relationships
+    story_attachments = {}
+    
+    # Helper function to filter stories by visibility
+    def get_visible_attachments(attachments):
+        visible = []
+        for attachment in attachments:
+            story = attachment.story
+            if request.user.is_authenticated:
+                if (story.created_by == request.user or 
+                    story.view_members or 
+                    story.view_public or 
+                    request.user.is_superuser):
+                    visible.append(attachment)
+            else:
+                if story.view_public:
+                    visible.append(attachment)
+        return visible
+    
+    # Get stories for capitals in (attached to ProjectCapitalIn instances)
+    for project_capital in project_capitals_in:
+        ct = ContentType.objects.get_for_model(project_capital)
+        attachments = StoryAttachment.objects.filter(
+            content_type=ct,
+            object_id=project_capital.id
+        ).select_related('story', 'story__created_by')
+        
+        visible_stories = get_visible_attachments(attachments)
+        if visible_stories:
+            # Key by capital_in id for template
+            story_attachments[f'capital_in_{project_capital.capital.id}'] = visible_stories
+    
+    # Get stories for capitals out (attached to ProjectCapitalOut instances)
+    for project_capital in project_capitals_out:
+        ct = ContentType.objects.get_for_model(project_capital)
+        attachments = StoryAttachment.objects.filter(
+            content_type=ct,
+            object_id=project_capital.id
+        ).select_related('story', 'story__created_by')
+        
+        visible_stories = get_visible_attachments(attachments)
+        if visible_stories:
+            # Key by capital_out id for template
+            story_attachments[f'capital_out_{project_capital.capital.id}'] = visible_stories
+    
+    return render(request, "projects/project_detail.html", {
+        "project": project,
+        "story_attachments": story_attachments,
+        "project_capitals_in": project_capitals_in,
+        "project_capitals_out": project_capitals_out,
+    })
 
 
 @login_required

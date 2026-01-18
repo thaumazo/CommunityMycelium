@@ -21,21 +21,6 @@ class Project(models.Model):
     )
     permissions = GenericRelation(ObjectPermission)
 
-    # Capitals relationships
-    capitals_in = models.ManyToManyField(
-        "capitals.Capital",
-        blank=True,
-        related_name="projects_in",
-        help_text="Capitals that this project takes in or uses"
-    )
-    
-    capitals_out = models.ManyToManyField(
-        "capitals.Capital",
-        blank=True,
-        related_name="projects_out",
-        help_text="Capitals that this project produces or outputs"
-    )
-
     view_members = models.BooleanField(
         default=False,
         help_text="Authenticated members can view this project.",
@@ -53,3 +38,61 @@ class Project(models.Model):
         permissions = [
             ("delegate_project", "Can delegate project"),
         ]
+
+
+class ProjectCapitalIn(models.Model):
+    """
+    Through model for project-capital_in relationship.
+    Stories attach to this to be project-specific.
+    """
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='project_capital_in_relationships'
+    )
+    capital = models.ForeignKey(
+        'capitals.Capital',
+        on_delete=models.CASCADE,
+        related_name='project_in_relationships'
+    )
+    
+    permissions = GenericRelation(ObjectPermission)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['project', 'capital']
+        permissions = [
+            ("delegate_projectcapitalin", "Can delegate project capital in"),
+        ]
+    
+    def __str__(self):
+        return f"{self.project.title} - {self.capital.title} (In)"
+
+
+class ProjectCapitalOut(models.Model):
+    """
+    Through model for project-capital_out relationship.
+    Stories attach to this to be project-specific.
+    """
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='project_capital_out_relationships'
+    )
+    capital = models.ForeignKey(
+        'capitals.Capital',
+        on_delete=models.CASCADE,
+        related_name='project_out_relationships'
+    )
+    
+    permissions = GenericRelation(ObjectPermission)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['project', 'capital']
+        permissions = [
+            ("delegate_projectcapitalout", "Can delegate project capital out"),
+        ]
+    
+    def __str__(self):
+        return f"{self.project.title} - {self.capital.title} (Out)"
