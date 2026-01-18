@@ -17,6 +17,11 @@ class Story(models.Model):
         blank=True,
         help_text="The main narrative content of the story"
     )
+    youtube_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="YouTube video URL to embed (e.g., https://www.youtube.com/watch?v=...)"
+    )
     created_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

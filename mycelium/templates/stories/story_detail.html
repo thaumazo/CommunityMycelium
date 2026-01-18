@@ -35,6 +35,23 @@
             </div>
           {% endif %}
 
+          <!-- YouTube Video -->
+          {% if story.youtube_url %}
+            <div class="mb-6">
+              <div class="bg-gray-900 rounded-lg overflow-hidden">
+                <div class="relative" style="padding-bottom: 56.25%; height: 0;">
+                  <iframe 
+                    src="{% if 'youtu.be' in story.youtube_url %}https://www.youtube.com/embed/{{ story.youtube_url|slice:'17:' }}{% elif 'watch?v=' in story.youtube_url %}https://www.youtube.com/embed/{{ story.youtube_url|slice:'-11:' }}{% else %}{{ story.youtube_url }}{% endif %}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen
+                    class="absolute top-0 left-0 w-full h-full">
+                  </iframe>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
           <!-- Media -->
           {% if story.media.all %}
             <div class="mb-6">

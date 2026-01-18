@@ -19,9 +19,10 @@ class StoryForm(forms.ModelForm):
     
     class Meta:
         model = Story
-        fields = ["title", "text_content", "view_members", "view_public"]
+        fields = ["title", "text_content", "youtube_url", "view_members", "view_public"]
         widgets = {
             "text_content": forms.Textarea(attrs={"rows": 8}),
+            "youtube_url": forms.URLInput(attrs={"placeholder": "https://www.youtube.com/watch?v=..."}),
         }
 
 
