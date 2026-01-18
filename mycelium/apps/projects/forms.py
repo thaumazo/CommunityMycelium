@@ -25,3 +25,16 @@ class ProjectForm(forms.ModelForm):
             "members": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "url": forms.Textarea(attrs={"rows": 1}),
         }
+
+    def save(self, commit=True):
+        project = super().save(commit=False)
+        
+        # Explicitly handle view_members and view_public fields
+        project.view_members = self.cleaned_data.get("view_members", False)
+        project.view_public = self.cleaned_data.get("view_public", False)
+        
+        if commit:
+            project.save()
+            self.save_m2m()
+        
+        return project

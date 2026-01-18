@@ -58,6 +58,11 @@ def is_permitted(user, action, obj_or_string):
         # Any authenticated user can view challenges that have a related bioregion
         if user.is_authenticated and obj.related_bioregion:
             return True
+    
+    # Allow any authenticated user to create projects
+    if isinstance(obj, Project) and action == "add":
+        if user.is_authenticated:
+            return True
 
     # If the object is a user, and it's the current user
     if isinstance(obj, User) and obj == user:

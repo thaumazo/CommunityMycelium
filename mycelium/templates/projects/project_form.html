@@ -20,38 +20,94 @@
             <form method="post" class="space-y-6">
               {% csrf_token %}
 
-              <div>
-                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.title.label }}</label>
-                <div class="mt-1">
-                  <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="w-full" />
+              <div class="mt-6">
+                <div class="tabs-container">
+                  <ul class="tab-list">
+                    <li class="tab active" data-tab="description">Description</li>
+                    <li class="tab" data-tab="visibility">Visibility</li>
+                  </ul>
                 </div>
-                {% if form.title.errors %}
-                  <div class="mt-1 text-sm text-red-600">{{ form.title.errors|join:', ' }}</div>
-                {% endif %}
-              </div>
 
-              <div>
-                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.description.label }}</label>
-                <div class="mt-1">
-                  <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="4" class="w-full">{{ form.description.value|default:'' }}</textarea>
-                </div>
-                {% if form.description.errors %}
-                  <div class="mt-1 text-sm text-red-600">{{ form.description.errors|join:', ' }}</div>
-                {% endif %}
-              </div>
-              <div>
-                <label for="{{ form.members.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.members.label }}</label>
-                <div class="mt-1 space-y-2">
-                  {% for choice in form.members %}
-                    <div class="flex items-center">
-                      <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                      <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                <!-- Description Tab -->
+                <div class="tab-content" id="description">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.title.label }}</label>
+                      <div class="mt-1">
+                        <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="w-full" />
+                      </div>
+                      {% if form.title.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.title.errors|join:', ' }}</div>
+                      {% endif %}
                     </div>
-                  {% endfor %}
+
+                    <div>
+                      <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.description.label }}</label>
+                      <div class="mt-1">
+                        <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="4" class="w-full">{{ form.description.value|default:'' }}</textarea>
+                      </div>
+                      {% if form.description.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.description.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.url.label }}</label>
+                      <div class="mt-1">
+                        <textarea name="{{ form.url.html_name }}" id="{{ form.url.id_for_label }}" rows="1" class="w-full">{{ form.url.value|default:'' }}</textarea>
+                      </div>
+                      {% if form.url.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.url.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.members.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.members.label }}</label>
+                      <div class="mt-1 space-y-2">
+                        {% for choice in form.members %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.members.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.members.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
                 </div>
-                {% if form.members.errors %}
-                  <div class="mt-1 text-sm text-red-600">{{ form.members.errors|join:', ' }}</div>
-                {% endif %}
+
+                <!-- Visibility Tab -->
+                <div class="tab-content hidden" id="visibility">
+                  <div class="space-y-4">
+                    <div class="flex items-center">
+                      <input type="checkbox" name="view_members" id="{{ form.view_members.id_for_label }}" {% if form.instance.view_members %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                      <label for="{{ form.view_members.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                        {{ form.view_members.label }}
+                      </label>
+                      {% if form.view_members.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.view_members.errors|join:", " }}</div>
+                      {% endif %}
+                    </div>
+                    {% if form.view_members.help_text %}
+                      <p class="text-xs text-gray-500">{{ form.view_members.help_text }}</p>
+                    {% endif %}
+
+                    <div class="flex items-center">
+                      <input type="checkbox" name="view_public" id="{{ form.view_public.id_for_label }}" {% if form.instance.view_public %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                      <label for="{{ form.view_public.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                        {{ form.view_public.label }}
+                      </label>
+                      {% if form.view_public.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.view_public.errors|join:", " }}</div>
+                      {% endif %}
+                    </div>
+                    {% if form.view_public.help_text %}
+                      <p class="text-xs text-gray-500">{{ form.view_public.help_text }}</p>
+                    {% endif %}
+                  </div>
+                </div>
               </div>
 
               <div class="flex justify-end space-x-3">

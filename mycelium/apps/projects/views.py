@@ -30,16 +30,12 @@ def project_detail_view(request, pk):
 
 @login_required
 def project_create_view(request):
-    if not is_permitted(request.user, "add", "projects.project"):
-        raise PermissionDenied
-
     if request.method == "POST":
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = form.save(commit=False)
             project.created_by = request.user
-            project.save()
-            form.save_m2m()  # Save many-to-many relationships
+            form.save()  # This will save the project and m2m fields
             messages.success(request, "Project created successfully!")
             return redirect("project_list")
     else:
