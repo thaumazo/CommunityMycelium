@@ -6,51 +6,6 @@ Below, learn a bit more about the stewards and the domains they're focused on.
 
 ---
 
-![image info](../../../../static/img/people/ollie2.png)
-## Ollie Rankin
-
-**Domain Steward:** Extinction Edge → Resilient Renaissance
-
-Ollie Rankin works at the intersection of technology, imagination, and collective responsibility—where humanity’s greatest risks and greatest possibilities meet. A virtual reality pioneer, multidisciplinary artist, and futurist, Ollie has spent decades exploring how emerging technologies shape culture, power, and our shared future.
-
-With a background in computer science, artificial intelligence, and computer graphics, Ollie has helped build some of the world’s most complex digital systems—from large-scale crowd simulations in major film franchises to immersive virtual worlds and global VR events. Alongside this technical work, he has consistently asked deeper questions: What kinds of futures are we building? Who benefits? And how do we ensure technology serves life rather than endangers it?
-
-As Co-Founder and President of United Humans, Ollie focuses on rethinking the “operating systems” of civilization—developing open, participatory approaches to governance, fairness, and collective decision-making grounded in science, ethics, and care. His work spans immersive storytelling, public speaking, activism, and community-building, with a long-standing commitment to inclusion, sustainability, and resisting authoritarianism in all its forms.
-
-As a Metachrysalis Judge, Ollie listens for projects and people who are engaging seriously with existential risk—not from fear or abstraction, but from responsibility and imagination. He is especially drawn to work that helps societies adapt to rapid change, builds resilient systems across technology and ecology, and invites more people into shaping humane, just, and life-affirming futures.
-
----
-
-![image info](../../../../static/img/people/faizan2.png)
-## Faizan Abbasi
-
-**Domain Steward:** Fragile Web → Interwoven Harmony
-
-Faizan Abbasi is a systems-minded generalist who works where complexity, uncertainty, and “stuck” problems tend to gather. Rooted in the Global South and shaped by lived experience of volatility and uneven infrastructure, Faizan brings a grounded understanding of how economic, political, technological, and social systems can fail—often not from one big collapse, but from cascading breakdowns across an interconnected web.
-
-Across strategy, emerging technology, and responsible innovation, Faizan’s work focuses on cracking open old assumptions and surfacing fresh patterns—especially in environments where people feel trapped between chaos and inertia. They’ve helped catalyze transformation across diverse industries and communities, with particular attention to the governance and ethical implications of XR, AI, and digital systems that increasingly shape everyday life.
-
-Faizan’s orientation is deeply relational and pragmatic: resilience isn’t a buzzword, it’s what happens when networks are real, trust is earned, and systems are designed to degrade gracefully rather than catastrophically. They’re especially interested in decentralized, cooperative solutions—the kinds that distribute capacity, reduce single points of failure, and help communities adapt when conditions change.
-
-As a Metachrysalis Judge, Faizan listens for changemakers who strengthen the “mesh” of the Fraser Lowland: projects that build redundancy, mutual aid, trustworthy coordination, and cross-domain collaboration—so local disruptions don’t become domino effects, and interdependence becomes a source of shared stability and care.
-
----
-
-![image info](../../../../static/img/people/kristin2.png)
-## Kristin Wilson (Kozar)
-
-**Domain Steward:** Truth Tornado → Shared Light
-
-Kristin Wilson (Kozar) is a leader, researcher, and community advocate working at the heart of one of the most important truth-and-trust challenges of our time: how societies repair shared understanding when history has been distorted, records have been withheld, and knowledge systems have been built to exclude.
-
-A proud member of the Hwlitsum First Nation, Kristin served as Executive Director of UBC’s Indian Residential School History and Dialogue Centre, where her work sits at the intersection of truth-telling, record stewardship, and relationship-building. She is currently completing a PhD at UBC iSchool focused on Indigenous Data Sovereignty and the ethical, governance, and justice dimensions of residential school records—work grounded in the principle that Indigenous Peoples have inherent rights to autonomy over their data, stories, and knowledge systems.
-
-Kristin brings deep experience in policy development, strategic partnerships, and community-led program design, including co-leading initiatives like the Oral Testimony Program—designed so that First Nations retain authority over how testimony is held, used, and shared, in alignment with Indigenous protocols and care.
-
-As a Metachrysalis Judge, Kristin listens for changemakers who strengthen the conditions for Shared Light: transparency with integrity, truth with cultural safety, and knowledge practices that build trust across difference. She is especially drawn to work that restores access, protects lived experience from extraction, and creates pathways for collective decision-making rooted in accountability, respect, and repair.
-
----
-
 ![image info](../../../../static/img/people/beverly2.png)
 ## Beverly Aarons
 
@@ -81,6 +36,21 @@ As a Metachrysalis Judge, Elyes listens for projects that move beyond extraction
 
 ---
 
+![image info](../../../../static/img/people/faizan2.png)
+## Faizan Abbasi
+
+**Domain Steward:** Fragile Web → Interwoven Harmony
+
+Faizan Abbasi is a systems-minded generalist who works where complexity, uncertainty, and “stuck” problems tend to gather. Rooted in the Global South and shaped by lived experience of volatility and uneven infrastructure, Faizan brings a grounded understanding of how economic, political, technological, and social systems can fail—often not from one big collapse, but from cascading breakdowns across an interconnected web.
+
+Across strategy, emerging technology, and responsible innovation, Faizan’s work focuses on cracking open old assumptions and surfacing fresh patterns—especially in environments where people feel trapped between chaos and inertia. They’ve helped catalyze transformation across diverse industries and communities, with particular attention to the governance and ethical implications of XR, AI, and digital systems that increasingly shape everyday life.
+
+Faizan’s orientation is deeply relational and pragmatic: resilience isn’t a buzzword, it’s what happens when networks are real, trust is earned, and systems are designed to degrade gracefully rather than catastrophically. They’re especially interested in decentralized, cooperative solutions—the kinds that distribute capacity, reduce single points of failure, and help communities adapt when conditions change.
+
+As a Metachrysalis Judge, Faizan listens for changemakers who strengthen the “mesh” of the Fraser Lowland: projects that build redundancy, mutual aid, trustworthy coordination, and cross-domain collaboration—so local disruptions don’t become domino effects, and interdependence becomes a source of shared stability and care.
+
+---
+
 ![image info](../../../../static/img/people/jessi2.png)
 ## Jessi Maness
 
@@ -93,6 +63,36 @@ With a background spanning finance, operations, design, and project management, 
 Jessi understands inequality not as an abstract problem, but as something that shows up in logistics, access, information flow, and whose needs are taken seriously during crises. Her approach emphasizes shared infrastructure, cooperative governance, and dignity-first response, ensuring communities aren’t just recipients of aid, but active participants in shaping recovery.
 
 As a Metachrysalis Judge, Jessi listens for projects that redistribute capacity and agency—work that strengthens commons-based systems, empowers disenfranchised people, and transforms relief and recovery into pathways toward lasting equity, resilience, and shared ownership of our collective future.
+
+---
+
+![image info](../../../../static/img/people/kristin2.png)
+## Kristin Wilson (Kozar)
+
+**Domain Steward:** Truth Tornado → Shared Light
+
+Kristin Wilson (Kozar) is a leader, researcher, and community advocate working at the heart of one of the most important truth-and-trust challenges of our time: how societies repair shared understanding when history has been distorted, records have been withheld, and knowledge systems have been built to exclude.
+
+A proud member of the Hwlitsum First Nation, Kristin served as Executive Director of UBC’s Indian Residential School History and Dialogue Centre, where her work sits at the intersection of truth-telling, record stewardship, and relationship-building. She is currently completing a PhD at UBC iSchool focused on Indigenous Data Sovereignty and the ethical, governance, and justice dimensions of residential school records—work grounded in the principle that Indigenous Peoples have inherent rights to autonomy over their data, stories, and knowledge systems.
+
+Kristin brings deep experience in policy development, strategic partnerships, and community-led program design, including co-leading initiatives like the Oral Testimony Program—designed so that First Nations retain authority over how testimony is held, used, and shared, in alignment with Indigenous protocols and care.
+
+As a Metachrysalis Judge, Kristin listens for changemakers who strengthen the conditions for Shared Light: transparency with integrity, truth with cultural safety, and knowledge practices that build trust across difference. She is especially drawn to work that restores access, protects lived experience from extraction, and creates pathways for collective decision-making rooted in accountability, respect, and repair.
+
+---
+
+![image info](../../../../static/img/people/ollie2.png)
+## Ollie Rankin
+
+**Domain Steward:** Extinction Edge → Resilient Renaissance
+
+Ollie Rankin works at the intersection of technology, imagination, and collective responsibility—where humanity’s greatest risks and greatest possibilities meet. A virtual reality pioneer, multidisciplinary artist, and futurist, Ollie has spent decades exploring how emerging technologies shape culture, power, and our shared future.
+
+With a background in computer science, artificial intelligence, and computer graphics, Ollie has helped build some of the world’s most complex digital systems—from large-scale crowd simulations in major film franchises to immersive virtual worlds and global VR events. Alongside this technical work, he has consistently asked deeper questions: What kinds of futures are we building? Who benefits? And how do we ensure technology serves life rather than endangers it?
+
+As Co-Founder and President of United Humans, Ollie focuses on rethinking the “operating systems” of civilization—developing open, participatory approaches to governance, fairness, and collective decision-making grounded in science, ethics, and care. His work spans immersive storytelling, public speaking, activism, and community-building, with a long-standing commitment to inclusion, sustainability, and resisting authoritarianism in all its forms.
+
+As a Metachrysalis Judge, Ollie listens for projects and people who are engaging seriously with existential risk—not from fear or abstraction, but from responsibility and imagination. He is especially drawn to work that helps societies adapt to rapid change, builds resilient systems across technology and ecology, and invites more people into shaping humane, just, and life-affirming futures.
 
 ---
 
