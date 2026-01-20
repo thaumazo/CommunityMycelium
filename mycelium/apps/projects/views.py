@@ -9,7 +9,6 @@ from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 
 
-@login_required
 def project_list_view(request):
     projects = get_permitted_objects(request.user, "view", Project)
     
@@ -22,7 +21,6 @@ def project_list_view(request):
     })
 
 
-@login_required
 def project_detail_view(request, pk):
     from apps.stories.models import Story, StoryAttachment
     from django.contrib.contenttypes.models import ContentType
