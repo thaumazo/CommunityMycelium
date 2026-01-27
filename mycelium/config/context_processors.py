@@ -7,4 +7,5 @@ def site_settings(request):
     """
     return {
         'URL_OVERRIDE': settings.URL_OVERRIDE,
+        'GOOGLE_ANALYTICS_ID': settings.GOOGLE_ANALYTICS_ID,
     }
