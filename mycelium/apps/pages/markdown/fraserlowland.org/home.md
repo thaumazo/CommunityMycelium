@@ -8,6 +8,8 @@ What if these efforts could see each other? What if the people doing this work c
 
 **Localism is a three-month pilot bringing together people who are already making change in the Fraser Lowland**. This is not: a startup accelerator, a pitch contest, a leaderboard, a hustle-culture productivity engine. It's an experiment in what happens when we prioritize relationships and learning alongside action - when we build community, not just react to crisis.
 
+![image info](../../../../static/img/misc/fraserlowland.org/FraserLowlandBW.png)
+
 ## Get Involved
 
 There are two ways to participate:
