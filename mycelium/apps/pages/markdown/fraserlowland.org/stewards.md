@@ -6,7 +6,7 @@ Below, learn a bit more about the stewards and the domains they're focused on.
 
 ---
 
-![image info](../../../../static/img/people/beverly2.png)
+![image info](../../../../static/img/people/beverly3.png)
 ## Beverly Aarons
 
 **Domain Steward:** Soul Split → Cultural Wholeness
@@ -21,7 +21,7 @@ As a Metachrysalis Judge, Beverly listens for projects and people who mend the �
 
 ---
 
-![image info](../../../../static/img/people/elyes2.png)
+![image info](../../../../static/img/people/elyes3.png)
 ## Elyes Mkacher
 
 **Domain Steward:** Earth Erosion → Regenerative Abundance
@@ -36,7 +36,7 @@ As a Metachrysalis Judge, Elyes listens for projects that move beyond extraction
 
 ---
 
-![image info](../../../../static/img/people/faizan2.png)
+![image info](../../../../static/img/people/faizan3.png)
 ## Faizan Abbasi
 
 **Domain Steward:** Fragile Web → Interwoven Harmony
@@ -51,7 +51,7 @@ As a Metachrysalis Judge, Faizan listens for changemakers who strengthen the “
 
 ---
 
-![image info](../../../../static/img/people/jessi2.png)
+![image info](../../../../static/img/people/jessi3.png)
 ## Jessi Maness
 
 **Domain Steward:** Power Pyramid → Equitable Commons
@@ -66,7 +66,7 @@ As a Metachrysalis Judge, Jessi listens for projects that redistribute capacity 
 
 ---
 
-![image info](../../../../static/img/people/kristin2.png)
+![image info](../../../../static/img/people/kristin3.png)
 ## Kristin Wilson (Kozar)
 
 **Domain Steward:** Truth Tornado → Shared Light
@@ -81,7 +81,7 @@ As a Metachrysalis Judge, Kristin listens for changemakers who strengthen the co
 
 ---
 
-![image info](../../../../static/img/people/ollie2.png)
+![image info](../../../../static/img/people/ollie3.png)
 ## Ollie Rankin
 
 **Domain Steward:** Extinction Edge → Resilient Renaissance
@@ -96,7 +96,7 @@ As a Metachrysalis Judge, Ollie listens for projects and people who are engaging
 
 ---
 
-![image info](../../../../static/img/people/saeed2.png)
+![image info](../../../../static/img/people/saeed3.png)
 ## Saeed Dyanatkar
 
 **Domain Steward:** Tech Tsunami → Tech Symphony
@@ -111,7 +111,7 @@ As a Metachrysalis Judge, Saeed listens for projects that help turn the Tech Tsu
 
 ---
 
-![image info](../../../../static/img/people/soudeh2.png)
+![image info](../../../../static/img/people/soudeh3.png)
 ## Soudeh Jamshidian
 
 **Domain Steward:** Leadership Lapse → Adaptive Stewardship
