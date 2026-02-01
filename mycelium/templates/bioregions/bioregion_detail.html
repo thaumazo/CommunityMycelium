@@ -45,6 +45,7 @@
                   <li class="tab" data-tab="people">People</li>
                   <li class="tab" data-tab="organizations">Orgs</li>
                   <li class="tab" data-tab="projects">Projects</li>
+                  <li class="tab" data-tab="locations">Locations</li>
                 </ul>
               </div>
 
@@ -231,6 +232,44 @@
               <div class="tab-content hidden" id="projects">
                 <h2 class="text-lg leading-6 font-medium text-gray-900">Projects</h2>
                 <p class="text-sm text-gray-500">Content for Projects will go here.</p>
+              </div>
+
+              <div class="tab-content hidden" id="locations">
+                <h2 class="text-lg leading-6 font-medium text-gray-900 mb-4">Locations</h2>
+                <div class="bg-white overflow-hidden">
+                  <ul class="divide-y divide-gray-200">
+                    {% for location in locations %}
+                      <li class="py-4">
+                        <div class="flex items-start gap-4">
+                          <div class="shrink-0">
+                            {% if location.picture_thumbnail %}
+                              <img src="{{ location.picture_thumbnail.url }}" alt="{{ location.title }}" class="w-10 h-10 rounded-full object-cover border-2 border-indigo-200" />
+                            {% elif location.picture %}
+                              <img src="{{ location.picture.url }}" alt="{{ location.title }}" class="w-10 h-10 rounded-full object-cover border-2 border-indigo-200" />
+                            {% else %}
+                              <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <span class="text-sm font-semibold text-indigo-600">{{ location.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-indigo-600">
+                              <a href="{% url 'location_detail' location.pk %}" class="hover:text-indigo-900 hover:underline">{{ location.title }}</a>
+                            </h3>
+                            {% if location.address %}
+                              <p class="text-sm text-gray-500 mt-1">{{ location.address }}</p>
+                            {% endif %}
+                            {% if location.description %}
+                              <p class="text-sm text-gray-500 mt-1">{{ location.description|truncatewords:20 }}</p>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </li>
+                    {% empty %}
+                      <li class="py-4 text-center text-gray-500">No locations found.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
               </div>
               {% endif %}
             </div>

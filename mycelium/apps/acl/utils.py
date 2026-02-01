@@ -33,6 +33,7 @@ def is_permitted(user, action, obj_or_string):
     from apps.challenges.models import Challenge
     from apps.communities.models import Community
     from apps.projects.models import Project
+    from apps.locations.models import Location
     
     # Handle anonymous users - check public visibility rules only
     if not user.is_authenticated:
@@ -43,6 +44,8 @@ def is_permitted(user, action, obj_or_string):
         if isinstance(obj, Community) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
         if isinstance(obj, Project) and action == "view" and hasattr(obj, 'view_public'):
+            return obj.view_public
+        if isinstance(obj, Location) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
         if isinstance(obj, Story) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
@@ -61,6 +64,11 @@ def is_permitted(user, action, obj_or_string):
     
     # Allow any authenticated user to create projects
     if isinstance(obj, Project) and action == "add":
+        if user.is_authenticated:
+            return True
+
+    # Allow any authenticated user to create locations
+    if isinstance(obj, Location) and action == "add":
         if user.is_authenticated:
             return True
 
@@ -107,6 +115,17 @@ def is_permitted(user, action, obj_or_string):
         if user.is_authenticated and obj.view_members:
             return True
         # Public users can see projects with view_public=True
+        if obj.view_public:
+            return True
+
+    # Visibility rules for locations
+    if isinstance(obj, Location) and action == "view":
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        if user.is_superuser:
+            return True
+        if user.is_authenticated and obj.view_members:
+            return True
         if obj.view_public:
             return True
     
@@ -275,6 +294,7 @@ def get_permitted_objects(user, action, model_class):
     from apps.challenges.models import Challenge
     from apps.communities.models import Community
     from apps.projects.models import Project
+    from apps.locations.models import Location
     
     # Public access rules
     if model_class == Bioregion and action == "view" and user.is_authenticated:
@@ -326,6 +346,17 @@ def get_permitted_objects(user, action, model_class):
             ).distinct())
         else:
             # Unauthenticated users can only see view_public projects
+            return list(model_class.objects.filter(view_public=True))
+
+    if model_class == Location and action == "view":
+        if user.is_superuser:
+            return list(model_class.objects.all())
+        elif user.is_authenticated:
+            from django.db.models import Q
+            return list(model_class.objects.filter(
+                Q(created_by=user) | Q(view_members=True) | Q(view_public=True)
+            ).distinct())
+        else:
             return list(model_class.objects.filter(view_public=True))
     
     from apps.stories.models import Story

@@ -14,6 +14,7 @@ urlpatterns = [
     path("meetings/", include("apps.meetings.urls")),
     path("communities/", include("apps.communities.urls")),
     path("projects/", include("apps.projects.urls")),
+    path("locations/", include("apps.locations.urls")),
     path("socialroles/", include("apps.socialroles.urls")),
     path("maladaptives/", include("apps.maladaptives.urls")),
     path("metacrisis_facets/", include("apps.metacrisis_facets.urls")),

@@ -38,17 +38,22 @@ def bioregion_detail_view(request, pk):
     
     # Get communities connected to this bioregion
     from apps.communities.models import Community
+    from apps.locations.models import Location
     if request.user.is_authenticated:
         from apps.acl.utils import get_permitted_objects
         all_communities = get_permitted_objects(request.user, "view", Community)
         # Filter to only communities connected to this bioregion
         communities = [c for c in all_communities if bioregion in c.bioregions.all()]
+        all_locations = get_permitted_objects(request.user, "view", Location)
+        locations = [l for l in all_locations if bioregion in l.bioregions.all()]
     else:
         communities = Community.objects.filter(bioregions=bioregion)
+        locations = Location.objects.filter(bioregions=bioregion, view_public=True)
     
     return render(request, "bioregions/bioregion_detail.html", {
         "bioregion": bioregion,
-        "communities": communities
+        "communities": communities,
+        "locations": locations,
     })
 
 

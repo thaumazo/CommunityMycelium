@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.communities",
     "apps.projects",
+    "apps.locations",
     "apps.socialroles",
     "apps.maladaptives",
     "apps.metacrisis_facets",

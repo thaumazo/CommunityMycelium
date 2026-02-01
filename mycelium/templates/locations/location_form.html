@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load image_filters %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      {% include '_components/object_nav.html' with object=location %}
+
+      <div class="max-w-3xl mx-auto">
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="space-y-2">
+              {% if location %}
+                <h1 class="text-2xl font-semibold text-gray-900">{{ location.title }}</h1>
+                <h2 class="text-lg text-gray-500">Edit</h2>
+              {% else %}
+                <h1 class="text-2xl font-semibold text-gray-900">Create Location</h1>
+              {% endif %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+              {% csrf_token %}
+
+              <div class="mt-6">
+                <div class="tabs-container">
+                  <ul class="tab-list">
+                    <li class="tab active" data-tab="details">Details</li>
+                    <li class="tab" data-tab="visibility">Visibility</li>
+                    <li class="tab" data-tab="bioregions">Bioregions</li>
+                    <li class="tab" data-tab="capitals">Capitals</li>
+                  </ul>
+                </div>
+
+                <!-- Details Tab -->
+                <div class="tab-content" id="details">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.title.label }}</label>
+                      <div class="mt-1">
+                        <input type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="w-full" />
+                      </div>
+                      {% if form.title.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.title.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.description.label }}</label>
+                      <div class="mt-1">
+                        <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="4" class="w-full">{{ form.description.value|default:'' }}</textarea>
+                      </div>
+                      {% if form.description.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.description.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.address.label }}</label>
+                      <div class="mt-1">
+                        <textarea name="{{ form.address.html_name }}" id="{{ form.address.id_for_label }}" rows="2" class="w-full">{{ form.address.value|default:'' }}</textarea>
+                      </div>
+                      {% if form.address.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.address.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label for="{{ form.latitude.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.latitude.label }}</label>
+                        <div class="mt-1">
+                          <input type="number" step="0.000001" name="{{ form.latitude.html_name }}" id="{{ form.latitude.id_for_label }}" value="{{ form.latitude.value|default:'' }}" class="w-full" />
+                        </div>
+                        {% if form.latitude.errors %}
+                          <div class="mt-1 text-sm text-red-600">{{ form.latitude.errors|join:', ' }}</div>
+                        {% endif %}
+                      </div>
+
+                      <div>
+                        <label for="{{ form.longitude.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.longitude.label }}</label>
+                        <div class="mt-1">
+                          <input type="number" step="0.000001" name="{{ form.longitude.html_name }}" id="{{ form.longitude.id_for_label }}" value="{{ form.longitude.value|default:'' }}" class="w-full" />
+                        </div>
+                        {% if form.longitude.errors %}
+                          <div class="mt-1 text-sm text-red-600">{{ form.longitude.errors|join:', ' }}</div>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label for="{{ form.picture.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.picture.label }}</label>
+                      {% if form.instance.picture_thumbnail %}
+                        <div class="mt-2 mb-2">
+                          <img src="{{ form.instance.picture_thumbnail.url }}" alt="Current picture" class="w-24 h-24 rounded-lg border-2 border-gray-300 object-cover">
+                          <p class="text-xs text-gray-500 mt-1">Current picture</p>
+                        </div>
+                      {% elif form.instance.picture %}
+                        <div class="mt-2 mb-2">
+                          <img src="{{ form.instance.picture.url }}" alt="Current picture" class="w-24 h-24 rounded-lg border-2 border-gray-300 object-cover">
+                          <p class="text-xs text-gray-500 mt-1">Current picture</p>
+                        </div>
+                      {% endif %}
+                      <div class="mt-1">
+                        <input type="file" name="{{ form.picture.html_name }}" id="{{ form.picture.id_for_label }}" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                      </div>
+                      {% if form.picture.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ form.picture.help_text }}</p>
+                      {% endif %}
+                      {% if form.picture.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.picture.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Visibility Tab -->
+                <div class="tab-content hidden" id="visibility">
+                  <div class="space-y-4">
+                    <div class="flex items-center">
+                      <input type="checkbox" name="view_members" id="{{ form.view_members.id_for_label }}" {% if form.instance.view_members %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                      <label for="{{ form.view_members.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                        {{ form.view_members.label }}
+                      </label>
+                      {% if form.view_members.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.view_members.errors|join:", " }}</div>
+                      {% endif %}
+                    </div>
+                    {% if form.view_members.help_text %}
+                      <p class="text-xs text-gray-500">{{ form.view_members.help_text }}</p>
+                    {% endif %}
+
+                    <div class="flex items-center">
+                      <input type="checkbox" name="view_public" id="{{ form.view_public.id_for_label }}" {% if form.instance.view_public %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                      <label for="{{ form.view_public.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                        {{ form.view_public.label }}
+                      </label>
+                      {% if form.view_public.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.view_public.errors|join:", " }}</div>
+                      {% endif %}
+                    </div>
+                    {% if form.view_public.help_text %}
+                      <p class="text-xs text-gray-500">{{ form.view_public.help_text }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Bioregions Tab -->
+                <div class="tab-content hidden" id="bioregions">
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-4">{{ form.bioregions.label }}</label>
+                      <div class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-md p-3">
+                        {% for choice in form.bioregions %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.bioregions.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.bioregions.errors|join:', ' }}</div>
+                      {% endif %}
+                      {% if form.bioregions.help_text %}
+                        <p class="text-xs text-gray-500 mt-2">{{ form.bioregions.help_text }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Capitals Tab -->
+                <div class="tab-content hidden" id="capitals">
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-4">{{ form.capitals.label }}</label>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for capital in form.fields.capitals.queryset %}
+                          <label for="id_capitals_{{ capital.pk }}" class="flex items-start cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                            <input type="checkbox" name="capitals" value="{{ capital.pk }}" id="id_capitals_{{ capital.pk }}" {% if form.instance.pk and capital.id in form.fields.capitals.initial %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
+                            {% if capital.image_path %}
+                              <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                              </div>
+                            {% else %}
+                              <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                                <span class="text-2xl text-gray-600 font-bold">{{ capital.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                            <div class="ml-4 flex-1">
+                              <div class="font-semibold text-gray-900">{{ capital.title }}</div>
+                              {% if capital.description %}
+                                <div class="text-sm text-gray-600 mt-1">{{ capital.description }}</div>
+                              {% endif %}
+                            </div>
+                          </label>
+                        {% endfor %}
+                      </div>
+                      {% if form.capitals.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.capitals.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end space-x-3 mt-6">
+                <a href="{% url 'location_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save Location</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
