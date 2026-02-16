@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Task(models.Model):
     title = models.CharField(max_length=255)
-    due_date = models.DateTimeField()
+    due_date = models.DateTimeField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     status = models.CharField(
         max_length=20,

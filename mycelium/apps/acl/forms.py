@@ -15,7 +15,7 @@ class ObjectPermissionForm(forms.Form):
 
 class UserSelectForm(forms.Form):
     user = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=User.objects.all().order_by('full_name'),
         label="Select User",
         empty_label="Choose a user...",
         widget=forms.Select(attrs={"class": "w-full"}),

@@ -92,6 +92,9 @@ class User(AbstractUser):
         help_text="Indicates if the user has been approved by a superuser.",
     )
 
+    class Meta:
+        ordering = ['full_name']
+
 
 class UserGoogleAuth(models.Model):
     """Store Google OAuth credentials for a user."""

@@ -86,7 +86,7 @@ def user_list_view(request):
 
     # Combine both querysets and ensure no duplicates
     users = permitted_users | additional_users
-    users = users.distinct()
+    users = users.distinct().order_by('full_name')
 
     # Pagination using helper function
     users_page, pagination_data = paginate_queryset(users, request, per_page=100)

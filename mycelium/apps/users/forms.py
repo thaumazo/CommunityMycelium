@@ -100,7 +100,7 @@ class UserForm(forms.ModelForm):
     )
 
     invited_by = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=User.objects.all().order_by('full_name'),
         widget=forms.Select(attrs={"class": "w-full"}),
         required=False,
         label="Invited by",
