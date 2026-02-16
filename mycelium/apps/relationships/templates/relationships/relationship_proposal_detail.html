@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      {% include '_components/messages.html' %}
+
+      <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="flex items-start justify-between">
+            <div>
+              <h1 class="text-2xl font-semibold text-gray-900">{{ proposal.display_title }}</h1>
+              <p class="text-sm text-gray-500">Proposed by {{ proposal.initiator.get_full_name }} on behalf of {{ proposal.get_from_label }} to {{ proposal.get_to_label }}</p>
+            </div>
+            <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700">{{ proposal.status }}</span>
+          </div>
+
+          <div class="mt-6 space-y-4">
+            {% if proposal.display_description %}
+              <div>
+                <h3 class="text-sm font-medium text-gray-500">Description</h3>
+                <p class="text-sm text-gray-900">{{ proposal.display_description|linebreaks }}</p>
+              </div>
+            {% endif %}
+
+            {% if proposal.note %}
+              <div>
+                <h3 class="text-sm font-medium text-gray-500">Note</h3>
+                <p class="text-sm text-gray-900">{{ proposal.note|linebreaks }}</p>
+              </div>
+            {% endif %}
+
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">Resolution</h3>
+              <a href="{% url 'resolution_detail' proposal.resolution.id %}" class="text-indigo-600 hover:text-indigo-900">{{ proposal.resolution.title }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if can_respond %}
+        <div class="bg-white shadow sm:rounded-lg mt-6">
+          <div class="px-4 py-5 sm:p-6">
+            <h2 class="text-lg font-medium text-gray-900">Respond</h2>
+
+            <form method="post" class="space-y-6 mt-4">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="respond" />
+
+              <div>
+                <label for="response_action" class="block text-sm font-medium text-gray-700">Action</label>
+                <select name="response_action" id="response_action" class="mt-1 w-full">
+                  <option value="accepted">Agree</option>
+                  <option value="countered">Counter</option>
+                  <option value="declined">Disagree</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="{{ response_form.note.id_for_label }}" class="block text-sm font-medium text-gray-700">Note</label>
+                <div class="mt-1">{{ response_form.note }}</div>
+              </div>
+
+              <div class="border-t border-gray-200 pt-4">
+                <h3 class="text-sm font-medium text-gray-700">Counter Details (only if countering)</h3>
+                <div class="mt-2 space-y-4">
+                  <div>
+                    <label for="{{ response_form.proposed_title.id_for_label }}" class="block text-sm font-medium text-gray-700">Proposed Title</label>
+                    <div class="mt-1">{{ response_form.proposed_title }}</div>
+                  </div>
+                  <div>
+                    <label for="{{ response_form.proposed_description.id_for_label }}" class="block text-sm font-medium text-gray-700">Proposed Description</label>
+                    <div class="mt-1">{{ response_form.proposed_description }}</div>
+                  </div>
+                  <div>
+                    <label for="{{ response_form.resolution.id_for_label }}" class="block text-sm font-medium text-gray-700">Resolution</label>
+                    <div class="mt-1">{{ response_form.resolution }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

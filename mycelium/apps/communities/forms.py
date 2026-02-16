@@ -25,10 +25,23 @@ class CommunityForm(forms.ModelForm):
     
     class Meta:
         model = Community
-        fields = ["title", "description", "members", "bioregions", "url", "picture", "view_members", "view_public"]
+        fields = [
+            "title",
+            "description",
+            "members",
+            "owners",
+            "admins",
+            "bioregions",
+            "url",
+            "picture",
+            "view_members",
+            "view_public",
+        ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
             "members": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+            "owners": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+            "admins": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "bioregions": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "url": forms.Textarea(attrs={"rows": 1}),
         }

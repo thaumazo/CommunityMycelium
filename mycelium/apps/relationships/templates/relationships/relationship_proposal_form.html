@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="space-y-2">
+            <h1 class="text-2xl font-semibold text-gray-900">Propose Relationship</h1>
+            <p class="text-sm text-gray-500">Select both parties and include a resolution.</p>
+          </div>
+
+          <form method="post" class="space-y-6 mt-6">
+            {% csrf_token %}
+
+            <div class="space-y-4">
+              <div>
+                <label for="{{ form.relationship_type.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.relationship_type.label }}</label>
+                <div class="mt-1">
+                  {{ form.relationship_type }}
+                </div>
+                {% if form.relationship_type.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.relationship_type.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.proposed_title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.proposed_title.label }}</label>
+                <div class="mt-1">
+                  {{ form.proposed_title }}
+                </div>
+                {% if form.proposed_title.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.proposed_title.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.proposed_description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.proposed_description.label }}</label>
+                <div class="mt-1">
+                  {{ form.proposed_description }}
+                </div>
+                {% if form.proposed_description.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.proposed_description.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.note.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.note.label }}</label>
+                <div class="mt-1">
+                  {{ form.note }}
+                </div>
+                {% if form.note.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.note.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label for="{{ form.resolution.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.resolution.label }}</label>
+                <div class="mt-1">
+                  {{ form.resolution }}
+                </div>
+                {% if form.resolution.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.resolution.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="mt-6 border-t border-gray-200 pt-6">
+              <h2 class="text-lg font-medium text-gray-900">On Behalf Of</h2>
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div>
+                  <label for="{{ form.from_person.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.from_person.label }}</label>
+                  <div class="mt-1">{{ form.from_person }}</div>
+                </div>
+                <div>
+                  <label for="{{ form.from_community.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.from_community.label }}</label>
+                  <div class="mt-1">{{ form.from_community }}</div>
+                </div>
+                <div>
+                  <label for="{{ form.from_project.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.from_project.label }}</label>
+                  <div class="mt-1">{{ form.from_project }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 border-t border-gray-200 pt-6">
+              <h2 class="text-lg font-medium text-gray-900">To</h2>
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div>
+                  <label for="{{ form.to_person.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.to_person.label }}</label>
+                  <div class="mt-1">{{ form.to_person }}</div>
+                </div>
+                <div>
+                  <label for="{{ form.to_community.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.to_community.label }}</label>
+                  <div class="mt-1">{{ form.to_community }}</div>
+                </div>
+                <div>
+                  <label for="{{ form.to_project.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.to_project.label }}</label>
+                  <div class="mt-1">{{ form.to_project }}</div>
+                </div>
+              </div>
+              {% if form.non_field_errors %}
+                <div class="mt-2 text-sm text-red-600">{{ form.non_field_errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div class="flex justify-end space-x-3">
+              <a href="{% url 'core:home' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
+              <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700">Send Proposal</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

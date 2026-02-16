@@ -36,10 +36,21 @@ class ProjectForm(forms.ModelForm):
     
     class Meta:
         model = Project
-        fields = ["title", "description", "members", "url", "view_members", "view_public"]
+        fields = [
+            "title",
+            "description",
+            "members",
+            "owners",
+            "admins",
+            "url",
+            "view_members",
+            "view_public",
+        ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
             "members": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+            "owners": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+            "admins": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "url": forms.Textarea(attrs={"rows": 1}),
         }
 
@@ -66,16 +77,42 @@ class ProjectForm(forms.ModelForm):
             project.save()
             self.save_m2m()
             
-            # Handle capitals_in through model
-            selected_capitals_in = self.cleaned_data.get('capitals_in', [])
-            ProjectCapitalIn.objects.filter(project=project).delete()
-            for capital in selected_capitals_in:
-                ProjectCapitalIn.objects.get_or_create(project=project, capital=capital)
+            # Handle capitals_in through model - sync instead of delete/recreate
+            selected_capitals_in = set(self.cleaned_data.get('capitals_in', []))
+            existing_capitals_in = set(
+                pc.capital for pc in ProjectCapitalIn.objects.filter(project=project).select_related('capital')
+            )
             
-            # Handle capitals_out through model
-            selected_capitals_out = self.cleaned_data.get('capitals_out', [])
-            ProjectCapitalOut.objects.filter(project=project).delete()
-            for capital in selected_capitals_out:
-                ProjectCapitalOut.objects.get_or_create(project=project, capital=capital)
+            # Remove capitals that are no longer selected
+            capitals_to_remove_in = existing_capitals_in - selected_capitals_in
+            if capitals_to_remove_in:
+                ProjectCapitalIn.objects.filter(
+                    project=project, 
+                    capital__in=capitals_to_remove_in
+                ).delete()
+            
+            # Add new capitals
+            capitals_to_add_in = selected_capitals_in - existing_capitals_in
+            for capital in capitals_to_add_in:
+                ProjectCapitalIn.objects.create(project=project, capital=capital)
+            
+            # Handle capitals_out through model - sync instead of delete/recreate
+            selected_capitals_out = set(self.cleaned_data.get('capitals_out', []))
+            existing_capitals_out = set(
+                pc.capital for pc in ProjectCapitalOut.objects.filter(project=project).select_related('capital')
+            )
+            
+            # Remove capitals that are no longer selected
+            capitals_to_remove_out = existing_capitals_out - selected_capitals_out
+            if capitals_to_remove_out:
+                ProjectCapitalOut.objects.filter(
+                    project=project, 
+                    capital__in=capitals_to_remove_out
+                ).delete()
+            
+            # Add new capitals
+            capitals_to_add_out = selected_capitals_out - existing_capitals_out
+            for capital in capitals_to_add_out:
+                ProjectCapitalOut.objects.create(project=project, capital=capital)
         
         return project

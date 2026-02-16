@@ -15,6 +15,18 @@ class Community(models.Model):
         blank=True,
         help_text="Users who are members of this community"
     )
+    owners = models.ManyToManyField(
+        User,
+        related_name="owned_communities",
+        blank=True,
+        help_text="Users who can respond to relationship proposals for this community"
+    )
+    admins = models.ManyToManyField(
+        User,
+        related_name="admin_communities",
+        blank=True,
+        help_text="Users who can respond to relationship proposals for this community"
+    )
     bioregions = models.ManyToManyField(
         "bioregions.Bioregion",
         related_name="communities",

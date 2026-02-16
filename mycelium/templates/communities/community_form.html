@@ -122,6 +122,36 @@
               <div class="tab-content hidden" id="connections">
                 <div class="space-y-6">
                   <div>
+                    <label for="{{ form.owners.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-3">{{ form.owners.label }}</label>
+                    <div class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-md p-3">
+                      {% for choice in form.owners %}
+                        <div class="flex items-center">
+                          <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                          <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                        </div>
+                      {% endfor %}
+                    </div>
+                    {% if form.owners.errors %}
+                      <div class="mt-1 text-sm text-red-600">{{ form.owners.errors|join:', ' }}</div>
+                    {% endif %}
+                  </div>
+
+                  <div>
+                    <label for="{{ form.admins.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-3">{{ form.admins.label }}</label>
+                    <div class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-md p-3">
+                      {% for choice in form.admins %}
+                        <div class="flex items-center">
+                          <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                          <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                        </div>
+                      {% endfor %}
+                    </div>
+                    {% if form.admins.errors %}
+                      <div class="mt-1 text-sm text-red-600">{{ form.admins.errors|join:', ' }}</div>
+                    {% endif %}
+                  </div>
+
+                  <div>
                     <label for="{{ form.bioregions.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-3">{{ form.bioregions.label }}</label>
                     <div class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-md p-3">
                       {% for choice in form.bioregions %}

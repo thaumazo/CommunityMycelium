@@ -15,6 +15,18 @@ class Project(models.Model):
         blank=True,
         help_text="Users who are members of this project"
     )
+    owners = models.ManyToManyField(
+        User,
+        related_name="owned_projects",
+        blank=True,
+        help_text="Users who can respond to relationship proposals for this project"
+    )
+    admins = models.ManyToManyField(
+        User,
+        related_name="admin_projects",
+        blank=True,
+        help_text="Users who can respond to relationship proposals for this project"
+    )
     url = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="projects"
