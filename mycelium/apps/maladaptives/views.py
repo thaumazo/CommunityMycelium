@@ -7,6 +7,7 @@ from .forms import MaladaptiveForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 @login_required
@@ -34,6 +35,12 @@ def maladaptive_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'maladaptive_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = MaladaptiveForm()
+            form_token = get_form_token(request, 'maladaptive_create')
+            return render(request, "maladaptives/maladaptive_form.html", {"form": form, "form_token": form_token})
+        
         form = MaladaptiveForm(request.POST)
         if form.is_valid():
             maladaptive = form.save(commit=False)
@@ -41,14 +48,15 @@ def maladaptive_create_view(request):
             maladaptive.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Maladaptive Schema created successfully!")
-            return redirect("maladaptive_list")
+            return redirect("maladaptive_detail", pk=maladaptive.pk)
     else:
         form = MaladaptiveForm()
 
+    form_token = get_form_token(request, 'maladaptive_create')
     return render(
         request,
         "maladaptives/maladaptive_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

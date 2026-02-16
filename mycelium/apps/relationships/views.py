@@ -10,6 +10,7 @@ from apps.projects.models import Project
 from apps.users.models import User
 from .models import Relationship, RelationshipProposal, RelationshipProposalResponse, RelationshipInstance
 from .forms import RelationshipForm, RelationshipProposalForm, RelationshipProposalResponseForm
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 @login_required
@@ -37,6 +38,12 @@ def relationship_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'relationship_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = RelationshipForm()
+            form_token = get_form_token(request, 'relationship_create')
+            return render(request, "relationships/relationship_form.html", {"form": form, "form_token": form_token})
+        
         form = RelationshipForm(request.POST)
         if form.is_valid():
             relationship = form.save(commit=False)
@@ -44,14 +51,15 @@ def relationship_create_view(request):
             relationship.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Relationship created successfully!")
-            return redirect("relationship_list")
+            return redirect("relationship_detail", pk=relationship.pk)
     else:
         form = RelationshipForm()
 
+    form_token = get_form_token(request, 'relationship_create')
     return render(
         request,
         "relationships/relationship_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

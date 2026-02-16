@@ -7,6 +7,7 @@ from .forms import CapitalForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 @login_required
@@ -34,6 +35,12 @@ def capital_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'capital_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = CapitalForm()
+            form_token = get_form_token(request, 'capital_create')
+            return render(request, "capitals/capital_form.html", {"form": form, "form_token": form_token})
+        
         form = CapitalForm(request.POST)
         if form.is_valid():
             capital = form.save(commit=False)
@@ -41,14 +48,15 @@ def capital_create_view(request):
             capital.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Capital created successfully!")
-            return redirect("capital_list")
+            return redirect("capital_detail", pk=capital.pk)
     else:
         form = CapitalForm()
 
+    form_token = get_form_token(request, 'capital_create')
     return render(
         request,
         "capitals/capital_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

@@ -7,6 +7,7 @@ from .forms import SocialroleForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 @login_required
@@ -34,6 +35,12 @@ def socialrole_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'socialrole_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = SocialroleForm()
+            form_token = get_form_token(request, 'socialrole_create')
+            return render(request, "socialroles/socialrole_form.html", {"form": form, "form_token": form_token})
+        
         form = SocialroleForm(request.POST)
         if form.is_valid():
             socialrole = form.save(commit=False)
@@ -41,14 +48,15 @@ def socialrole_create_view(request):
             socialrole.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Social Role created successfully!")
-            return redirect("socialrole_list")
+            return redirect("socialrole_detail", pk=socialrole.pk)
     else:
         form = SocialroleForm()
 
+    form_token = get_form_token(request, 'socialrole_create')
     return render(
         request,
         "socialroles/socialrole_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

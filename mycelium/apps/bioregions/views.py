@@ -7,6 +7,7 @@ from .forms import BioregionForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 def bioregion_list_view(request):
@@ -63,6 +64,12 @@ def bioregion_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'bioregion_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = BioregionForm()
+            form_token = get_form_token(request, 'bioregion_create')
+            return render(request, "bioregions/bioregion_form.html", {"form": form, "form_token": form_token})
+        
         form = BioregionForm(request.POST, request.FILES)
         if form.is_valid():
             bioregion = form.save(commit=False)
@@ -70,14 +77,15 @@ def bioregion_create_view(request):
             bioregion.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Bioregion created successfully!")
-            return redirect("bioregion_list")
+            return redirect("bioregion_detail", pk=bioregion.pk)
     else:
         form = BioregionForm()
 
+    form_token = get_form_token(request, 'bioregion_create')
     return render(
         request,
         "bioregions/bioregion_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

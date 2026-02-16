@@ -7,6 +7,7 @@ from .forms import ProjectForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 def project_list_view(request):
@@ -88,20 +89,27 @@ def project_detail_view(request, pk):
 @login_required
 def project_create_view(request):
     if request.method == "POST":
+        if not validate_form_token(request, 'project_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = ProjectForm()
+            form_token = get_form_token(request, 'project_create')
+            return render(request, "projects/project_form.html", {"form": form, "form_token": form_token})
+        
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = form.save(commit=False)
             project.created_by = request.user
             form.save()  # This will save the project and m2m fields
             messages.success(request, "Project created successfully!")
-            return redirect("project_list")
+            return redirect("project_detail", pk=project.pk)
     else:
         form = ProjectForm()
 
+    form_token = get_form_token(request, 'project_create')
     return render(
         request,
         "projects/project_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

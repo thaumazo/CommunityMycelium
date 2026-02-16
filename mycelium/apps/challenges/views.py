@@ -7,6 +7,7 @@ from .forms import ChallengeForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 @login_required
@@ -34,6 +35,12 @@ def challenge_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'challenge_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = ChallengeForm()
+            form_token = get_form_token(request, 'challenge_create')
+            return render(request, "challenges/challenge_form.html", {"form": form, "form_token": form_token})
+        
         form = ChallengeForm(request.POST)
         if form.is_valid():
             challenge = form.save(commit=False)
@@ -41,14 +48,15 @@ def challenge_create_view(request):
             challenge.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Challenge created successfully!")
-            return redirect("challenge_list")
+            return redirect("challenge_detail", pk=challenge.pk)
     else:
         form = ChallengeForm()
 
+    form_token = get_form_token(request, 'challenge_create')
     return render(
         request,
         "challenges/challenge_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

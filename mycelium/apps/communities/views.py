@@ -7,6 +7,7 @@ from .forms import CommunityForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 @login_required
@@ -38,6 +39,12 @@ def community_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'community_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = CommunityForm()
+            form_token = get_form_token(request, 'community_create')
+            return render(request, "communities/community_form.html", {"form": form, "form_token": form_token})
+        
         form = CommunityForm(request.POST, request.FILES)
         if form.is_valid():
             community = form.save(commit=False)
@@ -45,14 +52,15 @@ def community_create_view(request):
             community.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Community created successfully!")
-            return redirect("community_list")
+            return redirect("community_detail", pk=community.pk)
     else:
         form = CommunityForm()
 
+    form_token = get_form_token(request, 'community_create')
     return render(
         request,
         "communities/community_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

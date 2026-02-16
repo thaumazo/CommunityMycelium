@@ -6,6 +6,7 @@ from .models import Task
 from .forms import TaskForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 @login_required
 def task_list_view(request):
@@ -39,6 +40,12 @@ def task_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'task_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = TaskForm()
+            form_token = get_form_token(request, 'task_create')
+            return render(request, "tasks/task_form.html", {"form": form, "form_token": form_token})
+        
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save(commit=False)
@@ -46,14 +53,15 @@ def task_create_view(request):
             task.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Task created successfully!")
-            return redirect("task_list")
+            return redirect("task_detail", pk=task.pk)
     else:
         form = TaskForm()
 
+    form_token = get_form_token(request, 'task_create')
     return render(
         request,
         "tasks/task_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

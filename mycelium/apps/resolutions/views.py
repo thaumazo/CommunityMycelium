@@ -7,6 +7,7 @@ from .forms import ResolutionForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 @login_required
@@ -34,6 +35,12 @@ def resolution_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'resolution_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = ResolutionForm()
+            form_token = get_form_token(request, 'resolution_create')
+            return render(request, "resolutions/resolution_form.html", {"form": form, "form_token": form_token})
+        
         form = ResolutionForm(request.POST)
         if form.is_valid():
             resolution = form.save(commit=False)
@@ -41,14 +48,15 @@ def resolution_create_view(request):
             resolution.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Resolution created successfully!")
-            return redirect("resolution_list")
+            return redirect("resolution_detail", pk=resolution.pk)
     else:
         form = ResolutionForm()
 
+    form_token = get_form_token(request, 'resolution_create')
     return render(
         request,
         "resolutions/resolution_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

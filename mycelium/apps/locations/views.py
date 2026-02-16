@@ -6,6 +6,7 @@ from .models import Location, LocationCapital
 from .forms import LocationForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 
 
 def location_list_view(request):
@@ -35,20 +36,27 @@ def location_create_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        if not validate_form_token(request, 'location_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = LocationForm()
+            form_token = get_form_token(request, 'location_create')
+            return render(request, "locations/location_form.html", {"form": form, "form_token": form_token})
+        
         form = LocationForm(request.POST, request.FILES)
         if form.is_valid():
             location = form.save(commit=False)
             location.created_by = request.user
             form.save()
             messages.success(request, "Location created successfully!")
-            return redirect("location_list")
+            return redirect("location_detail", pk=location.pk)
     else:
         form = LocationForm()
 
+    form_token = get_form_token(request, 'location_create')
     return render(
         request,
         "locations/location_form.html",
-        {"form": form},
+        {"form": form, "form_token": form_token},
     )
 
 

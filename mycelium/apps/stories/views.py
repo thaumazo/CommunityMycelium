@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from apps.utils.pagination import paginate_queryset
+from apps.utils.form_tokens import get_form_token, validate_form_token
 from .models import Story, StoryMedia, StoryAttachment
 from .forms import StoryForm, StoryMediaForm
 
@@ -71,6 +72,18 @@ def story_create_view(request):
             raise PermissionDenied
     
     if request.method == "POST":
+        if not validate_form_token(request, 'story_create'):
+            messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
+            form = StoryForm()
+            form_token = get_form_token(request, 'story_create')
+            context = {
+                "form": form,
+                "attach_to_type": attach_to_type,
+                "attach_to_id": attach_to_id,
+                "form_token": form_token,
+            }
+            return render(request, "stories/story_form.html", context)
+        
         form = StoryForm(request.POST)
         if form.is_valid():
             story = form.save(commit=False)
@@ -94,10 +107,12 @@ def story_create_view(request):
     else:
         form = StoryForm()
     
+    form_token = get_form_token(request, 'story_create')
     context = {
         "form": form,
         "attach_to_type": attach_to_type,
         "attach_to_id": attach_to_id,
+        "form_token": form_token,
     }
     
     return render(request, "stories/story_form.html", context)
