@@ -6,21 +6,6 @@ Below, learn a bit more about the stewards and the domains they're focused on.
 
 ---
 
-![image info](../../../../static/img/people/beverly3.png)
-## Beverly Aarons
-
-**Domain Steward:** Soul Split → Cultural Wholeness
-
-Beverly Aarons is a Narrative Architect, Cultural Strategist, multidisciplinary storyteller and community-builder who works with one of the most underappreciated levers for collective resilience: **meaning**. As a writer, artist, and game + interactive media developer, Beverly creates spaces where people can feel what’s happening beneath the headlines—where history, present-day realities, and imagined futures can be held together without flattening complexity.
-
-Her work consistently brings forward perspectives that are often unseen, and she aims to infuse creative practice with emotional depth, cultural texture, and human truth. Beverly has received multiple awards, fellowships, and grants for projects that blend art, community engagement, and participatory design—including live events and interactive experiences that invite people to grapple together with questions like economic futures, migration, climate disruption, and what it means to belong.
-
-Alongside her creative practice, Beverly has spent years building real-world community infrastructure—most notably as the founder of the Seattle French Conversation Group, which grew into a thriving network of thousands of people meeting regularly for connection, culture, and shared practice. She also publishes Artists Up Close, a longform newsletter devoted to intimate profiles that go deeper than sound bites—documenting what artists make, why they make it, and how creativity sustains a life.
-
-As a Metachrysalis Judge, Beverly listens for projects and people who mend the “soul split” not through slogans, but through **story, ritual, play, and relationship**—work that rebuilds belonging, strengthens community bonds, and helps diverse people recover purpose, continuity, and cultural wholeness in the places they call home.
-
----
-
 ![image info](../../../../static/img/people/elyes3.png)
 ## Elyes Mkacher
 
