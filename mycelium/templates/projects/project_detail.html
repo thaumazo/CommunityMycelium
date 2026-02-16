@@ -95,7 +95,7 @@
                                 <div class="bg-white border border-gray-200 rounded p-3">
                                   <div class="flex items-start justify-between">
                                     <div class="flex-grow">
-                                      <a href="{% url 'story_detail' attachment.story.id %}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
+                                      <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
                                       <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>
@@ -156,7 +156,7 @@
                                 <div class="bg-white border border-gray-200 rounded p-3">
                                   <div class="flex items-start justify-between">
                                     <div class="flex-grow">
-                                      <a href="{% url 'story_detail' attachment.story.id %}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
+                                      <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
                                       <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>

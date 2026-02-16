@@ -27,7 +27,7 @@
                 <div class="flex items-start justify-between">
                   <div class="flex-1 min-w-0">
                     <h3 class="text-lg font-medium text-indigo-600">
-                      <a href="{% url 'story_detail' story.pk %}" class="hover:text-indigo-900 hover:underline">{{ story.title }}</a>
+                      <a href="{% url 'story_detail' story.pk %}?next={{ request.path }}" class="hover:text-indigo-900 hover:underline">{{ story.title }}</a>
                     </h3>
                     <p class="text-sm text-gray-500 mt-1">
                       By {{ story.created_by.username }} • {{ story.created_at|date:"F j, Y" }}

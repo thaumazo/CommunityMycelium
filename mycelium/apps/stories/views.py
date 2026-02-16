@@ -26,7 +26,22 @@ def story_list_view(request):
 def story_detail_view(request, pk):
     """View a story's details."""
     story = get_permitted_object(request.user, "view", Story, pk)
-    return render(request, "stories/story_detail.html", {"story": story})
+    
+    # Capture the 'next' parameter for contextual back navigation
+    # Fall back to HTTP referer if no 'next' parameter
+    back_url = request.GET.get('next')
+    if not back_url:
+        back_url = request.META.get('HTTP_REFERER')
+    
+    # If we still don't have a back URL, default to story list
+    if not back_url:
+        from django.urls import reverse
+        back_url = reverse('story_list')
+    
+    return render(request, "stories/story_detail.html", {
+        "story": story,
+        "back_url": back_url,
+    })
 
 
 @login_required
