@@ -107,6 +107,15 @@
                     <dt class="text-sm font-medium text-gray-500">View Public</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.view_public|yesno:"Yes,No" }}</dd>
                   </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">AI Transcript Processing</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      <div class="flex items-start space-x-2">
+                        <span>{{ user.ai_transcript_processing|yesno:"Yes,No" }}</span>
+                      </div>
+                      <p class="text-xs text-gray-500 mt-1">Allows AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.</p>
+                    </dd>
+                  </div>
                 </dl>
               </div>
 

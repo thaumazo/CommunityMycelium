@@ -91,6 +91,11 @@ class User(AbstractUser):
         help_text="Indicates if the user can view public content.",
     )
 
+    ai_transcript_processing = models.BooleanField(
+        default=False,
+        help_text="Allow AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.",
+    )
+
     is_approved = models.BooleanField(
         default=True,
         help_text="Indicates if the user has been approved by a superuser.",

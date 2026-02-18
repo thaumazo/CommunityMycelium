@@ -223,6 +223,19 @@
                     {% if form.view_public.help_text %}
                       <p class="text-xs text-gray-500">{{ form.view_public.help_text }}</p>
                     {% endif %}
+
+                    <div class="flex items-center">
+                      <input type="checkbox" name="ai_transcript_processing" id="{{ form.ai_transcript_processing.id_for_label }}" {% if form.instance.ai_transcript_processing %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                      <label for="{{ form.ai_transcript_processing.id_for_label }}" class="ml-2 block text-sm text-gray-900">
+                        {{ form.ai_transcript_processing.label }}
+                      </label>
+                      {% if form.ai_transcript_processing.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.ai_transcript_processing.errors|join:", " }}</div>
+                      {% endif %}
+                    </div>
+                    {% if form.ai_transcript_processing.help_text %}
+                      <p class="text-xs text-gray-500">{{ form.ai_transcript_processing.help_text }}</p>
+                    {% endif %}
                   </div>
                 </div>
 

@@ -53,6 +53,13 @@ class RegisterForm(forms.ModelForm):
         help_text="Allow viewing public content.",
     )
 
+    ai_transcript_processing = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="AI Transcript Processing",
+        help_text="Allow AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.",
+    )
+
     class Meta:
         model = User
         fields = ["username", "email", "full_name"]
@@ -195,6 +202,13 @@ class UserForm(forms.ModelForm):
         help_text="Allow viewing public content.",
     )
 
+    ai_transcript_processing = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="AI Transcript Processing",
+        help_text="Allow AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.",
+    )
+
     class Meta:
         model = User
         fields = [
@@ -244,9 +258,10 @@ class UserForm(forms.ModelForm):
         if pwd:
             user.set_password(pwd)
 
-        # Explicitly handle view_members and view_public fields
+        # Explicitly handle view_members, view_public, and ai_transcript_processing fields
         user.view_members = self.cleaned_data.get("view_members", user.view_members)
         user.view_public = self.cleaned_data.get("view_public", user.view_public)
+        user.ai_transcript_processing = self.cleaned_data.get("ai_transcript_processing", user.ai_transcript_processing)
 
         if commit:
             user.save()
