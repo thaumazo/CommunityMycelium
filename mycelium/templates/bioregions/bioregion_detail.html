@@ -230,8 +230,32 @@
               </div>
 
               <div class="tab-content hidden" id="projects">
-                <h2 class="text-lg leading-6 font-medium text-gray-900">Projects</h2>
-                <p class="text-sm text-gray-500">Content for Projects will go here.</p>
+                <h2 class="text-lg leading-6 font-medium text-gray-900 mb-4">Projects</h2>
+                <div class="bg-white overflow-hidden">
+                  <ul class="divide-y divide-gray-200">
+                    {% for project in projects %}
+                      <li class="py-4">
+                        <div class="flex items-start gap-4">
+                          <div class="shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                              <span class="text-sm font-semibold text-purple-600">{{ project.title|first|upper }}</span>
+                            </div>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-indigo-600">
+                              <a href="{% url 'project_detail' project.pk %}" class="hover:text-indigo-900 hover:underline">{{ project.title }}</a>
+                            </h3>
+                            {% if project.description %}
+                              <p class="text-sm text-gray-500 mt-1">{{ project.description|truncatewords:20 }}</p>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </li>
+                    {% empty %}
+                      <li class="py-4 text-center text-gray-500">No projects found.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
               </div>
 
               <div class="tab-content hidden" id="locations">

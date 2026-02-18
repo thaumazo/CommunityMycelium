@@ -278,8 +278,6 @@ def relationship_proposal_detail_view(request, pk):
                         to_person=proposal.to_person,
                         to_community=proposal.to_community,
                         to_project=proposal.to_project,
-                        title_override=proposal.proposed_title,
-                        description_override=proposal.proposed_description,
                         created_by=request.user,
                     )
                     RelationshipProposalResponse.objects.create(
@@ -304,14 +302,12 @@ def relationship_proposal_detail_view(request, pk):
                     return redirect("relationship_proposal_detail", proposal.id)
 
                 if action == RelationshipProposalResponse.Action.COUNTERED:
-                    proposed_title = response_form.cleaned_data.get("proposed_title")
-                    proposed_description = response_form.cleaned_data.get("proposed_description")
                     resolution = response_form.cleaned_data.get("resolution")
 
-                    if not resolution and not proposed_title and not proposed_description:
+                    if not resolution:
                         response_form.add_error(
                             "resolution",
-                            "Provide a new resolution or update the title/description.",
+                            "Provide a new resolution for the counter-proposal.",
                         )
                     else:
                         counter = RelationshipProposal.objects.create(
@@ -323,12 +319,8 @@ def relationship_proposal_detail_view(request, pk):
                             to_community=proposal.from_community,
                             to_project=proposal.from_project,
                             relationship_type=proposal.relationship_type,
-                            proposed_title=proposed_title or proposal.proposed_title,
-                            proposed_description=(
-                                proposed_description or proposal.proposed_description
-                            ),
                             note=note,
-                            resolution=resolution or proposal.resolution,
+                            resolution=resolution,
                             status=RelationshipProposal.Status.PENDING,
                             counter_parent=proposal,
                         )

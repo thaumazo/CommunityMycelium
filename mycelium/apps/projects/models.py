@@ -27,6 +27,12 @@ class Project(models.Model):
         blank=True,
         help_text="Users who can respond to relationship proposals for this project"
     )
+    bioregions = models.ManyToManyField(
+        "bioregions.Bioregion",
+        related_name="projects",
+        blank=True,
+        help_text="Bioregions this project is connected to"
+    )
     url = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="projects"

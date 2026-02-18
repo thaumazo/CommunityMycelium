@@ -126,8 +126,18 @@ def user_detail_view(request, pk):
     """View a user's details."""
     # Get the user to view
     user = get_permitted_object(request.user, "view", User, pk)
+    
+    # Get all projects where the user has any role (member, owner, or admin)
+    from apps.projects.models import Project
+    user_all_projects = Project.objects.filter(
+        Q(members=user) | Q(owners=user) | Q(admins=user)
+    ).distinct().order_by('title')
+    
     # Render the user details
-    return render(request, "users/user_detail.html", {"user": user})
+    return render(request, "users/user_detail.html", {
+        "user": user,
+        "user_all_projects": user_all_projects
+    })
 
 
 @login_required

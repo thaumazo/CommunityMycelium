@@ -23,6 +23,10 @@ class User(AbstractUser):
         "communities.Community", blank=True, related_name="users"
     )
 
+    user_projects = models.ManyToManyField(
+        "projects.Project", blank=True, related_name="connected_users"
+    )
+
     user_relationships = models.ManyToManyField("relationships.Relationship", blank=True, related_name="users")
     user_socialroles = models.ManyToManyField(
         "socialroles.Socialrole",

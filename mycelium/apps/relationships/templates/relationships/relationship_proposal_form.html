@@ -25,26 +25,6 @@
               </div>
 
               <div>
-                <label for="{{ form.proposed_title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.proposed_title.label }}</label>
-                <div class="mt-1">
-                  {{ form.proposed_title }}
-                </div>
-                {% if form.proposed_title.errors %}
-                  <div class="mt-1 text-sm text-red-600">{{ form.proposed_title.errors|join:', ' }}</div>
-                {% endif %}
-              </div>
-
-              <div>
-                <label for="{{ form.proposed_description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.proposed_description.label }}</label>
-                <div class="mt-1">
-                  {{ form.proposed_description }}
-                </div>
-                {% if form.proposed_description.errors %}
-                  <div class="mt-1 text-sm text-red-600">{{ form.proposed_description.errors|join:', ' }}</div>
-                {% endif %}
-              </div>
-
-              <div>
                 <label for="{{ form.note.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.note.label }}</label>
                 <div class="mt-1">
                   {{ form.note }}

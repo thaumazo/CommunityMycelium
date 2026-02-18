@@ -42,6 +42,7 @@ class ProjectForm(forms.ModelForm):
             "members",
             "owners",
             "admins",
+            "bioregions",
             "url",
             "view_members",
             "view_public",
@@ -51,6 +52,7 @@ class ProjectForm(forms.ModelForm):
             "members": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "owners": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "admins": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+            "bioregions": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "url": forms.Textarea(attrs={"rows": 1}),
         }
 

@@ -90,8 +90,6 @@ class RelationshipProposal(models.Model):
         on_delete=models.CASCADE,
         related_name="proposals",
     )
-    proposed_title = models.CharField(max_length=255, blank=True, null=True)
-    proposed_description = models.TextField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
     resolution = models.ForeignKey(
         "resolutions.Resolution",
@@ -135,12 +133,6 @@ class RelationshipProposal(models.Model):
     def get_to_label(self):
         party = self.get_to_party()
         return party.title if hasattr(party, "title") else party.get_full_name()
-
-    def display_title(self):
-        return self.proposed_title or self.relationship_type.title
-
-    def display_description(self):
-        return self.proposed_description or self.relationship_type.description
 
     def is_recipient(self, user):
         if not user or not user.is_authenticated:

@@ -27,37 +27,48 @@
               </div>
             </div>
 
-            <div class="mt-6 border-t border-gray-200">
-              <dl class="divide-y divide-gray-200">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Created by</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.created_by.username }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Description</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.description|linebreaks }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">URL</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.url }}</dd>
-                </div>
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt class="text-sm font-medium text-gray-500">Members</dt>
-                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {% for member in project.members.all %}
-                      {{ member.username }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                  </dd>
-                </div>
-              </dl>
-            </div>
+            <div class="mt-6">
+              <div class="tabs-container">
+                <ul class="tab-list">
+                  <li class="tab active" data-tab="details">Details</li>
+                  <li class="tab" data-tab="capitals">Capitals</li>
+                  <li class="tab" data-tab="connections">Connections</li>
+                </ul>
+              </div>
 
-            <!-- Capitals In Section -->
-            {% if project_capitals_in %}
-              <div class="mt-6 border-t border-gray-200 pt-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Capitals In</h2>
-                <div class="space-y-4">
-                  {% for project_capital in project_capitals_in %}
+              <div class="tab-content" id="details">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Created by</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.created_by.username }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Description</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.description|linebreaks }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">URL</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.url }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Members</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for member in project.members.all %}
+                        {{ member.username }}{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Capitals Tab -->
+              <div class="tab-content hidden" id="capitals">
+                <!-- Capitals In Section -->
+                {% if project_capitals_in %}
+                  <div class="mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Capitals In</h2>
+                    <div class="space-y-4">
+                      {% for project_capital in project_capitals_in %}
                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                       <div class="flex items-start">
                         <!-- Capital Icon -->
@@ -110,15 +121,14 @@
                     </div>
                   {% endfor %}
                 </div>
-              </div>
-            {% endif %}
+              {% endif %}
 
-            <!-- Capitals Out Section -->
-            {% if project_capitals_out %}
-              <div class="mt-6 border-t border-gray-200 pt-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Capitals Out</h2>
-                <div class="space-y-4">
-                  {% for project_capital in project_capitals_out %}
+              <!-- Capitals Out Section -->
+              {% if project_capitals_out %}
+                <div class="mt-6">
+                  <h2 class="text-lg font-semibold text-gray-900 mb-4">Capitals Out</h2>
+                  <div class="space-y-4">
+                    {% for project_capital in project_capitals_out %}
                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                       <div class="flex items-start">
                         <!-- Capital Icon -->
@@ -169,10 +179,28 @@
                         </div>
                       </div>
                     </div>
-                  {% endfor %}
+                    {% endfor %}
+                  </div>
                 </div>
-              </div>
-            {% endif %}
+              {% endif %}
+            </div>
+
+            <!-- Connections Tab -->
+            <div class="tab-content hidden" id="connections">
+              <dl class="divide-y divide-gray-200">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt class="text-sm font-medium text-gray-500">Bioregions</dt>
+                  <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {% for bioregion in project.bioregions.all %}
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ bioregion.title }}</span>
+                    {% empty %}
+                      <span class="text-gray-400">None</span>
+                    {% endfor %}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </div>
 
             <div class="mt-6 flex justify-end">
               <a href="{% url 'project_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Back to Projects</a>

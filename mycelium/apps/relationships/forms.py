@@ -54,8 +54,6 @@ class RelationshipProposalForm(forms.ModelForm):
         model = RelationshipProposal
         fields = [
             "relationship_type",
-            "proposed_title",
-            "proposed_description",
             "note",
             "resolution",
             "from_person",
@@ -66,7 +64,6 @@ class RelationshipProposalForm(forms.ModelForm):
             "to_project",
         ]
         widgets = {
-            "proposed_description": forms.Textarea(attrs={"rows": 4}),
             "note": forms.Textarea(attrs={"rows": 4}),
         }
 
@@ -112,6 +109,4 @@ class RelationshipProposalForm(forms.ModelForm):
 
 class RelationshipProposalResponseForm(forms.Form):
     note = forms.CharField(widget=forms.Textarea(attrs={"rows": 4}), required=False)
-    proposed_title = forms.CharField(required=False)
-    proposed_description = forms.CharField(widget=forms.Textarea(attrs={"rows": 4}), required=False)
     resolution = forms.ModelChoiceField(queryset=Resolution.objects.all(), required=False)

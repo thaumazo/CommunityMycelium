@@ -77,7 +77,13 @@
                   <span class="sr-only">Open user menu</span>
                   <div class="flex items-center gap-2">
                     <div class="border-2 border-gray-300 rounded-full cursor-pointer hover:border-blue-600">
-                      <div class="m-px w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white">{{ request.user.username|first|upper }}</div>
+                      {% if request.user.picture_thumbnail %}
+                        <img src="{{ request.user.picture_thumbnail.url }}" alt="{{ request.user.username }}" class="m-px w-8 h-8 rounded-full object-cover" />
+                      {% elif request.user.picture %}
+                        <img src="{{ request.user.picture.url }}" alt="{{ request.user.username }}" class="m-px w-8 h-8 rounded-full object-cover" />
+                      {% else %}
+                        <div class="m-px w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white">{{ request.user.username|first|upper }}</div>
+                      {% endif %}
                     </div>
                   </div>
                 </button>

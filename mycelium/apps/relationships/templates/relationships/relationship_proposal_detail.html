@@ -9,17 +9,17 @@
         <div class="px-4 py-5 sm:p-6">
           <div class="flex items-start justify-between">
             <div>
-              <h1 class="text-2xl font-semibold text-gray-900">{{ proposal.display_title }}</h1>
+              <h1 class="text-2xl font-semibold text-gray-900">{{ proposal.relationship_type.title }}</h1>
               <p class="text-sm text-gray-500">Proposed by {{ proposal.initiator.get_full_name }} on behalf of {{ proposal.get_from_label }} to {{ proposal.get_to_label }}</p>
             </div>
             <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700">{{ proposal.status }}</span>
           </div>
 
           <div class="mt-6 space-y-4">
-            {% if proposal.display_description %}
+            {% if proposal.relationship_type.description %}
               <div>
                 <h3 class="text-sm font-medium text-gray-500">Description</h3>
-                <p class="text-sm text-gray-900">{{ proposal.display_description|linebreaks }}</p>
+                <p class="text-sm text-gray-900">{{ proposal.relationship_type.description|linebreaks }}</p>
               </div>
             {% endif %}
 
@@ -64,14 +64,6 @@
               <div class="border-t border-gray-200 pt-4">
                 <h3 class="text-sm font-medium text-gray-700">Counter Details (only if countering)</h3>
                 <div class="mt-2 space-y-4">
-                  <div>
-                    <label for="{{ response_form.proposed_title.id_for_label }}" class="block text-sm font-medium text-gray-700">Proposed Title</label>
-                    <div class="mt-1">{{ response_form.proposed_title }}</div>
-                  </div>
-                  <div>
-                    <label for="{{ response_form.proposed_description.id_for_label }}" class="block text-sm font-medium text-gray-700">Proposed Description</label>
-                    <div class="mt-1">{{ response_form.proposed_description }}</div>
-                  </div>
                   <div>
                     <label for="{{ response_form.resolution.id_for_label }}" class="block text-sm font-medium text-gray-700">Resolution</label>
                     <div class="mt-1">{{ response_form.resolution }}</div>

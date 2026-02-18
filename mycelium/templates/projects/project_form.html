@@ -27,6 +27,8 @@
                 <div class="tabs-container">
                   <ul class="tab-list">
                     <li class="tab active" data-tab="description">Description</li>
+                    <li class="tab" data-tab="people">People</li>
+                    <li class="tab" data-tab="connections">Connections</li>
                     <li class="tab" data-tab="visibility">Visibility</li>
                     <li class="tab" data-tab="capitals-in">Capitals In</li>
                     <li class="tab" data-tab="capitals-out">Capitals Out</li>
@@ -65,7 +67,12 @@
                         <div class="mt-1 text-sm text-red-600">{{ form.url.errors|join:', ' }}</div>
                       {% endif %}
                     </div>
+                  </div>
+                </div>
 
+                <!-- People Tab -->
+                <div class="tab-content hidden" id="people">
+                  <div class="space-y-4">
                     <div>
                       <label for="{{ form.members.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.members.label }}</label>
                       <div class="mt-1 space-y-2">
@@ -108,6 +115,26 @@
                       </div>
                       {% if form.admins.errors %}
                         <div class="mt-1 text-sm text-red-600">{{ form.admins.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Connections Tab -->
+                <div class="tab-content hidden" id="connections">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.bioregions.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.bioregions.label }}</label>
+                      <div class="mt-1 space-y-2">
+                        {% for choice in form.bioregions %}
+                          <div class="flex items-center">
+                            <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                            <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label|title }}</label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if form.bioregions.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.bioregions.errors|join:', ' }}</div>
                       {% endif %}
                     </div>
                   </div>
