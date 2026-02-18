@@ -28,11 +28,11 @@ python manage.py shell < test_api.py
 | `/api/auth/refresh/` | POST | No* | Refresh access token |
 | `/api/auth/logout/` | POST | Yes | Logout, blacklist token |
 | `/api/auth/me/` | GET | Yes | Get current user |
-| `/api/users/` | GET | Yes | List users (ACL filtered) |
-| `/api/users/{id}/` | GET | Yes | Get user details |
-| `/api/users/` | POST | Yes | Create user |
-| `/api/users/{id}/` | PUT/PATCH | Yes | Update user |
-| `/api/users/{id}/` | DELETE | Yes | Delete user |
+| `/api/people/` | GET | Yes | List people (ACL filtered) |
+| `/api/people/{id}/` | GET | Yes | Get person details |
+| `/api/people/` | POST | Yes | Create person |
+| `/api/people/{id}/` | PUT/PATCH | Yes | Update person |
+| `/api/people/{id}/` | DELETE | Yes | Delete person |
 
 *Requires refresh token in body
 
@@ -51,9 +51,9 @@ curl -X GET http://localhost:8000/api/auth/me/ \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
-### List Users
+### List People
 ```bash
-curl -X GET http://localhost:8000/api/users/ \
+curl -X GET http://localhost:8000/api/people/ \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
@@ -119,11 +119,11 @@ UnityAPIManager.Instance.Logout(
 }
 ```
 
-### User List Response
+### Person List Response
 ```json
 {
   "count": 42,
-  "next": "http://localhost:8000/api/users/?page=2",
+  "next": "http://localhost:8000/api/people/?page=2",
   "previous": null,
   "results": [
     {

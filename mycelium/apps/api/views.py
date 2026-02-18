@@ -143,14 +143,14 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Return users based on ACL permissions.
+        Return people based on ACL permissions.
         """
         user = self.request.user
 
-        # Get users the current user has permission to view
+        # Get people the current user has permission to view
         permitted_users = get_permitted_objects(user, "view", User)
 
-        # Include users with view_members or view_public set to True
+        # Include people with view_members or view_public set to True
         additional_users = User.objects.filter(Q(view_members=True) | Q(view_public=True))
 
         # Combine both querysets and ensure no duplicates

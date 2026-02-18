@@ -43,14 +43,14 @@ class RegisterForm(forms.ModelForm):
         required=False,
         initial=False,
         label="View Members",
-        help_text="Check if the user can view members.",
+        help_text="Allow viewing members.",
     )
 
     view_public = forms.BooleanField(
         required=False,
         initial=False,
         label="View Public",
-        help_text="Check if the user can view public content.",
+        help_text="Allow viewing public content.",
     )
 
     class Meta:
@@ -185,14 +185,14 @@ class UserForm(forms.ModelForm):
         required=False,
         initial=False,
         label="View Members",
-        help_text="Check if the user can view members.",
+        help_text="Allow viewing members.",
     )
 
     view_public = forms.BooleanField(
         required=False,
         initial=False,
         label="View Public",
-        help_text="Check if the user can view public content.",
+        help_text="Allow viewing public content.",
     )
 
     class Meta:

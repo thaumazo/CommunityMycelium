@@ -494,9 +494,9 @@ public class LoginUI : MonoBehaviour
     
     public void LoadUserList()
     {
-        UnityAPIManager.Instance.Get<UserListResponse>("users/",
+        UnityAPIManager.Instance.Get<UserListResponse>("people/",
             onSuccess: (response) => {
-                Debug.Log($"Loaded {response.count} users");
+                Debug.Log($"Loaded {response.count} people");
                 // Process user list
             },
             onError: (error) => {

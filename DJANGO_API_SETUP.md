@@ -46,12 +46,12 @@ Added API routes to `config/urls.py` at `/api/`
 - `POST /api/auth/refresh/` - Refresh access token
 - `GET /api/auth/me/` - Get current user info
 
-### Users
-- `GET /api/users/` - List users (with ACL filtering)
-- `GET /api/users/{id}/` - Get user details
-- `POST /api/users/` - Create user (admin only)
-- `PUT/PATCH /api/users/{id}/` - Update user
-- `DELETE /api/users/{id}/` - Delete user
+### People
+- `GET /api/people/` - List people (with ACL filtering)
+- `GET /api/people/{id}/` - Get person details
+- `POST /api/people/` - Create person (admin only)
+- `PUT/PATCH /api/people/{id}/` - Update person
+- `DELETE /api/people/{id}/` - Delete person
 
 ## Next Steps
 
@@ -108,10 +108,10 @@ response = requests.post('http://localhost:8000/api/auth/login/', json={
 tokens = response.json()
 access_token = tokens['access']
 
-# Get users
-response = requests.get('http://localhost:8000/api/users/', 
+# Get people
+response = requests.get('http://localhost:8000/api/people/', 
     headers={'Authorization': f'Bearer {access_token}'})
-users = response.json()
+people = response.json()
 ```
 
 #### Using the Browsable API:

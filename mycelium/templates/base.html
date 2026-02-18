@@ -74,7 +74,7 @@
             {% if request.user.is_authenticated %}
               <div data-module="UserMenu">
                 <button type="button" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                  <span class="sr-only">Open user menu</span>
+                  <span class="sr-only">Open profile menu</span>
                   <div class="flex items-center gap-2">
                     <div class="border-2 border-gray-300 rounded-full cursor-pointer hover:border-blue-600">
                       {% if request.user.picture_thumbnail %}
@@ -221,7 +221,7 @@
               <li>
                 <a href="{% url 'pending_users' %}" class="{% active_class 'pending_users' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/users.html' %}
-                  <span class="flex-1 ms-3 whitespace-nowrap">Pending Users</span>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Pending People</span>
                   {% with pending_count=request.user|get_pending_users_count %}
                     {% if pending_count > 0 %}
                       <span class="inline-flex items-center justify-center w-5 h-5 ms-2 text-xs font-semibold text-white bg-red-500 rounded-full">{{ pending_count }}</span>

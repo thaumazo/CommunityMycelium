@@ -16,8 +16,8 @@ Your Django REST API is now fully configured for Unity integration with JWT-base
            ├─► POST /api/auth/login/
            ├─► POST /api/auth/register/
            ├─► POST /api/auth/refresh/
-           ├─► GET  /api/users/
-           └─► GET  /api/users/{id}/
+           ├─► GET  /api/people/
+           └─► GET  /api/people/{id}/
            │
 ┌──────────▼──────────┐
 │  Django REST API    │
@@ -64,12 +64,12 @@ Your Django REST API is now fully configured for Unity integration with JWT-base
    - Refresh: `POST /api/auth/refresh/`
    - Get Me: `GET /api/auth/me/`
 
-4. **User CRUD Endpoints**
-   - List: `GET /api/users/`
-   - Detail: `GET /api/users/{id}/`
-   - Create: `POST /api/users/`
-   - Update: `PUT/PATCH /api/users/{id}/`
-   - Delete: `DELETE /api/users/{id}/`
+4. **Person CRUD Endpoints**
+   - List: `GET /api/people/`
+   - Detail: `GET /api/people/{id}/`
+   - Create: `POST /api/people/`
+   - Update: `PUT/PATCH /api/people/{id}/`
+   - Delete: `DELETE /api/people/{id}/`
 
 5. **Serializers**
    - `UserSerializer` - Basic user data
@@ -182,7 +182,7 @@ public class UserListResponse
 
 void LoadUsers()
 {
-    UnityAPIManager.Instance.Get<UserListResponse>("users/",
+    UnityAPIManager.Instance.Get<UserListResponse>("people/",
         onSuccess: (response) => {
             foreach (var user in response.results)
             {

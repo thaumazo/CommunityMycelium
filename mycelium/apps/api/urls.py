@@ -17,7 +17,7 @@ from .views import (
 
 # Create a router for viewsets
 router = DefaultRouter()
-router.register(r"users", UserViewSet, basename="user")
+router.register(r"people", UserViewSet, basename="user")
 router.register(r"bioregions", BioregionViewSet, basename="bioregion")
 router.register(r"challenges", ChallengeViewSet, basename="challenge")
 router.register(r"communities", CommunityViewSet, basename="community")

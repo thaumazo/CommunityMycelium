@@ -48,8 +48,8 @@ In the Google Cloud Console:
 3. Application type: "Web application"
 4. Name: "Community Mycelium Web Client"
 5. Authorized redirect URIs:
-   - For local: `http://localhost:8000/users/google/auth/callback/`
-   - For production: `https://yourdomain.com/users/google/auth/callback/`
+   - For local: `http://localhost:8000/people/google/auth/callback/`
+   - For production: `https://yourdomain.com/people/google/auth/callback/`
 6. Click "Create"
 7. **Save the Client ID and Client Secret**
 
@@ -111,7 +111,7 @@ python manage.py migrate
    - Or paste the full Google Drive URL in "Transcript URL"
 
 3. **Browse Drive Files:**
-   - Visit `/users/google/drive/browse/`
+   - Visit `/people/google/drive/browse/`
    - Navigate through your Google Drive
    - Copy folder IDs or file URLs for meetings
 

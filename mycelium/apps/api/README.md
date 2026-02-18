@@ -157,10 +157,10 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
 }
 ```
 
-### User Endpoints
+### Person Endpoints
 
-#### 1. List Users
-**Endpoint:** `GET /api/users/`
+#### 1. List People
+**Endpoint:** `GET /api/people/`
 
 **Headers:**
 ```
@@ -175,7 +175,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
 ```json
 {
   "count": 150,
-  "next": "http://localhost:8000/api/users/?page=2",
+  "next": "http://localhost:8000/api/people/?page=2",
   "previous": null,
   "results": [
     {
@@ -201,8 +201,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
 }
 ```
 
-#### 2. Get User Details
-**Endpoint:** `GET /api/users/{id}/`
+#### 2. Get Person Details
+**Endpoint:** `GET /api/people/{id}/`
 
 **Headers:**
 ```
@@ -212,8 +212,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
 **Response (200 OK):**
 Returns detailed user information (same as `/api/auth/me/`)
 
-#### 3. Create User (Admin Only)
-**Endpoint:** `POST /api/users/`
+#### 3. Create Person (Admin Only)
+**Endpoint:** `POST /api/people/`
 
 **Headers:**
 ```
@@ -231,8 +231,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
 }
 ```
 
-#### 4. Update User
-**Endpoint:** `PUT /api/users/{id}/` or `PATCH /api/users/{id}/`
+#### 4. Update Person
+**Endpoint:** `PUT /api/people/{id}/` or `PATCH /api/people/{id}/`
 
 **Headers:**
 ```
@@ -247,8 +247,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
 }
 ```
 
-#### 5. Delete User
-**Endpoint:** `DELETE /api/users/{id}/`
+#### 5. Delete Person
+**Endpoint:** `DELETE /api/people/{id}/`
 
 **Headers:**
 ```

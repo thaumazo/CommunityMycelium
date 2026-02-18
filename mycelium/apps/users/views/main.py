@@ -108,7 +108,7 @@ def user_create_view(request):
         form = UserForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()  # commit=True, so M2M will save
-            messages.success(request, "User created successfully.")
+            messages.success(request, "Person created successfully.")
             return redirect("user_detail", pk=user.pk)
     else:
         form = UserForm()
@@ -151,7 +151,7 @@ def user_edit_view(request, pk):
         form = UserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
-            messages.success(request, "User updated successfully.")
+            messages.success(request, "Person updated successfully.")
             return redirect("user_detail", pk=user.pk)
     else:
         form = UserForm(instance=user)
@@ -178,7 +178,7 @@ def user_permission_edit_view(request, pk):
             user.groups.clear()
             if form.cleaned_data["groups"]:
                 user.groups.add(*form.cleaned_data["groups"])
-            messages.success(request, "User roles updated successfully.")
+            messages.success(request, "Person roles updated successfully.")
             return redirect("user_detail", pk=user.pk)
     else:
         form = UserPermissionForm(user=user)
@@ -201,7 +201,7 @@ def user_delete_view(request, pk):
         # Delete the user
         user.delete()
         # Add a success message
-        messages.success(request, "User deleted successfully.")
+        messages.success(request, "Person deleted successfully.")
         # Redirect to the user list
         return redirect("user_list")
 
@@ -331,7 +331,7 @@ def approve_user_view(request, pk):
         user.is_approved = True
         user.is_active = True
         user.save()
-        messages.success(request, f"User {user.username} has been approved and can now log in.")
+        messages.success(request, f"Person {user.username} has been approved and can now log in.")
         return redirect("pending_users")
     
     return render(request, "users/approve_user.html", {"user_to_approve": user})
@@ -348,7 +348,7 @@ def reject_user_view(request, pk):
     if request.method == "POST":
         username = user.username
         user.delete()
-        messages.success(request, f"User registration for {username} has been rejected and deleted.")
+        messages.success(request, f"Person registration for {username} has been rejected and deleted.")
         return redirect("pending_users")
     
     return render(request, "users/reject_user.html", {"user_to_reject": user})
