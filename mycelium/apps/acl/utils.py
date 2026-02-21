@@ -108,6 +108,10 @@ def is_permitted(user, action, obj_or_string):
         # Creator can always see their own project
         if hasattr(obj, "created_by") and obj.created_by == user:
             return True
+        # Project admins and owners can always view the project
+        if hasattr(obj, "pk") and obj.pk:
+            if user in obj.admins.all() or user in obj.owners.all():
+                return True
         # Superusers can see all projects
         if user.is_superuser:
             return True
@@ -116,6 +120,46 @@ def is_permitted(user, action, obj_or_string):
             return True
         # Public users can see projects with view_public=True
         if obj.view_public:
+            return True
+    
+    # Edit permissions for projects
+    if isinstance(obj, Project) and action == "change":
+        # Creator can always edit their own project
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Project admins and owners can always edit the project
+        if hasattr(obj, "pk") and obj.pk:
+            if user in obj.admins.all() or user in obj.owners.all():
+                return True
+        # Superusers can edit all projects
+        if user.is_superuser:
+            return True
+    
+    # Delete permissions for projects
+    if isinstance(obj, Project) and action == "delete":
+        # Creator can always delete their own project
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Project admins and owners can always delete the project
+        if hasattr(obj, "pk") and obj.pk:
+            if user in obj.admins.all() or user in obj.owners.all():
+                return True
+        # Superusers can delete all projects
+        if user.is_superuser:
+            return True
+    
+    # Permissions for ProjectCapitalIn and ProjectCapitalOut
+    from apps.projects.models import ProjectCapitalIn, ProjectCapitalOut
+    if isinstance(obj, (ProjectCapitalIn, ProjectCapitalOut)):
+        # Project admins and owners can view, change, and delete project capitals
+        if hasattr(obj, "project") and obj.project:
+            if user in obj.project.admins.all() or user in obj.project.owners.all():
+                return True
+        # Creator can manage their project capitals
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Superusers can do everything
+        if user.is_superuser:
             return True
 
     # Visibility rules for locations
@@ -138,12 +182,120 @@ def is_permitted(user, action, obj_or_string):
         # Superusers can see all stories
         if user.is_superuser:
             return True
+        # Check if story is attached to a project capital and user is admin/owner of that project
+        if hasattr(obj, "pk") and obj.pk and user.is_authenticated:
+            from apps.stories.models import StoryAttachment
+            from apps.projects.models import ProjectCapitalIn, ProjectCapitalOut
+            
+            # Get all attachments for this story
+            attachments = StoryAttachment.objects.filter(story=obj).select_related('content_type')
+            
+            for attachment in attachments:
+                # Check if attached to ProjectCapitalIn
+                ct_capital_in = ContentType.objects.get_for_model(ProjectCapitalIn)
+                if attachment.content_type == ct_capital_in:
+                    try:
+                        project_capital = ProjectCapitalIn.objects.get(pk=attachment.object_id)
+                        project = project_capital.project
+                        if user in project.admins.all() or user in project.owners.all():
+                            return True
+                    except ProjectCapitalIn.DoesNotExist:
+                        pass
+                
+                # Check if attached to ProjectCapitalOut
+                ct_capital_out = ContentType.objects.get_for_model(ProjectCapitalOut)
+                if attachment.content_type == ct_capital_out:
+                    try:
+                        project_capital = ProjectCapitalOut.objects.get(pk=attachment.object_id)
+                        project = project_capital.project
+                        if user in project.admins.all() or user in project.owners.all():
+                            return True
+                    except ProjectCapitalOut.DoesNotExist:
+                        pass
         # Authenticated members can see stories with view_members=True
         if user.is_authenticated and obj.view_members:
             return True
         # Public users can see stories with view_public=True
         if obj.view_public:
             return True
+    
+    # Edit permissions for stories
+    if isinstance(obj, Story) and action == "change":
+        # Creator can always edit their own story
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Superusers can edit all stories
+        if user.is_superuser:
+            return True
+        # Check if story is attached to a project capital and user is admin/owner of that project
+        if hasattr(obj, "pk") and obj.pk:
+            from apps.stories.models import StoryAttachment
+            from apps.projects.models import ProjectCapitalIn, ProjectCapitalOut
+            
+            # Get all attachments for this story
+            attachments = StoryAttachment.objects.filter(story=obj).select_related('content_type')
+            
+            for attachment in attachments:
+                # Check if attached to ProjectCapitalIn
+                ct_capital_in = ContentType.objects.get_for_model(ProjectCapitalIn)
+                if attachment.content_type == ct_capital_in:
+                    try:
+                        project_capital = ProjectCapitalIn.objects.get(pk=attachment.object_id)
+                        project = project_capital.project
+                        if user in project.admins.all() or user in project.owners.all():
+                            return True
+                    except ProjectCapitalIn.DoesNotExist:
+                        pass
+                
+                # Check if attached to ProjectCapitalOut
+                ct_capital_out = ContentType.objects.get_for_model(ProjectCapitalOut)
+                if attachment.content_type == ct_capital_out:
+                    try:
+                        project_capital = ProjectCapitalOut.objects.get(pk=attachment.object_id)
+                        project = project_capital.project
+                        if user in project.admins.all() or user in project.owners.all():
+                            return True
+                    except ProjectCapitalOut.DoesNotExist:
+                        pass
+    
+    # Delete permissions for stories
+    if isinstance(obj, Story) and action == "delete":
+        # Creator can always delete their own story
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Superusers can delete all stories
+        if user.is_superuser:
+            return True
+        # Check if story is attached to a project capital and user is admin/owner of that project
+        if hasattr(obj, "pk") and obj.pk:
+            from apps.stories.models import StoryAttachment
+            from apps.projects.models import ProjectCapitalIn, ProjectCapitalOut
+            
+            # Get all attachments for this story
+            attachments = StoryAttachment.objects.filter(story=obj).select_related('content_type')
+            
+            for attachment in attachments:
+                # Check if attached to ProjectCapitalIn
+                ct_capital_in = ContentType.objects.get_for_model(ProjectCapitalIn)
+                if attachment.content_type == ct_capital_in:
+                    try:
+                        project_capital = ProjectCapitalIn.objects.get(pk=attachment.object_id)
+                        project = project_capital.project
+                        if user in project.admins.all() or user in project.owners.all():
+                            return True
+                    except ProjectCapitalIn.DoesNotExist:
+                        pass
+                
+                # Check if attached to ProjectCapitalOut
+                ct_capital_out = ContentType.objects.get_for_model(ProjectCapitalOut)
+                if attachment.content_type == ct_capital_out:
+                    try:
+                        project_capital = ProjectCapitalOut.objects.get(pk=attachment.object_id)
+                        project = project_capital.project
+                        if user in project.admins.all() or user in project.owners.all():
+                            return True
+                    except ProjectCapitalOut.DoesNotExist:
+                        pass
     
     # ACL rules for through models (user-specific relationships)
     from apps.socialroles.models import UserSocialrole

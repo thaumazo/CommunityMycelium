@@ -36,6 +36,12 @@ def project_detail_view(request, pk):
     # Get stories attached to project capital relationships
     story_attachments = {}
     
+    # Check if current user is admin or owner of this project
+    is_project_admin_or_owner = (
+        request.user.is_authenticated and 
+        (request.user in project.admins.all() or request.user in project.owners.all())
+    )
+    
     # Helper function to filter stories by visibility
     def get_visible_attachments(attachments):
         visible = []
@@ -45,7 +51,8 @@ def project_detail_view(request, pk):
                 if (story.created_by == request.user or 
                     story.view_members or 
                     story.view_public or 
-                    request.user.is_superuser):
+                    request.user.is_superuser or
+                    is_project_admin_or_owner):  # Project admins/owners can see all stories
                     visible.append(attachment)
             else:
                 if story.view_public:
