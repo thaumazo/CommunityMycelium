@@ -39,10 +39,36 @@
 
               <div class="tab-content" id="details">
                 <dl class="divide-y divide-gray-200">
+                  {% if project.owners.all %}
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">Created by</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.created_by.username }}</dd>
+                    <dt class="text-sm font-medium text-gray-500">Owners</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for owner in project.owners.all %}
+                        <a href="{% url 'user_detail' owner.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ owner.username }}</a>{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </dd>
                   </div>
+                  {% endif %}
+                  {% if project.admins.all %}
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Admins</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for admin in project.admins.all %}
+                        <a href="{% url 'user_detail' admin.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ admin.username }}</a>{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </dd>
+                  </div>
+                  {% endif %}
+                  {% if project.members.all %}
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Members</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for member in project.members.all %}
+                        <a href="{% url 'user_detail' member.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ member.username }}</a>{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </dd>
+                  </div>
+                  {% endif %}
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Description</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 prose prose-sm">{{ project.description|markdown_to_html }}</dd>
@@ -52,11 +78,9 @@
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.url }}</dd>
                   </div>
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">Members</dt>
+                    <dt class="text-sm font-medium text-gray-500">Created by</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {% for member in project.members.all %}
-                        {{ member.username }}{% if not forloop.last %}, {% endif %}
-                      {% endfor %}
+                      <a href="{% url 'user_detail' project.created_by.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ project.created_by.username }}</a>
                     </dd>
                   </div>
                 </dl>
