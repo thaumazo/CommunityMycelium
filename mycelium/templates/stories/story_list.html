@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load user_tags %}
+{% load markdown_filters %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -33,7 +34,7 @@
                       By {{ story.created_by.username }} • {{ story.created_at|date:"F j, Y" }}
                     </p>
                     {% if story.text_content %}
-                      <p class="text-sm text-gray-700 mt-2">{{ story.text_content|truncatewords:30 }}</p>
+                      <p class="text-sm text-gray-700 mt-2">{{ story.text_content|markdown_to_html|striptags|truncatewords:30 }}</p>
                     {% endif %}
                     <div class="mt-2 flex items-center gap-2 text-xs text-gray-500">
                       <span>{{ story.media.count }} media</span>

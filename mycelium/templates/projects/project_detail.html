@@ -2,6 +2,7 @@
 {% load user_tags %}
 {% load static %}
 {% load image_filters %}
+{% load markdown_filters %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -44,7 +45,7 @@
                   </div>
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Description</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.description|linebreaks }}</dd>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 prose prose-sm">{{ project.description|markdown_to_html }}</dd>
                   </div>
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">URL</dt>
@@ -109,7 +110,7 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
-                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                     </div>
                                   </div>
                                 </div>
@@ -169,7 +170,7 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
-                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                     </div>
                                   </div>
                                 </div>

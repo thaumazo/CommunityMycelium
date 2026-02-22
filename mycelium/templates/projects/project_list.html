@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load user_tags %}
+{% load markdown_filters %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -45,7 +46,7 @@
                       <!-- Project Description -->
                       {% if project.description %}
                         <div class="">
-                          <p class="text-sm text-gray-700">{{ project.description|truncatewords:30 }}</p>
+                          <p class="text-sm text-gray-700">{{ project.description|markdown_to_html|striptags|truncatewords:30 }}</p>
                         </div>
                       {% endif %}
 
