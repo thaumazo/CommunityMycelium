@@ -206,15 +206,15 @@
               {% endif %}
 
               {% can request.user 'change' project as can_import_stories %}
-              {% if can_import_stories %}
+              {% url 'project_story_import' project.pk as project_story_import_url %}
+              {% if can_import_stories and project_story_import_url %}
                 <div class="mt-8 border border-gray-200 rounded-lg p-4 bg-gray-50">
                   <h2 class="text-lg font-semibold text-gray-900">Import Stories from JSON</h2>
                   <p class="text-sm text-gray-600 mt-1">
-                    Paste JSON matching the schema below. Each story must include <strong>capital_direction</strong> and <strong>capital_title</strong>.
-                    The schema now includes <strong>capital_title_reference</strong> with the exact titles to use for <strong>in</strong> and <strong>out</strong>.
+                    Paste JSON matching the schema below. (This schema can be pasted into AI to generate properly formatted JSON)
                   </p>
 
-                  <form method="post" action="{% url 'project_story_import' project.pk %}" class="mt-4 space-y-3">
+                  <form method="post" action="{{ project_story_import_url }}" class="mt-4 space-y-3">
                     {% csrf_token %}
                     <div>
                       <label for="story_import_json" class="block text-sm font-medium text-gray-700 mb-1">Stories JSON</label>
