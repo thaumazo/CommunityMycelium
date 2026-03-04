@@ -2,6 +2,7 @@
 {% load user_tags %}
 {% load static %}
 {% load image_filters %}
+{% load markdown_filters %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -97,7 +98,7 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
-                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                       {% if attachment.attachment_context %}
                                         <span class="inline-block mt-1 text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded">{{ attachment.attachment_context }}</span>
                                       {% endif %}
@@ -162,7 +163,7 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
-                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                       {% if attachment.attachment_context %}
                                         <span class="inline-block mt-1 text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded">{{ attachment.attachment_context }}</span>
                                       {% endif %}
@@ -227,7 +228,7 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
-                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                       {% if attachment.attachment_context %}
                                         <span class="inline-block mt-1 text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded">{{ attachment.attachment_context }}</span>
                                       {% endif %}

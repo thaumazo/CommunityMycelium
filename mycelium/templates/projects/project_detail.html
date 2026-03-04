@@ -2,6 +2,7 @@
 {% load user_tags %}
 {% load static %}
 {% load image_filters %}
+{% load markdown_filters %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -31,38 +32,58 @@
               <div class="tabs-container">
                 <ul class="tab-list">
                   <li class="tab active" data-tab="details">Details</li>
-                  <li class="tab" data-tab="capitals">Capitals</li>
                   <li class="tab" data-tab="connections">Connections</li>
                 </ul>
               </div>
 
               <div class="tab-content" id="details">
                 <dl class="divide-y divide-gray-200">
+                  {% if project.owners.all %}
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">Created by</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.created_by.username }}</dd>
+                    <dt class="text-sm font-medium text-gray-500">Owners</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for owner in project.owners.all %}
+                        <a href="{% url 'user_detail' owner.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ owner.username }}</a>{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </dd>
                   </div>
+                  {% endif %}
+                  {% if project.admins.all %}
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Admins</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for admin in project.admins.all %}
+                        <a href="{% url 'user_detail' admin.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ admin.username }}</a>{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </dd>
+                  </div>
+                  {% endif %}
+                  {% if project.members.all %}
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Members</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for member in project.members.all %}
+                        <a href="{% url 'user_detail' member.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ member.username }}</a>{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </dd>
+                  </div>
+                  {% endif %}
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Description</dt>
-                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.description|linebreaks }}</dd>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 prose prose-sm">{{ project.description|markdown_to_html }}</dd>
                   </div>
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">URL</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.url }}</dd>
                   </div>
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">Members</dt>
+                    <dt class="text-sm font-medium text-gray-500">Created by</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {% for member in project.members.all %}
-                        {{ member.username }}{% if not forloop.last %}, {% endif %}
-                      {% endfor %}
+                      <a href="{% url 'user_detail' project.created_by.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ project.created_by.username }}</a>
                     </dd>
                   </div>
                 </dl>
-              </div>
 
-              <!-- Capitals Tab -->
-              <div class="tab-content hidden" id="capitals">
                 <!-- Capitals In Section -->
                 {% if project_capitals_in %}
                   <div class="mb-6">
@@ -109,7 +130,7 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
-                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                     </div>
                                   </div>
                                 </div>
@@ -169,7 +190,7 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
-                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|truncatewords:20 }}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                     </div>
                                   </div>
                                 </div>
@@ -183,7 +204,46 @@
                   </div>
                 </div>
               {% endif %}
+
+              {% can request.user 'change' project as can_import_stories %}
+              {% if can_import_stories %}
+                <div class="mt-8 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <h2 class="text-lg font-semibold text-gray-900">Import Stories from JSON</h2>
+                  <p class="text-sm text-gray-600 mt-1">
+                    Paste JSON matching the schema below. Each story must include <strong>capital_direction</strong> and <strong>capital_title</strong>.
+                    The schema now includes <strong>capital_title_reference</strong> with the exact titles to use for <strong>in</strong> and <strong>out</strong>.
+                  </p>
+
+                  <form method="post" action="{% url 'project_story_import' project.pk %}" class="mt-4 space-y-3">
+                    {% csrf_token %}
+                    <div>
+                      <label for="story_import_json" class="block text-sm font-medium text-gray-700 mb-1">Stories JSON</label>
+                      <textarea
+                        id="story_import_json"
+                        name="story_import_json"
+                        rows="12"
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-xs"
+                        placeholder='{"schema_version": 1, "stories": [...]}'
+                      ></textarea>
+                    </div>
+                    <div class="flex items-center">
+                      <input id="dry_run" name="dry_run" type="checkbox" value="1" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                      <label for="dry_run" class="ml-2 block text-sm text-gray-700">Preview / dry run (validate and report, without creating stories)</label>
+                    </div>
+                    <button type="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                      Import Stories
+                    </button>
+                  </form>
+
+                  <div class="mt-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2">Schema Example</h3>
+                    <textarea readonly rows="18" class="w-full rounded-md border-gray-300 bg-white text-xs font-mono">{{ story_import_schema }}</textarea>
+                  </div>
+                </div>
+              {% endif %}
             </div>
+
+              </div>
 
             <!-- Connections Tab -->
             <div class="tab-content hidden" id="connections">
