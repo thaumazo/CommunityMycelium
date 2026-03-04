@@ -59,6 +59,32 @@
                     </div>
 
                     <div>
+                      <label for="{{ form.phase.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.phase.label }}</label>
+                      <div class="mt-1">
+                        {{ form.phase }}
+                      </div>
+                      {% if form.phase.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.phase.help_text }}</p>
+                      {% endif %}
+                      {% if form.phase.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.phase.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.state.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.state.label }}</label>
+                      <div class="mt-1">
+                        {{ form.state }}
+                      </div>
+                      {% if form.state.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.state.help_text }}</p>
+                      {% endif %}
+                      {% if form.state.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.state.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
                       <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.url.label }}</label>
                       <div class="mt-1">
                         <textarea name="{{ form.url.html_name }}" id="{{ form.url.id_for_label }}" rows="1" class="w-full">{{ form.url.value|default:'' }}</textarea>

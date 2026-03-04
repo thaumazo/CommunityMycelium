@@ -39,6 +39,8 @@ class ProjectForm(forms.ModelForm):
         fields = [
             "title",
             "description",
+            "phase",
+            "state",
             "members",
             "owners",
             "admins",
@@ -49,6 +51,8 @@ class ProjectForm(forms.ModelForm):
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
+            "phase": forms.Select(attrs={"class": "w-full"}),
+            "state": forms.Select(attrs={"class": "w-full"}),
             "members": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "owners": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "admins": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),

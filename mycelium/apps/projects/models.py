@@ -7,8 +7,52 @@ User = get_user_model()
 
 
 class Project(models.Model):
+    PHASE_UNKNOWN = "unknown"
+    PHASE_IDEA = "idea"
+    PHASE_SCOPING = "scoping"
+    PHASE_READY = "ready"
+    PHASE_ACTIVE = "active"
+    PHASE_REVIEW = "review"
+    PHASE_COMPLETE = "complete"
+
+    PHASE_CHOICES = [
+        (PHASE_UNKNOWN, "Unknown"),
+        (PHASE_IDEA, "Idea"),
+        (PHASE_SCOPING, "Scoping"),
+        (PHASE_READY, "Ready"),
+        (PHASE_ACTIVE, "Active"),
+        (PHASE_REVIEW, "Review"),
+        (PHASE_COMPLETE, "Complete"),
+    ]
+
+    STATE_UNKNOWN = "unknown"
+    STATE_PLANNED = "planned"
+    STATE_ACTIVE = "active"
+    STATE_ON_HOLD = "on_hold"
+    STATE_BLOCKED = "blocked"
+
+    STATE_CHOICES = [
+        (STATE_UNKNOWN, "Unknown"),
+        (STATE_PLANNED, "Planned"),
+        (STATE_ACTIVE, "Active"),
+        (STATE_ON_HOLD, "On Hold"),
+        (STATE_BLOCKED, "Blocked"),
+    ]
+
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    phase = models.CharField(
+        max_length=20,
+        choices=PHASE_CHOICES,
+        default=PHASE_UNKNOWN,
+        help_text="Lifecycle phase from idea through completion.",
+    )
+    state = models.CharField(
+        max_length=20,
+        choices=STATE_CHOICES,
+        default=STATE_UNKNOWN,
+        help_text="Current operating state such as active, planned, on hold, or blocked.",
+    )
     members = models.ManyToManyField(
         User,
         related_name="members_projects",

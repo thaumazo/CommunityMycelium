@@ -75,6 +75,11 @@
                         </div>
                       {% endif %}
 
+                      <div class="flex flex-wrap items-center gap-2">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">Phase: {{ project.get_phase_display }}</span>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">State: {{ project.get_state_display }}</span>
+                      </div>
+
                       <!-- Project URL -->
                       {% if project.url %}
                         <div class="flex flex-wrap items-center gap-y-2 gap-x-4 pb-2">
