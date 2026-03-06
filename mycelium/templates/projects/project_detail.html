@@ -92,10 +92,59 @@
                   </div>
                 </dl>
 
+                {% can request.user 'change' project as can_manage_story_visibility_all %}
+                {% if can_manage_story_visibility_all %}
+                  {% url 'project_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url_all %}
+                  {% if project_story_visibility_bulk_url_all %}
+                    <div class="mt-6 mb-4 p-3 rounded-lg border border-gray-200 bg-gray-50">
+                      <form id="bulk-visibility-all-form" method="post" action="{{ project_story_visibility_bulk_url_all }}" class="flex flex-wrap items-center gap-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="scope" value="all">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <label for="bulk_visibility_level_all" class="text-xs font-medium text-gray-600">Bulk visibility (All project stories):</label>
+                        <select id="bulk_visibility_level_all" name="visibility_level" class="rounded-md border-gray-300 text-xs">
+                          <option value="private">Private</option>
+                          <option value="members">Members</option>
+                          <option value="public">Public</option>
+                        </select>
+                        <button type="submit" class="text-xs px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">Apply to selected</button>
+                      </form>
+                      <div class="mt-2 flex items-center gap-2">
+                        <input
+                          id="select_all_project_stories"
+                          type="checkbox"
+                          class="h-3.5 w-3.5 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
+                          onchange="document.querySelectorAll('input[form=\'bulk-visibility-all-form\'][name=\'story_ids\']').forEach(cb => cb.checked = this.checked);"
+                        >
+                        <label for="select_all_project_stories" class="text-xs text-gray-600">Select all stories</label>
+                      </div>
+                      <p class="mt-2 text-xs text-gray-500">Check story boxes in either Capitals In or Capitals Out and apply one visibility level to all selected stories at once.</p>
+                    </div>
+                  {% endif %}
+                {% endif %}
+
                 <!-- Capitals In Section -->
                 {% if project_capitals_in %}
                   <div class="mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">Capitals In</h2>
+                      {% can request.user 'change' project as can_manage_story_visibility_in %}
+                      {% if can_manage_story_visibility_in %}
+                        {% url 'project_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url %}
+                        {% if project_story_visibility_bulk_url %}
+                          <form id="bulk-visibility-in-form" method="post" action="{{ project_story_visibility_bulk_url }}" class="mb-4 flex flex-wrap items-center gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="scope" value="in">
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <label for="bulk_visibility_level_in" class="text-xs font-medium text-gray-600">Bulk visibility (Capitals In):</label>
+                            <select id="bulk_visibility_level_in" name="visibility_level" class="rounded-md border-gray-300 text-xs">
+                              <option value="private">Private</option>
+                              <option value="members">Members</option>
+                              <option value="public">Public</option>
+                            </select>
+                            <button type="submit" class="text-xs px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">Apply to selected</button>
+                          </form>
+                        {% endif %}
+                      {% endif %}
                     <div class="space-y-4">
                       {% for project_capital in project_capitals_in %}
                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
@@ -138,6 +187,41 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
+                                      <div class="mt-2 flex flex-wrap items-center gap-2">
+                                        {% if attachment.story.view_public %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Public</span>
+                                        {% elif attachment.story.view_members %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Members</span>
+                                        {% else %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">Private</span>
+                                        {% endif %}
+
+                                        {% if can_manage_story_visibility_in %}
+                                          {% if project_story_visibility_bulk_url %}
+                                            <label class="inline-flex items-center gap-1 text-xs text-gray-600">
+                                              <input type="checkbox" name="story_ids" value="{{ attachment.story.id }}" form="bulk-visibility-in-form" class="h-3.5 w-3.5 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500">
+                                              Select
+                                            </label>
+                                          {% endif %}
+                                          {% if project_story_visibility_bulk_url_all %}
+                                            <input type="checkbox" name="story_ids" value="{{ attachment.story.id }}" form="bulk-visibility-all-form" class="h-3.5 w-3.5 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500" title="Select for global bulk update">
+                                          {% endif %}
+
+                                          {% url 'project_story_visibility_update' project.pk attachment.story.id as project_story_visibility_update_url %}
+                                          {% if project_story_visibility_update_url %}
+                                            <form method="post" action="{{ project_story_visibility_update_url }}" class="inline-flex items-center gap-1">
+                                              {% csrf_token %}
+                                              <input type="hidden" name="next" value="{{ request.path }}">
+                                              <select name="visibility_level" class="rounded-md border-gray-300 text-xs">
+                                                <option value="private" {% if not attachment.story.view_members and not attachment.story.view_public %}selected{% endif %}>Private</option>
+                                                <option value="members" {% if attachment.story.view_members and not attachment.story.view_public %}selected{% endif %}>Members</option>
+                                                <option value="public" {% if attachment.story.view_public %}selected{% endif %}>Public</option>
+                                              </select>
+                                              <button type="submit" class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition">Save</button>
+                                            </form>
+                                          {% endif %}
+                                        {% endif %}
+                                      </div>
                                       <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                     </div>
                                   </div>
@@ -156,6 +240,24 @@
               {% if project_capitals_out %}
                 <div class="mt-6">
                   <h2 class="text-lg font-semibold text-gray-900 mb-4">Capitals Out</h2>
+                  {% can request.user 'change' project as can_manage_story_visibility_out %}
+                  {% if can_manage_story_visibility_out %}
+                    {% url 'project_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url_out %}
+                    {% if project_story_visibility_bulk_url_out %}
+                      <form id="bulk-visibility-out-form" method="post" action="{{ project_story_visibility_bulk_url_out }}" class="mb-4 flex flex-wrap items-center gap-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="scope" value="out">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <label for="bulk_visibility_level_out" class="text-xs font-medium text-gray-600">Bulk visibility (Capitals Out):</label>
+                        <select id="bulk_visibility_level_out" name="visibility_level" class="rounded-md border-gray-300 text-xs">
+                          <option value="private">Private</option>
+                          <option value="members">Members</option>
+                          <option value="public">Public</option>
+                        </select>
+                        <button type="submit" class="text-xs px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">Apply to selected</button>
+                      </form>
+                    {% endif %}
+                  {% endif %}
                   <div class="space-y-4">
                     {% for project_capital in project_capitals_out %}
                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
@@ -198,6 +300,41 @@
                                       <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">
                                         {{ attachment.story.title }}
                                       </a>
+                                      <div class="mt-2 flex flex-wrap items-center gap-2">
+                                        {% if attachment.story.view_public %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Public</span>
+                                        {% elif attachment.story.view_members %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Members</span>
+                                        {% else %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">Private</span>
+                                        {% endif %}
+
+                                        {% if can_manage_story_visibility_out %}
+                                          {% if project_story_visibility_bulk_url_out %}
+                                            <label class="inline-flex items-center gap-1 text-xs text-gray-600">
+                                              <input type="checkbox" name="story_ids" value="{{ attachment.story.id }}" form="bulk-visibility-out-form" class="h-3.5 w-3.5 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500">
+                                              Select
+                                            </label>
+                                          {% endif %}
+                                          {% if project_story_visibility_bulk_url_all %}
+                                            <input type="checkbox" name="story_ids" value="{{ attachment.story.id }}" form="bulk-visibility-all-form" class="h-3.5 w-3.5 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500" title="Select for global bulk update">
+                                          {% endif %}
+
+                                          {% url 'project_story_visibility_update' project.pk attachment.story.id as project_story_visibility_update_url_out %}
+                                          {% if project_story_visibility_update_url_out %}
+                                            <form method="post" action="{{ project_story_visibility_update_url_out }}" class="inline-flex items-center gap-1">
+                                              {% csrf_token %}
+                                              <input type="hidden" name="next" value="{{ request.path }}">
+                                              <select name="visibility_level" class="rounded-md border-gray-300 text-xs">
+                                                <option value="private" {% if not attachment.story.view_members and not attachment.story.view_public %}selected{% endif %}>Private</option>
+                                                <option value="members" {% if attachment.story.view_members and not attachment.story.view_public %}selected{% endif %}>Members</option>
+                                                <option value="public" {% if attachment.story.view_public %}selected{% endif %}>Public</option>
+                                              </select>
+                                              <button type="submit" class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition">Save</button>
+                                            </form>
+                                          {% endif %}
+                                        {% endif %}
+                                      </div>
                                       <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:20 }}</p>
                                     </div>
                                   </div>

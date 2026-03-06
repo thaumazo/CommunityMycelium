@@ -11,6 +11,7 @@ from .models import Project, ProjectCapitalIn, ProjectCapitalOut
 from .forms import ProjectForm
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Q
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
@@ -58,6 +59,46 @@ def _normalize_capital_title(value):
 
 def _normalize_story_title(value):
     return _normalize_capital_title(value)
+
+
+def _apply_story_visibility(story, visibility_level):
+    if visibility_level == "private":
+        story.view_members = False
+        story.view_public = False
+    elif visibility_level == "members":
+        story.view_members = True
+        story.view_public = False
+    elif visibility_level == "public":
+        story.view_members = True
+        story.view_public = True
+    else:
+        raise ValueError("Invalid visibility level. Use private, members, or public.")
+
+
+def _project_story_queryset(project, scope="all"):
+    from django.contrib.contenttypes.models import ContentType
+    from apps.stories.models import Story
+
+    ct_in = ContentType.objects.get_for_model(ProjectCapitalIn)
+    ct_out = ContentType.objects.get_for_model(ProjectCapitalOut)
+
+    in_ids = list(ProjectCapitalIn.objects.filter(project=project).values_list("id", flat=True))
+    out_ids = list(ProjectCapitalOut.objects.filter(project=project).values_list("id", flat=True))
+
+    in_filter = Q(attachments__content_type=ct_in, attachments__object_id__in=in_ids)
+    out_filter = Q(attachments__content_type=ct_out, attachments__object_id__in=out_ids)
+
+    if scope == "in":
+        return Story.objects.filter(in_filter).distinct()
+    if scope == "out":
+        return Story.objects.filter(out_filter).distinct()
+    return Story.objects.filter(in_filter | out_filter).distinct()
+
+
+def _redirect_project_next_or_detail(project, safe_next):
+    if safe_next:
+        return redirect(safe_next)
+    return redirect("project_detail", pk=project.pk)
 
 
 def _project_story_import_schema_for(project):
@@ -436,6 +477,73 @@ def project_story_import_view(request, pk):
             f"and updated {updated_count} existing stor{'y' if updated_count == 1 else 'ies'}."
         )
     return redirect("project_detail", pk=project.pk)
+
+
+@login_required
+def project_story_visibility_update_view(request, pk, story_pk):
+    project = get_permitted_object(request.user, "change", Project, pk)
+    if request.method != "POST":
+        return redirect("project_detail", pk=project.pk)
+
+    visibility_level = (request.POST.get("visibility_level") or "").strip().lower()
+    next_url = (request.POST.get("next") or "").strip()
+    safe_next = next_url if next_url.startswith("/") else ""
+
+    story = _project_story_queryset(project).filter(pk=story_pk).first()
+    if not story:
+        messages.error(request, "Story not found on this project.")
+        return _redirect_project_next_or_detail(project, safe_next)
+
+    try:
+        _apply_story_visibility(story, visibility_level)
+    except ValueError as exc:
+        messages.error(request, str(exc))
+        return _redirect_project_next_or_detail(project, safe_next)
+
+    story.save(update_fields=["view_members", "view_public", "updated_at"])
+    messages.success(request, f"Updated visibility for '{story.title}'.")
+    return _redirect_project_next_or_detail(project, safe_next)
+
+
+@login_required
+def project_story_visibility_bulk_update_view(request, pk):
+    project = get_permitted_object(request.user, "change", Project, pk)
+    if request.method != "POST":
+        return redirect("project_detail", pk=project.pk)
+
+    visibility_level = (request.POST.get("visibility_level") or "").strip().lower()
+    scope = (request.POST.get("scope") or "all").strip().lower()
+    selected_story_ids = request.POST.getlist("story_ids")
+    next_url = (request.POST.get("next") or "").strip()
+    safe_next = next_url if next_url.startswith("/") else ""
+
+    if scope not in {"all", "in", "out"}:
+        messages.error(request, "Invalid scope for bulk visibility update.")
+        return _redirect_project_next_or_detail(project, safe_next)
+
+    if not selected_story_ids:
+        messages.error(request, "Select at least one story for bulk visibility update.")
+        return _redirect_project_next_or_detail(project, safe_next)
+
+    queryset = _project_story_queryset(project, scope=scope).filter(pk__in=selected_story_ids)
+
+    updated_count = 0
+    try:
+        with transaction.atomic():
+            for story in queryset:
+                _apply_story_visibility(story, visibility_level)
+                story.save(update_fields=["view_members", "view_public", "updated_at"])
+                updated_count += 1
+    except ValueError as exc:
+        messages.error(request, str(exc))
+        return _redirect_project_next_or_detail(project, safe_next)
+
+    if updated_count == 0:
+        messages.error(request, "No eligible stories found for update.")
+    else:
+        messages.success(request, f"Updated visibility for {updated_count} stor{'y' if updated_count == 1 else 'ies'}.")
+
+    return _redirect_project_next_or_detail(project, safe_next)
 
 
 @login_required
