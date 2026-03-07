@@ -176,6 +176,40 @@ def is_permitted(user, action, obj_or_string):
     # Visibility rules for stories
     from apps.stories.models import Story
     if isinstance(obj, Story) and action == "view":
+        # Community notes remain private to project admins/owners until promoted
+        if getattr(obj, "is_community_note", False) and getattr(obj, "community_note_status", "") != Story.COMMUNITY_NOTE_PROMOTED:
+            if user.is_superuser:
+                return True
+
+            if hasattr(obj, "pk") and obj.pk and user.is_authenticated:
+                from apps.stories.models import StoryAttachment
+                from apps.projects.models import ProjectCapitalIn, ProjectCapitalOut
+
+                attachments = StoryAttachment.objects.filter(story=obj).select_related('content_type')
+                ct_capital_in = ContentType.objects.get_for_model(ProjectCapitalIn)
+                ct_capital_out = ContentType.objects.get_for_model(ProjectCapitalOut)
+
+                for attachment in attachments:
+                    if attachment.content_type == ct_capital_in:
+                        try:
+                            project_capital = ProjectCapitalIn.objects.get(pk=attachment.object_id)
+                            project = project_capital.project
+                            if user in project.admins.all() or user in project.owners.all():
+                                return True
+                        except ProjectCapitalIn.DoesNotExist:
+                            pass
+
+                    if attachment.content_type == ct_capital_out:
+                        try:
+                            project_capital = ProjectCapitalOut.objects.get(pk=attachment.object_id)
+                            project = project_capital.project
+                            if user in project.admins.all() or user in project.owners.all():
+                                return True
+                        except ProjectCapitalOut.DoesNotExist:
+                            pass
+
+            return False
+
         # Creator can always see their own story
         if hasattr(obj, "created_by") and obj.created_by == user:
             return True

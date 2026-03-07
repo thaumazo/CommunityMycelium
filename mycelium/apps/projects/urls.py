@@ -8,6 +8,7 @@ from .views import (
     project_story_import_view,
     project_story_visibility_update_view,
     project_story_visibility_bulk_update_view,
+    project_community_note_decision_view,
 )
 
 urlpatterns = [
@@ -17,6 +18,7 @@ urlpatterns = [
     path("<int:pk>/import-stories/", project_story_import_view, name="project_story_import"),
     path("<int:pk>/stories/<int:story_pk>/visibility/", project_story_visibility_update_view, name="project_story_visibility_update"),
     path("<int:pk>/stories/visibility/bulk/", project_story_visibility_bulk_update_view, name="project_story_visibility_bulk_update"),
+    path("<int:pk>/community-notes/<int:story_pk>/decision/", project_community_note_decision_view, name="project_community_note_decision"),
     path("<int:pk>/edit/", project_edit_view, name="project_edit"),
     path("<int:pk>/delete/", project_delete_view, name="project_delete"),
 ]

@@ -12,6 +12,7 @@ from .forms import ProjectForm
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
@@ -93,6 +94,30 @@ def _project_story_queryset(project, scope="all"):
     if scope == "out":
         return Story.objects.filter(out_filter).distinct()
     return Story.objects.filter(in_filter | out_filter).distinct()
+
+
+def _is_project_admin_or_owner(user, project):
+    return (
+        user.is_authenticated
+        and (
+            user.is_superuser
+            or user in project.admins.all()
+            or user in project.owners.all()
+        )
+    )
+
+
+def _can_submit_project_community_notes(user, project):
+    return (
+        user.is_authenticated
+        and is_permitted(user, "view", project)
+        and (
+            user.is_superuser
+            or user in project.members.all()
+            or user in project.admins.all()
+            or user in project.owners.all()
+        )
+    )
 
 
 def _redirect_project_next_or_detail(project, safe_next):
@@ -211,7 +236,6 @@ def project_list_view(request):
 def project_detail_view(request, pk):
     from apps.stories.models import Story, StoryAttachment
     from django.contrib.contenttypes.models import ContentType
-    from django.db.models import Q
     
     project = get_permitted_object(request.user, "view", Project, pk)
     
@@ -221,18 +245,28 @@ def project_detail_view(request, pk):
     
     # Get stories attached to project capital relationships
     story_attachments = {}
+    community_note_attachments = {}
     
     # Check if current user is admin or owner of this project
-    is_project_admin_or_owner = (
-        request.user.is_authenticated and 
-        (request.user in project.admins.all() or request.user in project.owners.all())
-    )
+    is_project_admin_or_owner = _is_project_admin_or_owner(request.user, project)
+    can_submit_community_notes = _can_submit_project_community_notes(request.user, project)
+    show_promoted_only = (request.GET.get("promoted_only") or "").strip().lower() in {"1", "true", "yes", "on"}
     
-    # Helper function to filter stories by visibility
-    def get_visible_attachments(attachments):
+    # Helper function to filter stories by visibility for capital story sections
+    def get_visible_capital_attachments(attachments):
         visible = []
         for attachment in attachments:
             story = attachment.story
+
+            # Community notes only appear in capital stories once promoted
+            if story.is_community_note and story.community_note_status != Story.COMMUNITY_NOTE_PROMOTED:
+                continue
+
+            if show_promoted_only and not (
+                story.is_community_note and story.community_note_status == Story.COMMUNITY_NOTE_PROMOTED
+            ):
+                continue
+
             if request.user.is_authenticated:
                 if (story.created_by == request.user or 
                     story.view_members or 
@@ -244,6 +278,17 @@ def project_detail_view(request, pk):
                 if story.view_public:
                     visible.append(attachment)
         return visible
+
+    # Community notes are only visible to project admins/owners
+    def get_visible_community_note_attachments(attachments):
+        if not is_project_admin_or_owner:
+            return []
+
+        visible = []
+        for attachment in attachments:
+            if attachment.story.is_community_note:
+                visible.append(attachment)
+        return visible
     
     # Get stories for capitals in (attached to ProjectCapitalIn instances)
     for project_capital in project_capitals_in:
@@ -253,10 +298,14 @@ def project_detail_view(request, pk):
             object_id=project_capital.id
         ).select_related('story', 'story__created_by')
         
-        visible_stories = get_visible_attachments(attachments)
+        visible_stories = get_visible_capital_attachments(attachments)
         if visible_stories:
             # Key by capital_in id for template
             story_attachments[f'capital_in_{project_capital.capital.id}'] = visible_stories
+
+        visible_notes = get_visible_community_note_attachments(attachments)
+        if visible_notes:
+            community_note_attachments[f'capital_in_{project_capital.capital.id}'] = visible_notes
     
     # Get stories for capitals out (attached to ProjectCapitalOut instances)
     for project_capital in project_capitals_out:
@@ -266,18 +315,68 @@ def project_detail_view(request, pk):
             object_id=project_capital.id
         ).select_related('story', 'story__created_by')
         
-        visible_stories = get_visible_attachments(attachments)
+        visible_stories = get_visible_capital_attachments(attachments)
         if visible_stories:
             # Key by capital_out id for template
             story_attachments[f'capital_out_{project_capital.capital.id}'] = visible_stories
+
+        visible_notes = get_visible_community_note_attachments(attachments)
+        if visible_notes:
+            community_note_attachments[f'capital_out_{project_capital.capital.id}'] = visible_notes
     
     return render(request, "projects/project_detail.html", {
         "project": project,
         "story_attachments": story_attachments,
+        "community_note_attachments": community_note_attachments,
         "project_capitals_in": project_capitals_in,
         "project_capitals_out": project_capitals_out,
+        "is_project_admin_or_owner": is_project_admin_or_owner,
+        "can_submit_community_notes": can_submit_community_notes,
+        "show_promoted_only": show_promoted_only,
         "story_import_schema": json.dumps(_project_story_import_schema_for(project), indent=2),
     })
+
+
+@login_required
+def project_community_note_decision_view(request, pk, story_pk):
+    from apps.stories.models import Story
+
+    project = get_permitted_object(request.user, "change", Project, pk)
+    if request.method != "POST":
+        return redirect("project_detail", pk=project.pk)
+
+    decision = (request.POST.get("decision") or "").strip().lower()
+    next_url = (request.POST.get("next") or "").strip()
+    safe_next = next_url if next_url.startswith("/") else ""
+
+    if decision not in {Story.COMMUNITY_NOTE_PROMOTED, Story.COMMUNITY_NOTE_DECLINED}:
+        messages.error(request, "Invalid community note decision.")
+        return _redirect_project_next_or_detail(project, safe_next)
+
+    story = _project_story_queryset(project).filter(pk=story_pk, is_community_note=True).first()
+    if not story:
+        messages.error(request, "Community note not found on this project.")
+        return _redirect_project_next_or_detail(project, safe_next)
+
+    story.community_note_status = decision
+    story.community_note_decided_by = request.user
+    story.community_note_decided_at = timezone.now()
+
+    update_fields = ["community_note_status", "community_note_decided_by", "community_note_decided_at", "updated_at"]
+
+    if decision == Story.COMMUNITY_NOTE_PROMOTED:
+        story.view_members = True
+        if "view_members" not in update_fields:
+            update_fields.append("view_members")
+
+    story.save(update_fields=update_fields)
+
+    if decision == Story.COMMUNITY_NOTE_PROMOTED:
+        messages.success(request, f"Promoted '{story.title}' to member-visible capital story.")
+    else:
+        messages.success(request, f"Marked '{story.title}' as declined.")
+
+    return _redirect_project_next_or_detail(project, safe_next)
 
 
 @login_required

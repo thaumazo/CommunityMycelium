@@ -48,10 +48,32 @@ def story_detail_view(request, pk):
 def story_create_view(request):
     """Create a new story."""
     # Authenticated users can always create stories (the question is whether they can attach them)
+
+    def can_submit_project_community_note(user, target):
+        from apps.projects.models import ProjectCapitalIn, ProjectCapitalOut
+
+        if not user.is_authenticated:
+            return False
+        if not isinstance(target, (ProjectCapitalIn, ProjectCapitalOut)):
+            return False
+
+        project = target.project
+        if not is_permitted(user, "view", project):
+            return False
+
+        return (
+            user.is_superuser
+            or user in project.members.all()
+            or user in project.admins.all()
+            or user in project.owners.all()
+        )
     
     # Check if we're attaching to a specific object
     attach_to_type = request.GET.get('attach_to_type')
     attach_to_id = request.GET.get('attach_to_id')
+    is_community_note_submission = (request.GET.get("community_note") or "").strip().lower() in {"1", "true", "yes", "on"}
+    community_note_type = (request.GET.get("note_type") or "").strip().lower()
+    is_valid_note_type = community_note_type in {Story.NOTE_TYPE_IDEA, Story.NOTE_TYPE_OFFER}
     
     # If attaching to an object, verify the user has permission to change that object
     attachment_target = None
@@ -64,21 +86,31 @@ def story_create_view(request):
             )
             model_class = content_type.model_class()
             attachment_target = model_class.objects.get(pk=attach_to_id)
-            
+
             # Check if user has permission to change the attachment target
-            if not is_permitted(request.user, "change", attachment_target):
+            has_change_permission = is_permitted(request.user, "change", attachment_target)
+            can_submit_community_note = (
+                is_community_note_submission
+                and is_valid_note_type
+                and can_submit_project_community_note(request.user, attachment_target)
+            )
+
+            if not has_change_permission and not can_submit_community_note:
                 messages.error(request, "You don't have permission to attach stories to this object.")
                 raise PermissionDenied
-        except (ContentType.DoesNotExist, model_class.DoesNotExist) as e:
-            messages.error(request, f"Attachment target not found: {e}")
-            raise PermissionDenied
         except ValueError as e:
             messages.error(request, f"Invalid attachment type format: {e}")
+            raise PermissionDenied
+        except ContentType.DoesNotExist as e:
+            messages.error(request, f"Attachment target not found: {e}")
             raise PermissionDenied
         except PermissionDenied:
             # Re-raise permission denied without wrapping
             raise
         except Exception as e:
+            if "does not exist" in str(e).lower():
+                messages.error(request, f"Attachment target not found: {e}")
+                raise PermissionDenied
             # Log unexpected errors but don't expose details to user
             print(f"Unexpected error in story_create_view: {type(e).__name__}: {e}")
             import traceback
@@ -95,6 +127,8 @@ def story_create_view(request):
                 "form": form,
                 "attach_to_type": attach_to_type,
                 "attach_to_id": attach_to_id,
+                "is_community_note_submission": is_community_note_submission and is_valid_note_type,
+                "community_note_type": community_note_type,
                 "form_token": form_token,
             }
             return render(request, "stories/story_form.html", context)
@@ -103,6 +137,14 @@ def story_create_view(request):
         if form.is_valid():
             story = form.save(commit=False)
             story.created_by = request.user
+
+            if attachment_target and is_community_note_submission and is_valid_note_type and can_submit_project_community_note(request.user, attachment_target):
+                story.is_community_note = True
+                story.community_note_type = community_note_type
+                story.community_note_status = Story.COMMUNITY_NOTE_PENDING
+                story.view_members = False
+                story.view_public = False
+
             story.save()
             
             # If attaching to a specific object, create the attachment
@@ -116,7 +158,11 @@ def story_create_view(request):
                     )
                 except Exception as e:
                     print(f"Error creating attachment: {e}")
-            
+
+            if story.is_community_note:
+                messages.success(request, "Community note submitted successfully!")
+                return redirect("project_detail", pk=attachment_target.project.pk)
+
             messages.success(request, "Story created successfully!")
             return redirect("story_detail", pk=story.pk)
     else:
@@ -127,6 +173,8 @@ def story_create_view(request):
         "form": form,
         "attach_to_type": attach_to_type,
         "attach_to_id": attach_to_id,
+        "is_community_note_submission": is_community_note_submission and is_valid_note_type,
+        "community_note_type": community_note_type,
         "form_token": form_token,
     }
     

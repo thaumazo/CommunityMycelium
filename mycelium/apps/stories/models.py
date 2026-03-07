@@ -12,6 +12,26 @@ class Story(models.Model):
     Core story model for warm data narratives.
     Stories can be attached to multiple objects (projects, facets, etc.)
     """
+    NOTE_TYPE_NONE = "none"
+    NOTE_TYPE_IDEA = "idea"
+    NOTE_TYPE_OFFER = "offer"
+
+    NOTE_TYPE_CHOICES = [
+        (NOTE_TYPE_NONE, "None"),
+        (NOTE_TYPE_IDEA, "Idea"),
+        (NOTE_TYPE_OFFER, "Offer"),
+    ]
+
+    COMMUNITY_NOTE_PENDING = "pending"
+    COMMUNITY_NOTE_PROMOTED = "promoted"
+    COMMUNITY_NOTE_DECLINED = "declined"
+
+    COMMUNITY_NOTE_STATUS_CHOICES = [
+        (COMMUNITY_NOTE_PENDING, "Pending"),
+        (COMMUNITY_NOTE_PROMOTED, "Promoted"),
+        (COMMUNITY_NOTE_DECLINED, "Declined"),
+    ]
+
     title = models.CharField(max_length=255)
     text_content = models.TextField(
         blank=True,
@@ -36,6 +56,38 @@ class Story(models.Model):
     view_public = models.BooleanField(
         default=False,
         help_text="Public (unauthenticated) users can view this story.",
+    )
+
+    is_community_note = models.BooleanField(
+        default=False,
+        help_text="Whether this story was submitted as a project community note.",
+    )
+
+    community_note_type = models.CharField(
+        max_length=20,
+        choices=NOTE_TYPE_CHOICES,
+        default=NOTE_TYPE_NONE,
+        help_text="Type of community note (idea or offer).",
+    )
+
+    community_note_status = models.CharField(
+        max_length=20,
+        choices=COMMUNITY_NOTE_STATUS_CHOICES,
+        default=COMMUNITY_NOTE_PENDING,
+        help_text="Decision status for community note review.",
+    )
+
+    community_note_decided_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="decided_community_notes",
+        blank=True,
+        null=True,
+    )
+
+    community_note_decided_at = models.DateTimeField(
+        blank=True,
+        null=True,
     )
     
     created_at = models.DateTimeField(auto_now_add=True)
