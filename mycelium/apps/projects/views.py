@@ -111,12 +111,6 @@ def _can_submit_project_community_notes(user, project):
     return (
         user.is_authenticated
         and is_permitted(user, "view", project)
-        and (
-            user.is_superuser
-            or user in project.members.all()
-            or user in project.admins.all()
-            or user in project.owners.all()
-        )
     )
 
 

@@ -61,12 +61,7 @@ def story_create_view(request):
         if not is_permitted(user, "view", project):
             return False
 
-        return (
-            user.is_superuser
-            or user in project.members.all()
-            or user in project.admins.all()
-            or user in project.owners.all()
-        )
+        return True
     
     # Check if we're attaching to a specific object
     attach_to_type = request.GET.get('attach_to_type')
