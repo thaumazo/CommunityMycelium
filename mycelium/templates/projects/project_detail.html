@@ -438,53 +438,55 @@
                     <p class="text-sm text-gray-600">Idea and Offer submissions from project members. Promoted notes stay here and also appear in capital stories.</p>
                   </div>
 
+                  {% if not community_note_attachments %}
+                    <p class="text-sm text-gray-500">No community notes for this project yet.</p>
+                  {% endif %}
+
                   {% if project_capitals_in %}
                     <div>
                       <h3 class="text-base font-semibold text-gray-900 mb-3">Capitals In</h3>
                       <div class="space-y-4">
                         {% for project_capital in project_capitals_in %}
+                          {% get_stories_for community_note_attachments 'capital_in' project_capital.capital.id as notes %}
+                          {% if notes %}
                           <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                             <h4 class="text-sm font-semibold text-gray-800 mb-2">{{ project_capital.capital.title }}</h4>
-                            {% get_stories_for community_note_attachments 'capital_in' project_capital.capital.id as notes %}
-                            {% if notes %}
-                              <div class="space-y-2">
-                                {% for attachment in notes %}
-                                  <div class="bg-white border border-gray-200 rounded p-3">
-                                    <div class="flex items-start justify-between gap-4">
-                                      <div class="flex-grow">
-                                        <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">{{ attachment.story.title }}</a>
-                                        <div class="mt-2 flex flex-wrap items-center gap-2">
-                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">{{ attachment.story.get_community_note_type_display }}</span>
-                                          {% if attachment.story.community_note_status == 'promoted' %}
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Promoted</span>
-                                          {% elif attachment.story.community_note_status == 'declined' %}
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Declined</span>
-                                          {% else %}
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">Pending</span>
-                                          {% endif %}
-                                        </div>
-                                        <p class="text-xs text-gray-600 mt-2">Suggested by <span class="font-medium">{{ attachment.story.created_by.username }}</span>{% if attachment.story.created_by.email %} ({{ attachment.story.created_by.email }}){% else %} (email unavailable){% endif %}</p>
-                                        <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:30 }}</p>
-                                      </div>
-                                      <div class="flex-shrink-0">
-                                        {% url 'project_community_note_decision' project.pk attachment.story.id as project_community_note_decision_url %}
-                                        {% if project_community_note_decision_url %}
-                                          <form method="post" action="{{ project_community_note_decision_url }}" class="flex items-center gap-2">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="next" value="{{ request.path }}">
-                                            <button type="submit" name="decision" value="promoted" class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded hover:bg-green-200 transition">Promote</button>
-                                            <button type="submit" name="decision" value="declined" class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition">Decline</button>
-                                          </form>
+                            <div class="space-y-2">
+                              {% for attachment in notes %}
+                                <div class="bg-white border border-gray-200 rounded p-3">
+                                  <div class="flex items-start justify-between gap-4">
+                                    <div class="flex-grow">
+                                      <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">{{ attachment.story.title }}</a>
+                                      <div class="mt-2 flex flex-wrap items-center gap-2">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">{{ attachment.story.get_community_note_type_display }}</span>
+                                        {% if attachment.story.community_note_status == 'promoted' %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Promoted</span>
+                                        {% elif attachment.story.community_note_status == 'declined' %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Declined</span>
+                                        {% else %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">Pending</span>
                                         {% endif %}
                                       </div>
+                                      <p class="text-xs text-gray-600 mt-2">Suggested by <span class="font-medium">{{ attachment.story.created_by.username }}</span>{% if attachment.story.created_by.email %} ({{ attachment.story.created_by.email }}){% else %} (email unavailable){% endif %}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:30 }}</p>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                      {% url 'project_community_note_decision' project.pk attachment.story.id as project_community_note_decision_url %}
+                                      {% if project_community_note_decision_url %}
+                                        <form method="post" action="{{ project_community_note_decision_url }}" class="flex items-center gap-2">
+                                          {% csrf_token %}
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+                                          <button type="submit" name="decision" value="promoted" class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded hover:bg-green-200 transition">Promote</button>
+                                          <button type="submit" name="decision" value="declined" class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition">Decline</button>
+                                        </form>
+                                      {% endif %}
                                     </div>
                                   </div>
-                                {% endfor %}
-                              </div>
-                            {% else %}
-                              <p class="text-sm text-gray-500">No community notes for this capital yet.</p>
-                            {% endif %}
+                                </div>
+                              {% endfor %}
+                            </div>
                           </div>
+                          {% endif %}
                         {% endfor %}
                       </div>
                     </div>
@@ -495,48 +497,46 @@
                       <h3 class="text-base font-semibold text-gray-900 mb-3">Capitals Out</h3>
                       <div class="space-y-4">
                         {% for project_capital in project_capitals_out %}
+                          {% get_stories_for community_note_attachments 'capital_out' project_capital.capital.id as notes %}
+                          {% if notes %}
                           <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                             <h4 class="text-sm font-semibold text-gray-800 mb-2">{{ project_capital.capital.title }}</h4>
-                            {% get_stories_for community_note_attachments 'capital_out' project_capital.capital.id as notes %}
-                            {% if notes %}
-                              <div class="space-y-2">
-                                {% for attachment in notes %}
-                                  <div class="bg-white border border-gray-200 rounded p-3">
-                                    <div class="flex items-start justify-between gap-4">
-                                      <div class="flex-grow">
-                                        <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">{{ attachment.story.title }}</a>
-                                        <div class="mt-2 flex flex-wrap items-center gap-2">
-                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">{{ attachment.story.get_community_note_type_display }}</span>
-                                          {% if attachment.story.community_note_status == 'promoted' %}
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Promoted</span>
-                                          {% elif attachment.story.community_note_status == 'declined' %}
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Declined</span>
-                                          {% else %}
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">Pending</span>
-                                          {% endif %}
-                                        </div>
-                                        <p class="text-xs text-gray-600 mt-2">Suggested by <span class="font-medium">{{ attachment.story.created_by.username }}</span>{% if attachment.story.created_by.email %} ({{ attachment.story.created_by.email }}){% else %} (email unavailable){% endif %}</p>
-                                        <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:30 }}</p>
-                                      </div>
-                                      <div class="flex-shrink-0">
-                                        {% url 'project_community_note_decision' project.pk attachment.story.id as project_community_note_decision_url_out %}
-                                        {% if project_community_note_decision_url_out %}
-                                          <form method="post" action="{{ project_community_note_decision_url_out }}" class="flex items-center gap-2">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="next" value="{{ request.path }}">
-                                            <button type="submit" name="decision" value="promoted" class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded hover:bg-green-200 transition">Promote</button>
-                                            <button type="submit" name="decision" value="declined" class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition">Decline</button>
-                                          </form>
+                            <div class="space-y-2">
+                              {% for attachment in notes %}
+                                <div class="bg-white border border-gray-200 rounded p-3">
+                                  <div class="flex items-start justify-between gap-4">
+                                    <div class="flex-grow">
+                                      <a href="{% url 'story_detail' attachment.story.id %}?next={{ request.path }}" class="text-sm font-medium text-indigo-700 hover:text-indigo-900">{{ attachment.story.title }}</a>
+                                      <div class="mt-2 flex flex-wrap items-center gap-2">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">{{ attachment.story.get_community_note_type_display }}</span>
+                                        {% if attachment.story.community_note_status == 'promoted' %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Promoted</span>
+                                        {% elif attachment.story.community_note_status == 'declined' %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Declined</span>
+                                        {% else %}
+                                          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">Pending</span>
                                         {% endif %}
                                       </div>
+                                      <p class="text-xs text-gray-600 mt-2">Suggested by <span class="font-medium">{{ attachment.story.created_by.username }}</span>{% if attachment.story.created_by.email %} ({{ attachment.story.created_by.email }}){% else %} (email unavailable){% endif %}</p>
+                                      <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:30 }}</p>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                      {% url 'project_community_note_decision' project.pk attachment.story.id as project_community_note_decision_url_out %}
+                                      {% if project_community_note_decision_url_out %}
+                                        <form method="post" action="{{ project_community_note_decision_url_out }}" class="flex items-center gap-2">
+                                          {% csrf_token %}
+                                          <input type="hidden" name="next" value="{{ request.path }}">
+                                          <button type="submit" name="decision" value="promoted" class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded hover:bg-green-200 transition">Promote</button>
+                                          <button type="submit" name="decision" value="declined" class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200 transition">Decline</button>
+                                        </form>
+                                      {% endif %}
                                     </div>
                                   </div>
-                                {% endfor %}
-                              </div>
-                            {% else %}
-                              <p class="text-sm text-gray-500">No community notes for this capital yet.</p>
-                            {% endif %}
+                                </div>
+                              {% endfor %}
+                            </div>
                           </div>
+                          {% endif %}
                         {% endfor %}
                       </div>
                     </div>
