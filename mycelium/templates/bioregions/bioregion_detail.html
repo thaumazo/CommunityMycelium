@@ -112,10 +112,35 @@
               {% if user.is_authenticated %}
               <div class="tab-content hidden" id="challenges">
                 <h2 class="text-lg leading-6 font-medium text-gray-900">Challenges</h2>
+
+                {% with challenges=bioregion.challenges.all %}
+
+                {# Facet filter bar — buttons rendered per challenge, JS deduplicates and hides bar if none #}
+                <div class="mt-3 mb-2" id="challenge-facet-filter">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs text-gray-500 font-medium">Filter:</span>
+                    {% for challenge in challenges %}
+                      {% if challenge.related_facet and challenge.related_facet.image_path %}
+                        <button
+                          type="button"
+                          data-facet-btn="{{ challenge.related_facet.title }}"
+                          onclick="toggleFacetFilter(this)"
+                          class="facet-filter-btn inline-flex items-center gap-1 px-2 py-1 rounded-full border border-gray-300 bg-white text-xs text-gray-700 hover:border-indigo-400 transition"
+                          title="{{ challenge.related_facet.title }}"
+                        >
+                          <img src="{% static challenge.related_facet.image_path %}" alt="{{ challenge.related_facet.title }}" class="w-5 h-5 object-contain">
+                          <span>{{ challenge.related_facet.title }}</span>
+                        </button>
+                      {% endif %}
+                    {% endfor %}
+                    <button type="button" onclick="clearFacetFilter()" class="text-xs px-2 py-1 rounded-full border border-gray-200 bg-gray-100 text-gray-500 hover:bg-gray-200 transition">Clear</button>
+                  </div>
+                </div>
+
                 <div class="mt-4">
-                  <ul class="divide-y divide-gray-200">
-                    {% for challenge in bioregion.challenges.all %}
-                      <li class="py-4">
+                  <ul class="divide-y divide-gray-200" id="challenge-list">
+                    {% for challenge in challenges %}
+                      <li class="py-4 challenge-item" data-facet="{{ challenge.related_facet.title|default:'' }}">
                         <div class="flex items-center justify-between">
                           <div class="flex items-start space-x-3 flex-1">
                             {% if challenge.related_facet and challenge.related_facet.image_path %}
@@ -150,7 +175,62 @@
                       <li class="py-4 text-center text-gray-500">No challenges found for this bioregion.</li>
                     {% endfor %}
                   </ul>
+                  <p id="challenge-no-match" class="hidden py-4 text-center text-gray-500 text-sm">No challenges match the selected filters.</p>
                 </div>
+
+                {% endwith %}
+
+                <script>
+                (function() {
+                  var bar = document.getElementById('challenge-facet-filter');
+                  var seen = {};
+                  var hasBtns = false;
+                  // De-duplicate: keep first button per facet title, remove rest
+                  bar.querySelectorAll('[data-facet-btn]').forEach(function(btn) {
+                    var key = btn.dataset.facetBtn;
+                    if (seen[key]) { btn.remove(); } else { seen[key] = true; hasBtns = true; }
+                  });
+                  // Hide entire filter bar if no facet-tagged challenges exist
+                  if (!hasBtns) { bar.style.display = 'none'; }
+
+                  var active = new Set();
+
+                  window.toggleFacetFilter = function(btn) {
+                    var facet = btn.dataset.facetBtn;
+                    if (active.has(facet)) {
+                      active.delete(facet);
+                      btn.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-800');
+                      btn.classList.add('border-gray-300', 'bg-white', 'text-gray-700');
+                    } else {
+                      active.add(facet);
+                      btn.classList.remove('border-gray-300', 'bg-white', 'text-gray-700');
+                      btn.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-800');
+                    }
+                    applyFilter();
+                  };
+
+                  window.clearFacetFilter = function() {
+                    active.clear();
+                    bar.querySelectorAll('[data-facet-btn]').forEach(function(btn) {
+                      btn.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-800');
+                      btn.classList.add('border-gray-300', 'bg-white', 'text-gray-700');
+                    });
+                    applyFilter();
+                  };
+
+                  function applyFilter() {
+                    var items = document.querySelectorAll('#challenge-list .challenge-item');
+                    var visible = 0;
+                    items.forEach(function(li) {
+                      var match = active.size === 0 || active.has(li.dataset.facet);
+                      li.style.display = match ? '' : 'none';
+                      if (match) visible++;
+                    });
+                    var noMatch = document.getElementById('challenge-no-match');
+                    if (noMatch) noMatch.classList.toggle('hidden', visible > 0 || active.size === 0);
+                  }
+                })();
+                </script></div>
 
                 {% can request.user 'change' bioregion as can_import_challenges %}
                 {% url 'bioregion_challenge_import' bioregion.pk as challenge_import_url %}
