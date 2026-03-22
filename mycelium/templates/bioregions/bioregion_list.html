@@ -58,6 +58,59 @@
                         </div>
                       {% endif %}
 
+                      <!-- Status indicators -->
+                      <div class="flex flex-wrap items-center gap-2 mt-1">
+                        {% if bioregion.challenges.exists %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800" title="Has challenges">
+                            ⚡ Challenges
+                          </span>
+                        {% else %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400" title="No challenges entered">
+                            ⚡ Challenges
+                          </span>
+                        {% endif %}
+
+                        {% if bioregion.latitude and bioregion.longitude and bioregion.radius_km %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800" title="Has coordinates & radius">
+                            📍 Mapped
+                          </span>
+                        {% else %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400" title="Coordinates or radius not set">
+                            📍 Mapped
+                          </span>
+                        {% endif %}
+
+                        {% if bioregion.users.exists %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800" title="Has people">
+                            👤 People
+                          </span>
+                        {% else %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400" title="No people listed">
+                            👤 People
+                          </span>
+                        {% endif %}
+
+                        {% if bioregion.communities.exists %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800" title="Has communities/orgs">
+                            🏘 Orgs
+                          </span>
+                        {% else %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400" title="No communities/orgs listed">
+                            🏘 Orgs
+                          </span>
+                        {% endif %}
+
+                        {% if bioregion.projects.exists %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800" title="Has projects">
+                            🌱 Projects
+                          </span>
+                        {% else %}
+                          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-400" title="No projects listed">
+                            🌱 Projects
+                          </span>
+                        {% endif %}
+                      </div>
+
                     </div>
 
                     <!-- Bioregion Controls -->
