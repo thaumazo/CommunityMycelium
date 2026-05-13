@@ -3,10 +3,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.contrib.contenttypes.models import ContentType
 from ..forms import LoginForm, RegisterForm, UserForm, UserPermissionForm
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from apps.utils import dump
 from apps.utils.pagination import paginate_queryset
+from apps.bookmarks.models import Bookmark
 from django.db.models import Q
 
 User = get_user_model()
@@ -88,8 +90,25 @@ def user_list_view(request):
     users = permitted_users | additional_users
     users = users.distinct().order_by('full_name')
 
+    # Float bookmarked users to the top
+    if request.user.is_authenticated:
+        user_content_type = ContentType.objects.get_for_model(User)
+        bookmarked_ids = set(
+            Bookmark.objects.filter(
+                user=request.user,
+                content_type=user_content_type
+            ).values_list('object_id', flat=True)
+        )
+        # Separate bookmarked from non-bookmarked
+        users_list = list(users)
+        bookmarked_users = [u for u in users_list if u.pk in bookmarked_ids]
+        non_bookmarked_users = [u for u in users_list if u.pk not in bookmarked_ids]
+        users_list = bookmarked_users + non_bookmarked_users
+    else:
+        users_list = list(users)
+
     # Pagination using helper function
-    users_page, pagination_data = paginate_queryset(users, request, per_page=100)
+    users_page, pagination_data = paginate_queryset(users_list, request, per_page=100)
 
     return render(request, "users/user_list.html", {
         "users": users_page,

@@ -1,13 +1,29 @@
 {% load user_tags %}
+{% load bookmark_tags %}
 
 {% if request.user.is_authenticated %}
   <div class="flex justify-center mb-6 overflow-x-auto">
-    <nav class="flex space-x-4" aria-label="Object navigation">
+    <nav class="flex items-center space-x-3" aria-label="Object navigation">
       {% if object %}
+        {% object_content_type object as object_content_type %}
         {% can request.user 'view' object as check %}
-        {% if check %}
-          <a href="{% url object.content_type.model|add:'_detail' object.pk %}"
-            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == object.content_type.model|add:'_detail' %}
+        {% if check and object_content_type %}
+          {% bookmark_state request.user object as is_bookmarked %}
+          {% url 'bookmark_toggle' object_content_type.app_label object_content_type.model object.pk as bookmark_toggle_url %}
+          <form method="post" action="{{ bookmark_toggle_url }}" class="shrink-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit"
+              class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-full transition-colors {% if is_bookmarked %}bg-amber-100 text-amber-700 hover:bg-amber-200{% else %}text-gray-500 hover:text-gray-700 hover:bg-gray-100{% endif %}"
+              aria-pressed="{% if is_bookmarked %}true{% else %}false{% endif %}">
+              <span class="h-4 w-4 inline-flex items-center justify-center">
+                {% include '_icons/star.html' %}
+              </span>
+              <span>{% if is_bookmarked %}Favourited{% else %}Favourite{% endif %}</span>
+            </button>
+          </form>
+          <a href="{% url object._meta.model_name|add:'_detail' object.pk %}"
+            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == object._meta.model_name|add:'_detail' %}
              bg-indigo-100 text-indigo-700
             {% else %}
              text-gray-500 hover:text-gray-700 hover:bg-gray-100
@@ -17,8 +33,8 @@
         {% endif %}
         {% can request.user 'change' object as check %}
         {% if check %}
-          <a href="{% url object.content_type.model|add:'_edit' object.pk %}"
-            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == object.content_type.model|add:'_edit' %}
+          <a href="{% url object._meta.model_name|add:'_edit' object.pk %}"
+            class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == object._meta.model_name|add:'_edit' %}
                bg-indigo-100 text-indigo-700
             {% else %}
                text-gray-500 hover:text-gray-700 hover:bg-gray-100
@@ -27,8 +43,8 @@
           </a>
         {% endif %}
         {% can request.user 'delegate' object as check %}
-        {% if check %}
-          <a href="{% url 'acl_object_permission_form_step_1' object.content_type.id object.pk %}"
+        {% if check and object_content_type %}
+          <a href="{% url 'acl_object_permission_form_step_1' object_content_type.id object.pk %}"
             class="shrink-0 px-3 py-2 text-sm font-medium rounded-full {% if request.resolver_match.url_name == 'acl_object_permission_form_step_1' or request.resolver_match.url_name == 'acl_object_permission_form_step_2' %}
                bg-indigo-100 text-indigo-700
             {% else %}

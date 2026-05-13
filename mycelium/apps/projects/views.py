@@ -6,7 +6,9 @@ from copy import deepcopy
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
+from apps.bookmarks.models import Bookmark
 from .models import Project, ProjectCapitalIn, ProjectCapitalOut
 from .forms import ProjectForm
 from django.core.exceptions import PermissionDenied
@@ -218,8 +220,25 @@ def _normalize_story_import_payload(raw_payload):
 def project_list_view(request):
     projects = get_permitted_objects(request.user, "view", Project)
     
+    # Float bookmarked projects to the top
+    if request.user.is_authenticated:
+        project_content_type = ContentType.objects.get_for_model(Project)
+        bookmarked_ids = set(
+            Bookmark.objects.filter(
+                user=request.user,
+                content_type=project_content_type
+            ).values_list('object_id', flat=True)
+        )
+        # Separate bookmarked from non-bookmarked
+        projects_list = list(projects)
+        bookmarked_projects = [p for p in projects_list if p.pk in bookmarked_ids]
+        non_bookmarked_projects = [p for p in projects_list if p.pk not in bookmarked_ids]
+        projects_list = bookmarked_projects + non_bookmarked_projects
+    else:
+        projects_list = list(projects)
+    
     # Pagination using helper function
-    projects_page, pagination_data = paginate_queryset(projects, request, per_page=10)
+    projects_page, pagination_data = paginate_queryset(projects_list, request, per_page=10)
     
     return render(request, "projects/project_list.html", {
         "projects": projects_page,

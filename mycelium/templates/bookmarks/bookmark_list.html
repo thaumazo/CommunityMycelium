@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load bookmark_tags %}
+{% load user_tags %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-900">Favourites</h1>
+          <p class="text-sm text-gray-500">Saved people, projects, and communities.</p>
+        </div>
+      </div>
+
+      {% include '_components/messages.html' %}
+
+      <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+          {% for bookmark in bookmarks %}
+            {% if bookmark.content_object %}
+              {% object_detail_url bookmark.content_object as detail_url %}
+              <li class="hover:bg-gray-50 transition-colors duration-150">
+                <div class="px-4 py-4 sm:px-6 flex items-start justify-between gap-4">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">{{ bookmark.content_type.model }}</span>
+                      <span class="text-sm font-medium text-gray-900 truncate">{{ bookmark.content_object }}</span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">Bookmarked {{ bookmark.created_at|date:'F j, Y' }}</p>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    {% if detail_url %}
+                      <a href="{{ detail_url }}" class="px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Open</a>
+                    {% endif %}
+                    <form method="post" action="{% url 'bookmark_toggle' bookmark.content_type.app_label bookmark.content_type.model bookmark.object_id %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <button type="submit" class="px-2 py-1 text-xs font-semibold rounded text-amber-700 border border-amber-300 hover:bg-amber-100">Remove</button>
+                    </form>
+                  </div>
+                </div>
+              </li>
+            {% endif %}
+          {% empty %}
+            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No favourites yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}

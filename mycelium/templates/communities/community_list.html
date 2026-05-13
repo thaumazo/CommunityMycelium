@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load user_tags %}
 {% load markdown_filters %}
+{% load bookmark_tags %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -23,8 +24,9 @@
       <div class="bg-white shadow overflow-hidden sm:rounded-md">
         <ul class="divide-y divide-gray-200">
           {% for community in communities %}
-            <li class="hover:bg-gray-50 transition-colors duration-150">
-              <div class="px-4 py-4 sm:px-6">
+            {% bookmark_state request.user community as is_bookmarked %}
+            <li class="hover:bg-gray-50 transition-colors duration-150 {% if is_bookmarked %}border-l-4 border-amber-400{% endif %}">
+              <div class="px-4 py-4 sm:px-6{% if is_bookmarked %} bg-amber-50{% endif %}">
                 <div class="flex items-start gap-4">
                   <!-- Community Icon/Picture -->
                   <div class="shrink-0">
@@ -69,6 +71,16 @@
 
                     <!-- Community Controls -->
                     <div class="flex items-center gap-2">
+                      {% if request.user.is_authenticated %}
+                        {% bookmark_state request.user community as is_bookmarked %}
+                        {% object_content_type community as ct %}
+                        <form method="post" action="{% url 'bookmark_toggle' ct.app_label ct.model community.pk %}">
+                          {% csrf_token %}
+                          <button type="submit" class="inline-flex items-center justify-center h-8 w-8 rounded-full border {% if is_bookmarked %}border-amber-300 bg-amber-100 text-amber-700{% else %}border-gray-300 bg-white text-gray-500 hover:bg-gray-50{% endif %}" aria-label="{% if is_bookmarked %}Remove favourite{% else %}Add favourite{% endif %}">
+                            {% include '_icons/star.html' %}
+                          </button>
+                        </form>
+                      {% endif %}
                       <!-- Community Edit/Delete -->
                       {% can request.user 'change' community as check %}
                       {% if check %}

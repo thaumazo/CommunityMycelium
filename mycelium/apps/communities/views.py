@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
+from apps.bookmarks.models import Bookmark
 from .models import Community
 from .forms import CommunityForm
 from django.core.exceptions import PermissionDenied
@@ -14,8 +16,22 @@ from apps.utils.form_tokens import get_form_token, validate_form_token
 def community_list_view(request):
     communities = get_permitted_objects(request.user, "view", Community)
     
+    # Float bookmarked communities to the top
+    community_content_type = ContentType.objects.get_for_model(Community)
+    bookmarked_ids = set(
+        Bookmark.objects.filter(
+            user=request.user,
+            content_type=community_content_type
+        ).values_list('object_id', flat=True)
+    )
+    # Separate bookmarked from non-bookmarked
+    communities_list = list(communities)
+    bookmarked_communities = [c for c in communities_list if c.pk in bookmarked_ids]
+    non_bookmarked_communities = [c for c in communities_list if c.pk not in bookmarked_ids]
+    communities_list = bookmarked_communities + non_bookmarked_communities
+    
     # Pagination using helper function
-    communities_page, pagination_data = paginate_queryset(communities, request, per_page=10)
+    communities_page, pagination_data = paginate_queryset(communities_list, request, per_page=10)
     
     return render(
         request, "communities/community_list.html", {
