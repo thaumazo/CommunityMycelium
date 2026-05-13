@@ -104,7 +104,7 @@ Below this introduction, you’ll soon find:
 ## 🪴 Start a Move
 Ready to act?
 
-➡️ **[Add your project](#)** and share your Flourishing Move with the network.  
+➡️ **[Start Here](/pages/start-here/)** and share your Flourishing Move with the network.  
 Every contribution — from healing a stream to hosting a dialogue — is part of the same collective metamorphosis.
 
 ---

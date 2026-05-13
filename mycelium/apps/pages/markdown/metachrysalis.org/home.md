@@ -33,7 +33,7 @@ It’s about designing and practicing the new one — together.
 ## Start Here
 New to Metachrysalis?
 
-→ **[Start Here](./pages/start-here)**  
+→ **[Start Here](/pages/start-here/)**  
 Find your way in. Choose your place. Create your character. Make your first Move.
 
 ---
@@ -41,7 +41,7 @@ Find your way in. Choose your place. Create your character. Make your first Move
 ## About
 Curious about the deeper thinking behind the work?
 
-→ **[About Metachrysalis](./pages/about)**  
+→ **[About Metachrysalis](/pages/about/)**  
 Origins, influences, principles, and the story behind the framework.
 
 ---
@@ -49,7 +49,7 @@ Origins, influences, principles, and the story behind the framework.
 ## Play
 Ready to explore how it works in practice?
 
-→ **[How to Play](./pages/play)**  
+→ **[How to Play](/pages/play/)**  
 Character sheets, parties, Moves, cohorts, and the open-source playbook.
 
 ---
@@ -57,7 +57,7 @@ Character sheets, parties, Moves, cohorts, and the open-source playbook.
 ## The Framework
 Want to understand the lenses we use?
 
-→ **[Framework Library](./pages/frameworks)**  
+→ **[Framework Library](/pages/frameworks/)**  
 Permaculture Capitals, Metacrisis & Metachrysalis Facets, Roles, and more.
 
 ---
@@ -65,10 +65,10 @@ Permaculture Capitals, Metacrisis & Metachrysalis Facets, Roles, and more.
 ## People, Communities, and Moves
 Explore what’s already unfolding:
 
-- **[People](./pages/people)** — changemakers in the network  
-- **[Communities](./pages/communities)** — organizations and circles participating  
-- **[Bioregions](./pages/bioregions)** — places where the game is being played  
-- **[Projects / Moves](./pages/projects)** — real-world actions and experiments  
+- **[People](/pages/people/)** — changemakers in the network  
+- **[Communities](/pages/communities/)** — organizations and circles participating  
+- **[Bioregions](/pages/bioregions/)** — places where the game is being played  
+- **[Projects / Moves](/pages/projects/)** — real-world actions and experiments  
 
 ---
 

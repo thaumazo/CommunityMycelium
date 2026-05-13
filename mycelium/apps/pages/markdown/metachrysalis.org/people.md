@@ -72,7 +72,7 @@ Below, you’ll soon be able to:
 ## 💫 Join the Metachrysalis
 Ready to add your story to the web?
 
-➡️ **[Create your character profile](#)** to become part of the growing Metachrysalis network.  
+➡️ **[Start Here](/pages/start-here/)** and then join the growing Metachrysalis network.  
 Each connection you make strengthens the collective — and brings us one step closer to flourishing together.
 
 ---

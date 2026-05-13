@@ -56,9 +56,11 @@
             
             {% if request.get_host == 'metachrysalis.org' or URL_OVERRIDE == 'metachrysalis.org' %}
               {# Metachrysalis-specific links #}
-              <a href="/pages/people" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">People</a>
-              <a href="/pages/communities" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Communities</a>
-              <a href="/pages/projects" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+              <a href="/pages/about/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">About</a>
+              <a href="/pages/frameworks/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Framework</a>
+              <a href="/pages/people/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">People</a>
+              <a href="/pages/communities/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Communities</a>
+              <a href="/pages/projects/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Projects</a>
 
             {% elif request.get_host == 'fraserlowland.org' or URL_OVERRIDE == 'fraserlowland.org' %}
               {# Fraser Lowland-specific links #}
@@ -153,9 +155,11 @@
           <ul class="space-y-1">
             <li><a href="/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Home</a></li>
             {% if request.get_host == 'metachrysalis.org' or URL_OVERRIDE == 'metachrysalis.org' %}
-              <li><a href="/pages/people" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">People</a></li>
-              <li><a href="/pages/communities" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Communities</a></li>
-              <li><a href="/pages/projects" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Projects</a></li>
+              <li><a href="/pages/about/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">About</a></li>
+              <li><a href="/pages/frameworks/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Framework</a></li>
+              <li><a href="/pages/people/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">People</a></li>
+              <li><a href="/pages/communities/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Communities</a></li>
+              <li><a href="/pages/projects/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Projects</a></li>
             {% elif request.get_host == 'fraserlowland.org' or URL_OVERRIDE == 'fraserlowland.org' %}
               <li><a href="/pages/about" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">About</a></li>
               <li><a href="/pages/benefits" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Member Benefits</a></li>

@@ -26,6 +26,7 @@ urlpatterns = [
     path("tasks/", include("apps.tasks.urls")),
     path("acl/", include("apps.acl.urls")),  # Access Control List routes
     path("stories/", include("apps.stories.urls")),  # Stories system routes
+    path("bookmarks/", include("apps.bookmarks.urls")),  # Bookmark routes
     path("pages/", include("apps.pages.urls")),  # Pages app routes
     path("megachart/", include("apps.megachart.urls")),  # Knowledge graph system
 ]

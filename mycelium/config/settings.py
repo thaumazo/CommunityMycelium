@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "apps.tasks",
     "apps.acl",
     "apps.stories",
+    "apps.bookmarks",
     "apps.utils",
     "apps.api",
     # Megachart knowledge graph system

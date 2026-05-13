@@ -86,7 +86,7 @@ Each listing links directly to projects, people, and stories that show what coll
 ## 💠 Start or Join a Community
 Ready to play together?
 
-➡️ **[Add your community](#)** or connect with one already active in your bioregion.  
+➡️ **[Create your character profile](/pages/people/)** and connect with communities already active in your bioregion.  
 Whether you’re an emerging circle or a well-established organization, your participation strengthens the mycelial web.
 
 ---
