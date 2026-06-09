@@ -241,6 +241,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "description",
             "members",
             "members_detail",
+            "bioregions",
             "url",
             "created_by",
             "created_by_detail",
