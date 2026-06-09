@@ -212,19 +212,28 @@ def bioregion_detail_view(request, pk):
     from apps.communities.models import Community
     from apps.locations.models import Location
     from apps.projects.models import Project
+    from django.contrib.auth import get_user_model
+    from django.db.models import Q
+    UserModel = get_user_model()
     if request.user.is_authenticated:
-        from apps.acl.utils import get_permitted_objects
-        all_communities = get_permitted_objects(request.user, "view", Community)
-        # Filter to only communities connected to this bioregion
-        communities = [c for c in all_communities if bioregion in c.bioregions.all()]
-        all_locations = get_permitted_objects(request.user, "view", Location)
-        locations = [l for l in all_locations if bioregion in l.bioregions.all()]
-        all_projects = get_permitted_objects(request.user, "view", Project)
-        projects = [p for p in all_projects if bioregion in p.bioregions.all()]
+        user = request.user
+        communities = Community.objects.filter(bioregions=bioregion).filter(
+            Q(created_by=user) | Q(members=user) | Q(view_members=True) | Q(view_public=True)
+        ).distinct()
+        locations = Location.objects.filter(bioregions=bioregion).filter(
+            Q(created_by=user) | Q(view_members=True) | Q(view_public=True)
+        ).distinct()
+        projects = Project.objects.filter(bioregions=bioregion).filter(
+            Q(created_by=user) | Q(members=user) | Q(owners=user) | Q(admins=user) | Q(view_members=True) | Q(view_public=True)
+        ).distinct()
+        people = UserModel.objects.filter(user_bioregions=bioregion).filter(
+            Q(id=user.id) | Q(view_members=True) | Q(view_public=True)
+        ).distinct()
     else:
-        communities = Community.objects.filter(bioregions=bioregion)
+        communities = Community.objects.filter(bioregions=bioregion, view_public=True)
         locations = Location.objects.filter(bioregions=bioregion, view_public=True)
         projects = Project.objects.filter(bioregions=bioregion, view_public=True)
+        people = UserModel.objects.filter(user_bioregions=bioregion, view_public=True)
     
     challenge_import_schema = json.dumps(_bioregion_challenge_import_schema_for(bioregion), indent=2)
 
@@ -233,6 +242,7 @@ def bioregion_detail_view(request, pk):
         "communities": communities,
         "locations": locations,
         "projects": projects,
+        "people": people,
         "challenge_import_schema": challenge_import_schema,
     })
 

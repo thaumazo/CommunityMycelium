@@ -148,14 +148,9 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         # Get people the current user has permission to view
-        permitted_users = get_permitted_objects(user, "view", User)
-
-        # Include people with view_members or view_public set to True
-        additional_users = User.objects.filter(Q(view_members=True) | Q(view_public=True))
-
-        # Combine both querysets and ensure no duplicates
-        users = permitted_users | additional_users
-        return users.distinct()
+        return User.objects.filter(
+            Q(id=user.id) | Q(view_members=True) | Q(view_public=True)
+        ).distinct()
 
     def get_serializer_class(self):
         """
