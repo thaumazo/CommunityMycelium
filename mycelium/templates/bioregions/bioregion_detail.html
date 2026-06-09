@@ -232,42 +232,7 @@
                 })();
                 </script></div>
 
-                {% can request.user 'change' bioregion as can_import_challenges %}
-                {% url 'bioregion_challenge_import' bioregion.pk as challenge_import_url %}
-                {% if can_import_challenges and challenge_import_url %}
-                  <div class="mt-8 border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <h3 class="text-base font-semibold text-gray-900">Import Challenges from JSON</h3>
-                    <p class="text-sm text-gray-600 mt-1">
-                      Paste JSON matching the schema below. (This schema can be pasted into AI to generate properly formatted JSON for all 16 metacrisis facets.)
-                    </p>
 
-                    <form method="post" action="{{ challenge_import_url }}" class="mt-4 space-y-3">
-                      {% csrf_token %}
-                      <div>
-                        <label for="challenge_import_json" class="block text-sm font-medium text-gray-700 mb-1">Challenges JSON</label>
-                        <textarea
-                          id="challenge_import_json"
-                          name="challenge_import_json"
-                          rows="12"
-                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-xs"
-                          placeholder='{"schema_version": 1, "challenges": [...]}'
-                        ></textarea>
-                      </div>
-                      <div class="flex items-center">
-                        <input id="challenge_dry_run" name="dry_run" type="checkbox" value="1" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                        <label for="challenge_dry_run" class="ml-2 block text-sm text-gray-700">Preview / dry run (validate and report, without saving challenges)</label>
-                      </div>
-                      <button type="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-                        Import Challenges
-                      </button>
-                    </form>
-
-                    <div class="mt-4">
-                      <h4 class="text-sm font-medium text-gray-700 mb-2">Schema &amp; Facet Reference</h4>
-                      <textarea readonly rows="20" class="w-full rounded-md border-gray-300 bg-white text-xs font-mono">{{ challenge_import_schema }}</textarea>
-                    </div>
-                  </div>
-                {% endif %}
               </div>
 
               <div class="tab-content hidden" id="doughnut">
@@ -412,6 +377,44 @@
                 </div>
               </div>
               {% endif %}
+
+                {% can request.user 'change' bioregion as can_import_challenges %}
+                {% url 'bioregion_challenge_import' bioregion.pk as challenge_import_url %}
+                {% if can_import_challenges and challenge_import_url %}
+                  <div class="mt-8 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <h3 class="text-base font-semibold text-gray-900">Import Challenges from JSON</h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                      Paste JSON matching the schema below. (This schema can be pasted into AI to generate properly formatted JSON for all 16 metacrisis facets.)
+                    </p>
+
+                    <form method="post" action="{{ challenge_import_url }}" class="mt-4 space-y-3">
+                      {% csrf_token %}
+                      <div>
+                        <label for="challenge_import_json" class="block text-sm font-medium text-gray-700 mb-1">Challenges JSON</label>
+                        <textarea
+                          id="challenge_import_json"
+                          name="challenge_import_json"
+                          rows="12"
+                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-xs"
+                          placeholder='{"schema_version": 1, "challenges": [...]}'
+                        ></textarea>
+                      </div>
+                      <div class="flex items-center">
+                        <input id="challenge_dry_run" name="dry_run" type="checkbox" value="1" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        <label for="challenge_dry_run" class="ml-2 block text-sm text-gray-700">Preview / dry run (validate and report, without saving challenges)</label>
+                      </div>
+                      <button type="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                        Import Challenges
+                      </button>
+                    </form>
+
+                    <div class="mt-4">
+                      <h4 class="text-sm font-medium text-gray-700 mb-2">Schema &amp; Facet Reference</h4>
+                      <textarea readonly rows="20" class="w-full rounded-md border-gray-300 bg-white text-xs font-mono">{{ challenge_import_schema }}</textarea>
+                    </div>
+                  </div>
+                {% endif %}
+
             </div>
 
             <div class="mt-6 flex justify-end">
