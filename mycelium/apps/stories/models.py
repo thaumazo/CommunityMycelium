@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from apps.acl.models import ObjectPermission
 
 User = get_user_model()
@@ -92,6 +93,33 @@ class Story(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    TIME_PRECISION_NONE = "none"
+    TIME_PRECISION_POINT = "point"
+    TIME_PRECISION_RANGE = "range"
+
+    TIME_PRECISION_CHOICES = [
+        (TIME_PRECISION_NONE, "No time specified"),
+        (TIME_PRECISION_POINT, "Single point in time"),
+        (TIME_PRECISION_RANGE, "Time range"),
+    ]
+
+    event_start_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Optional start time for this story",
+    )
+    event_end_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Optional end time for this story (for ranges)",
+    )
+    time_precision = models.CharField(
+        max_length=20,
+        choices=TIME_PRECISION_CHOICES,
+        default=TIME_PRECISION_NONE,
+        help_text="Whether this story is anchored at a point in time or a range",
+    )
     
     permissions = GenericRelation(ObjectPermission)
     
@@ -104,6 +132,19 @@ class Story(models.Model):
     
     def __str__(self):
         return f"{self.title} by {self.created_by.username}"
+
+    def clean(self):
+        if self.event_end_at and not self.event_start_at:
+            raise ValidationError("event_start_at is required when event_end_at is set.")
+        if self.event_start_at and self.event_end_at and self.event_end_at < self.event_start_at:
+            raise ValidationError("event_end_at must be after event_start_at.")
+
+        if self.time_precision == self.TIME_PRECISION_POINT and self.event_end_at:
+            raise ValidationError("Point-in-time stories should not set event_end_at.")
+        if self.time_precision == self.TIME_PRECISION_RANGE and not self.event_end_at:
+            raise ValidationError("Range stories require event_end_at.")
+        if self.time_precision == self.TIME_PRECISION_NONE and (self.event_start_at or self.event_end_at):
+            raise ValidationError("Set time_precision to point or range when time fields are used.")
 
     def get_youtube_embed_url(self):
         """Return a robust YouTube embed URL for the story's youtube_url.
@@ -306,6 +347,129 @@ class StoryAttachment(models.Model):
         ordering = ['created_at']
         # Prevent duplicate attachments
         unique_together = ['story', 'content_type', 'object_id']
+
+    ATTACHABLE_TARGETS = {
+        ("projects", "project"),
+        ("bioregions", "bioregion"),
+        ("capitals", "capital"),
+        ("metacrisis_facets", "metacrisis_facet"),
+        ("challenges", "challenge"),
+        ("communities", "community"),
+        ("users", "user"),
+        ("locations", "location"),
+    }
+
+    @classmethod
+    def is_attachable_content_type(cls, app_label, model):
+        return (app_label, model) in cls.ATTACHABLE_TARGETS
+
+    def clean(self):
+        if self.content_type and not self.is_attachable_content_type(self.content_type.app_label, self.content_type.model):
+            raise ValidationError(
+                f"Story attachments to {self.content_type.app_label}.{self.content_type.model} are not allowed."
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.story.title} → {self.content_object}"
+
+
+class StoryGeoPin(models.Model):
+    """
+    Spatial pins for stories. A story can have multiple pins.
+    """
+
+    story = models.ForeignKey(
+        Story,
+        on_delete=models.CASCADE,
+        related_name="geo_pins",
+    )
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    radius_m = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="Optional radius in meters for area-based pins",
+    )
+    label = models.CharField(max_length=255, blank=True)
+    role = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="Optional role like origin, impact, or meeting_site",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def clean(self):
+        if self.latitude is None or self.longitude is None:
+            raise ValidationError("latitude and longitude are required for story pins.")
+        if self.latitude < -90 or self.latitude > 90:
+            raise ValidationError("latitude must be between -90 and 90.")
+        if self.longitude < -180 or self.longitude > 180:
+            raise ValidationError("longitude must be between -180 and 180.")
+        if self.radius_m is not None and self.radius_m <= 0:
+            raise ValidationError("radius_m must be positive when provided.")
+
+    def __str__(self):
+        return f"{self.story.title} pin ({self.latitude}, {self.longitude})"
+
+
+class StoryLink(models.Model):
+    """
+    Directed links between stories to support nested/related narrative graphs.
+    """
+
+    RELATION_CONTINUATION = "continuation"
+    RELATION_EVIDENCE = "evidence"
+    RELATION_RESPONSE = "response"
+    RELATION_CHILD = "child_narrative"
+    RELATION_SYNTHESIS = "synthesis"
+
+    RELATION_CHOICES = [
+        (RELATION_CONTINUATION, "Continuation"),
+        (RELATION_EVIDENCE, "Evidence"),
+        (RELATION_RESPONSE, "Response"),
+        (RELATION_CHILD, "Child narrative"),
+        (RELATION_SYNTHESIS, "Synthesis"),
+    ]
+
+    from_story = models.ForeignKey(
+        Story,
+        on_delete=models.CASCADE,
+        related_name="outbound_links",
+    )
+    to_story = models.ForeignKey(
+        Story,
+        on_delete=models.CASCADE,
+        related_name="inbound_links",
+    )
+    relation_type = models.CharField(max_length=30, choices=RELATION_CHOICES, default=RELATION_CONTINUATION)
+    note = models.CharField(max_length=255, blank=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_story_links",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        unique_together = ["from_story", "to_story", "relation_type"]
+
+    def clean(self):
+        if self.from_story_id and self.to_story_id and self.from_story_id == self.to_story_id:
+            raise ValidationError("A story cannot link to itself.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.from_story.title} -> {self.to_story.title} ({self.relation_type})"

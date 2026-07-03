@@ -43,9 +43,37 @@ def community_list_view(request):
 
 @login_required
 def community_detail_view(request, pk):
+    from apps.stories.models import Story, StoryAttachment
+
     community = get_permitted_object(request.user, "view", Community, pk)
+
+    community_content_type = ContentType.objects.get_for_model(Community)
+    attached_story_ids = set(
+        StoryAttachment.objects.filter(
+            content_type=community_content_type,
+            object_id=community.pk,
+        ).values_list("story_id", flat=True)
+    )
+
+    permitted_stories = get_permitted_objects(request.user, "view", Story)
+    if hasattr(permitted_stories, "filter"):
+        community_stories = permitted_stories.filter(pk__in=attached_story_ids).order_by("-created_at")
+        community_story_count = community_stories.count()
+        community_stories_preview = community_stories[:3]
+    else:
+        community_stories = [s for s in permitted_stories if s.pk in attached_story_ids]
+        community_stories.sort(key=lambda s: s.created_at, reverse=True)
+        community_story_count = len(community_stories)
+        community_stories_preview = community_stories[:3]
+
     return render(
-        request, "communities/community_detail.html", {"community": community}
+        request,
+        "communities/community_detail.html",
+        {
+            "community": community,
+            "community_story_count": community_story_count,
+            "community_stories_preview": community_stories_preview,
+        },
     )
 
 

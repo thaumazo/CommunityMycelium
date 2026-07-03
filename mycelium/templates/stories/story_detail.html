@@ -36,6 +36,17 @@
             </div>
           {% endif %}
 
+          {% if story.time_precision != 'none' and story.event_start_at %}
+            <div class="mb-6 p-3 bg-gray-50 rounded-lg">
+              <h2 class="text-sm font-semibold text-gray-900 mb-1">Time Anchor</h2>
+              {% if story.time_precision == 'point' %}
+                <p class="text-sm text-gray-700">{{ story.event_start_at|date:"F j, Y, g:i a" }}</p>
+              {% else %}
+                <p class="text-sm text-gray-700">{{ story.event_start_at|date:"F j, Y, g:i a" }} to {{ story.event_end_at|date:"F j, Y, g:i a" }}</p>
+              {% endif %}
+            </div>
+          {% endif %}
+
           <!-- YouTube Video -->
           {% if story.youtube_url %}
             <div class="mb-6 max-w-md">
@@ -145,6 +156,53 @@
                   </div>
                 {% endfor %}
               </div>
+            </div>
+          {% endif %}
+
+          {% if story.geo_pins.all %}
+            <div class="mb-6">
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">Geo Pins</h2>
+              <div class="space-y-2">
+                {% for pin in story.geo_pins.all %}
+                  <div class="p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
+                    <div>Lat {{ pin.latitude }}, Long {{ pin.longitude }}</div>
+                    {% if pin.label %}<div>Label: {{ pin.label }}</div>{% endif %}
+                    {% if pin.radius_m %}<div>Radius: {{ pin.radius_m }} m</div>{% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if story.outbound_links.all or story.inbound_links.all %}
+            <div class="mb-6">
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">Linked Stories</h2>
+              {% if story.outbound_links.all %}
+                <div class="mb-3">
+                  <h3 class="text-sm font-semibold text-gray-700 mb-1">From this story</h3>
+                  <ul class="space-y-1">
+                    {% for link in story.outbound_links.all %}
+                      <li class="text-sm text-gray-700">
+                        <a href="{% url 'story_detail' link.to_story.pk %}" class="text-indigo-600 hover:underline">{{ link.to_story.title }}</a>
+                        <span class="text-gray-500">({{ link.get_relation_type_display }})</span>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+              {% if story.inbound_links.all %}
+                <div>
+                  <h3 class="text-sm font-semibold text-gray-700 mb-1">Linking to this story</h3>
+                  <ul class="space-y-1">
+                    {% for link in story.inbound_links.all %}
+                      <li class="text-sm text-gray-700">
+                        <a href="{% url 'story_detail' link.from_story.pk %}" class="text-indigo-600 hover:underline">{{ link.from_story.title }}</a>
+                        <span class="text-gray-500">({{ link.get_relation_type_display }})</span>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
             </div>
           {% endif %}
 

@@ -145,17 +145,39 @@ def user_detail_view(request, pk):
     """View a user's details."""
     # Get the user to view
     user = get_permitted_object(request.user, "view", User, pk)
+    from apps.stories.models import Story, StoryAttachment
     
     # Get all projects where the user has any role (member, owner, or admin)
     from apps.projects.models import Project
     user_all_projects = Project.objects.filter(
         Q(members=user) | Q(owners=user) | Q(admins=user)
     ).distinct().order_by('title')
+
+    user_content_type = ContentType.objects.get_for_model(User)
+    attached_story_ids = set(
+        StoryAttachment.objects.filter(
+            content_type=user_content_type,
+            object_id=user.pk,
+        ).values_list("story_id", flat=True)
+    )
+
+    permitted_stories = get_permitted_objects(request.user, "view", Story)
+    if hasattr(permitted_stories, "filter"):
+        user_stories = permitted_stories.filter(pk__in=attached_story_ids).order_by("-created_at")
+        user_story_count = user_stories.count()
+        user_stories_preview = user_stories[:3]
+    else:
+        user_stories = [s for s in permitted_stories if s.pk in attached_story_ids]
+        user_stories.sort(key=lambda s: s.created_at, reverse=True)
+        user_story_count = len(user_stories)
+        user_stories_preview = user_stories[:3]
     
     # Render the user details
     return render(request, "users/user_detail.html", {
         "user": user,
-        "user_all_projects": user_all_projects
+        "user_all_projects": user_all_projects,
+        "user_story_count": user_story_count,
+        "user_stories_preview": user_stories_preview,
     })
 
 

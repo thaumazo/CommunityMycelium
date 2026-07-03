@@ -18,6 +18,15 @@
         {% endif %}
       </div>
 
+      {% if attached_to %}
+        <div class="mb-4 p-3 bg-indigo-50 border border-indigo-100 rounded-md">
+          <p class="text-sm text-indigo-800">
+            Showing stories connected to:
+            <span class="font-semibold">{{ attached_to_label|default:attached_to }}</span>
+          </p>
+        </div>
+      {% endif %}
+
       {% include '_components/messages.html' %}
 
       <div class="bg-white shadow overflow-hidden sm:rounded-md">

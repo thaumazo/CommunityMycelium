@@ -285,6 +285,8 @@ def bioregion_detail_view(request, pk):
     from apps.communities.models import Community
     from apps.locations.models import Location
     from apps.projects.models import Project
+    from apps.stories.models import Story, StoryAttachment
+    from django.contrib.contenttypes.models import ContentType
     from django.contrib.auth import get_user_model
     from django.db.models import Q
     UserModel = get_user_model()
@@ -307,6 +309,29 @@ def bioregion_detail_view(request, pk):
         locations = Location.objects.filter(bioregions=bioregion, view_public=True)
         projects = Project.objects.filter(bioregions=bioregion, view_public=True)
         people = UserModel.objects.filter(user_bioregions=bioregion, view_public=True)
+
+    bioregion_content_type = ContentType.objects.get_for_model(Bioregion)
+    attached_story_ids = StoryAttachment.objects.filter(
+        content_type=bioregion_content_type,
+        object_id=bioregion.pk,
+    ).values_list("story_id", flat=True)
+    attached_story_id_set = set(attached_story_ids)
+
+    if request.user.is_authenticated:
+        permitted_stories = get_permitted_objects(request.user, "view", Story)
+        if hasattr(permitted_stories, "filter"):
+            bioregion_stories = permitted_stories.filter(pk__in=attached_story_id_set).order_by("-created_at")
+            bioregion_story_count = bioregion_stories.count()
+            bioregion_stories_preview = bioregion_stories[:3]
+        else:
+            filtered_stories = [s for s in permitted_stories if s.pk in attached_story_id_set]
+            filtered_stories.sort(key=lambda s: s.created_at, reverse=True)
+            bioregion_story_count = len(filtered_stories)
+            bioregion_stories_preview = filtered_stories[:3]
+    else:
+        bioregion_stories = Story.objects.filter(pk__in=attached_story_id_set, view_public=True).order_by("-created_at")
+        bioregion_story_count = bioregion_stories.count()
+        bioregion_stories_preview = bioregion_stories[:3]
     
     challenge_import_schema = json.dumps(_bioregion_challenge_import_schema_for(bioregion), indent=2)
 
@@ -316,6 +341,8 @@ def bioregion_detail_view(request, pk):
         "locations": locations,
         "projects": projects,
         "people": people,
+        "bioregion_story_count": bioregion_story_count,
+        "bioregion_stories_preview": bioregion_stories_preview,
         "challenge_import_schema": challenge_import_schema,
     })
 

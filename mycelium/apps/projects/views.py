@@ -259,6 +259,25 @@ def project_detail_view(request, pk):
     # Get stories attached to project capital relationships
     story_attachments = {}
     community_note_attachments = {}
+
+    project_content_type = ContentType.objects.get_for_model(Project)
+    project_attached_story_ids = set(
+        StoryAttachment.objects.filter(
+            content_type=project_content_type,
+            object_id=project.pk,
+        ).values_list("story_id", flat=True)
+    )
+
+    permitted_project_stories = get_permitted_objects(request.user, "view", Story)
+    if hasattr(permitted_project_stories, "filter"):
+        project_stories = permitted_project_stories.filter(pk__in=project_attached_story_ids).order_by("-created_at")
+        project_story_count = project_stories.count()
+        project_stories_preview = project_stories[:3]
+    else:
+        project_stories = [s for s in permitted_project_stories if s.pk in project_attached_story_ids]
+        project_stories.sort(key=lambda s: s.created_at, reverse=True)
+        project_story_count = len(project_stories)
+        project_stories_preview = project_stories[:3]
     
     # Check if current user is admin or owner of this project
     is_project_admin_or_owner = _is_project_admin_or_owner(request.user, project)
@@ -339,6 +358,8 @@ def project_detail_view(request, pk):
     
     return render(request, "projects/project_detail.html", {
         "project": project,
+        "project_story_count": project_story_count,
+        "project_stories_preview": project_stories_preview,
         "story_attachments": story_attachments,
         "community_note_attachments": community_note_attachments,
         "project_capitals_in": project_capitals_in,

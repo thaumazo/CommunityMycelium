@@ -31,6 +31,7 @@
               <div class="tabs-container">
                 <ul class="tab-list">
                   <li class="tab active" data-tab="account">Account</li>
+                  <li class="tab" data-tab="stories">Stories <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ user_story_count }}</span></li>
                   <li class="tab" data-tab="visibility">Visibility</li>
                   <li class="tab" data-tab="connections">Connections</li>
                   <li class="tab" data-tab="projects">Projects</li>
@@ -95,6 +96,49 @@
                     </dd>
                   </div>
                 </dl>
+              </div>
+
+              <div class="tab-content hidden" id="stories">
+                <div class="flex items-center justify-between mb-3">
+                  <h2 class="text-lg leading-6 font-medium text-gray-900">Stories</h2>
+                  {% can request.user 'add' 'stories.story' as can_add_story %}
+                  {% if can_add_story %}
+                    <a href="{% url 'story_create' %}?attach_to_type=users.user&attach_to_id={{ user.pk }}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Attach Story</a>
+                  {% endif %}
+                </div>
+
+                {% if user_stories_preview %}
+                  <div class="space-y-3">
+                    {% for story in user_stories_preview %}
+                      <article class="border border-gray-200 rounded-md p-3 bg-white">
+                        <h3 class="text-sm font-semibold text-indigo-700">
+                          <a href="{% url 'story_detail' story.pk %}?next={{ request.path }}" class="hover:underline">{{ story.title }}</a>
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">By {{ story.created_by.username }}</p>
+                        {% if story.time_precision != 'none' and story.event_start_at %}
+                          <p class="text-xs text-gray-500 mt-1">
+                            {% if story.time_precision == 'point' %}
+                              {{ story.event_start_at|date:"F j, Y, g:i a" }}
+                            {% else %}
+                              {{ story.event_start_at|date:"F j, Y, g:i a" }} to {{ story.event_end_at|date:"F j, Y, g:i a" }}
+                            {% endif %}
+                          </p>
+                        {% endif %}
+                        {% if story.text_content %}
+                          <p class="text-sm text-gray-700 mt-2">{{ story.text_content|markdown_to_html|striptags|truncatewords:24 }}</p>
+                        {% endif %}
+                      </article>
+                    {% endfor %}
+                  </div>
+
+                  {% if user_story_count > 3 %}
+                    <div class="mt-3">
+                      <a href="{% url 'story_list' %}?attached_to=users.user:{{ user.pk }}" class="text-sm text-indigo-600 hover:text-indigo-900">View all {{ user_story_count }} stories</a>
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <p class="text-sm text-gray-500">No stories connected to this person yet.</p>
+                {% endif %}
               </div>
 
               <!-- Visibility Tab -->

@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.story_list_view, name='story_list'),
+    path('attachment-options/', views.story_attachment_options_view, name='story_attachment_options'),
     path('<int:pk>/', views.story_detail_view, name='story_detail'),
     path('create/', views.story_create_view, name='story_create'),
     path('<int:pk>/edit/', views.story_edit_view, name='story_edit'),

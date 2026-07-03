@@ -48,6 +48,120 @@
               {% endif %}
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label for="{{ form.time_precision.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.time_precision.label }}</label>
+                <select name="{{ form.time_precision.html_name }}" id="{{ form.time_precision.id_for_label }}" class="w-full mt-1">
+                  {% for value, label in form.time_precision.field.choices %}
+                    <option value="{{ value }}" {% if form.time_precision.value == value %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+                {% if form.time_precision.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.time_precision.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+              <div>
+                <label for="{{ form.event_start_at.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.event_start_at.label }}</label>
+                <input type="datetime-local" name="{{ form.event_start_at.html_name }}" id="{{ form.event_start_at.id_for_label }}" value="{{ form.event_start_at.value|default:'' }}" class="w-full mt-1" />
+                {% if form.event_start_at.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.event_start_at.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+              <div>
+                <label for="{{ form.event_end_at.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.event_end_at.label }}</label>
+                <input type="datetime-local" name="{{ form.event_end_at.html_name }}" id="{{ form.event_end_at.id_for_label }}" value="{{ form.event_end_at.value|default:'' }}" class="w-full mt-1" />
+                {% if form.event_end_at.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.event_end_at.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Connections</label>
+              <p class="mt-1 text-xs text-gray-500">Choose a type, search, then click results to tag them to this story.</p>
+
+              <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label for="story-attachment-type" class="block text-xs font-medium text-gray-600 mb-1">Type</label>
+                  <select id="story-attachment-type" class="w-full">
+                    <option value="">Select type...</option>
+                    <option value="bioregion">Bioregion</option>
+                    <option value="project">Project</option>
+                    <option value="person">Person</option>
+                    <option value="community">Community</option>
+                    <option value="challenge">Challenge</option>
+                    <option value="capital">Permaculture Capital</option>
+                    <option value="metacrisis_facet">Metacrisis Facet</option>
+                    <option value="location">Location</option>
+                  </select>
+                </div>
+                <div class="md:col-span-2">
+                  <label for="story-attachment-search" class="block text-xs font-medium text-gray-600 mb-1">Search</label>
+                  <input id="story-attachment-search" type="text" class="w-full" placeholder="Search within selected type..." disabled />
+                </div>
+              </div>
+
+              <div id="story-attachment-results" class="mt-3 border border-gray-200 rounded-md p-2 max-h-48 overflow-auto text-sm text-gray-700">
+                Select a type to begin.
+              </div>
+
+              <div class="mt-3">
+                <p class="text-xs font-medium text-gray-600 mb-1">Selected connections</p>
+                <div id="story-attachment-selected" class="flex flex-wrap gap-2"></div>
+              </div>
+
+              {% if recommended_connections %}
+                <div class="mt-3">
+                  <p class="text-xs font-medium text-gray-600 mb-1">Recommended from source context</p>
+                  <div id="story-attachment-recommended" class="flex flex-wrap gap-2"></div>
+                </div>
+              {% endif %}
+
+              <details class="mt-3">
+                <summary class="cursor-pointer text-xs text-gray-600">Advanced mode (raw tokens)</summary>
+                <div class="mt-2">
+                  <textarea name="{{ form.attachment_targets.html_name }}" id="{{ form.attachment_targets.id_for_label }}" rows="4" class="w-full font-mono text-xs">{{ form.attachment_targets.value|default:'' }}</textarea>
+                </div>
+              </details>
+
+              {% if form.attachment_targets.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.attachment_targets.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.geo_pins_input.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.geo_pins_input.label }}</label>
+              <div class="mt-1">
+                <textarea name="{{ form.geo_pins_input.html_name }}" id="{{ form.geo_pins_input.id_for_label }}" rows="4" class="w-full" placeholder="49.282700,-123.120700,Origin,500">{{ form.geo_pins_input.value|default:'' }}</textarea>
+              </div>
+              <p class="mt-1 text-xs text-gray-500">{{ form.geo_pins_input.help_text }}</p>
+              {% if form.geo_pins_input.errors %}
+                <div class="mt-1 text-sm text-red-600">{{ form.geo_pins_input.errors|join:', ' }}</div>
+              {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="{{ form.linked_story_ids.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.linked_story_ids.label }}</label>
+                <input type="text" name="{{ form.linked_story_ids.html_name }}" id="{{ form.linked_story_ids.id_for_label }}" value="{{ form.linked_story_ids.value|default:'' }}" class="w-full mt-1" placeholder="14, 27, 31" />
+                <p class="mt-1 text-xs text-gray-500">{{ form.linked_story_ids.help_text }}</p>
+                {% if form.linked_story_ids.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.linked_story_ids.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+              <div>
+                <label for="{{ form.story_link_relation.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.story_link_relation.label }}</label>
+                <select name="{{ form.story_link_relation.html_name }}" id="{{ form.story_link_relation.id_for_label }}" class="w-full mt-1">
+                  {% for value, label in form.story_link_relation.field.choices %}
+                    <option value="{{ value }}" {% if form.story_link_relation.value == value %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+                {% if form.story_link_relation.errors %}
+                  <div class="mt-1 text-sm text-red-600">{{ form.story_link_relation.errors|join:', ' }}</div>
+                {% endif %}
+              </div>
+            </div>
+
             {% if not is_community_note_submission %}
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-4">Visibility Settings</label>
@@ -101,4 +215,177 @@
       </div>
     </div>
   </div>
+
+  {{ default_connections|json_script:"story-default-connections-data" }}
+  {{ recommended_connections|json_script:"story-recommended-connections-data" }}
+
+  <script>
+    (function () {
+      var hiddenField = document.getElementById('{{ form.attachment_targets.id_for_label }}');
+      var typeSelect = document.getElementById('story-attachment-type');
+      var searchInput = document.getElementById('story-attachment-search');
+      var resultsEl = document.getElementById('story-attachment-results');
+      var selectedEl = document.getElementById('story-attachment-selected');
+
+      if (!hiddenField || !typeSelect || !searchInput || !resultsEl || !selectedEl) {
+        return;
+      }
+
+      var selectedTokens = new Set();
+      var tokenLabels = {};
+      var fetchTimer = null;
+      var recommendedEl = document.getElementById('story-attachment-recommended');
+      var defaultConnectionsDataEl = document.getElementById('story-default-connections-data');
+      var recommendedConnectionsDataEl = document.getElementById('story-recommended-connections-data');
+      var defaultConnections = defaultConnectionsDataEl ? JSON.parse(defaultConnectionsDataEl.textContent) : [];
+      var recommendedConnections = recommendedConnectionsDataEl ? JSON.parse(recommendedConnectionsDataEl.textContent) : [];
+
+      (hiddenField.value || '').split(/\r?\n/).forEach(function (line) {
+        var token = line.trim();
+        if (token) {
+          selectedTokens.add(token);
+          tokenLabels[token] = token;
+        }
+      });
+
+      defaultConnections.forEach(function (item) {
+        selectedTokens.add(item.token);
+        tokenLabels[item.token] = item.label + ' (' + item.typeLabel + ')';
+      });
+
+      function syncHiddenField() {
+        hiddenField.value = Array.from(selectedTokens).join('\n');
+      }
+
+      function renderSelected() {
+        selectedEl.innerHTML = '';
+        if (selectedTokens.size === 0) {
+          selectedEl.innerHTML = '<span class="text-xs text-gray-500">No connections selected yet.</span>';
+          return;
+        }
+
+        Array.from(selectedTokens).forEach(function (token) {
+          var chip = document.createElement('span');
+          chip.className = 'inline-flex items-center gap-2 px-2 py-1 rounded-full bg-indigo-50 text-indigo-800 text-xs border border-indigo-200';
+          var label = tokenLabels[token] || token;
+          chip.textContent = label;
+
+          var removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'text-indigo-600 hover:text-indigo-900';
+          removeBtn.textContent = 'x';
+          removeBtn.setAttribute('aria-label', 'Remove connection');
+          removeBtn.addEventListener('click', function () {
+            selectedTokens.delete(token);
+            delete tokenLabels[token];
+            syncHiddenField();
+            renderSelected();
+          });
+
+          chip.appendChild(removeBtn);
+          selectedEl.appendChild(chip);
+        });
+      }
+
+      function renderRecommended() {
+        if (!recommendedEl) {
+          return;
+        }
+        recommendedEl.innerHTML = '';
+        if (!recommendedConnections || recommendedConnections.length === 0) {
+          recommendedEl.innerHTML = '<span class="text-xs text-gray-500">No recommendations for this context.</span>';
+          return;
+        }
+
+        recommendedConnections.forEach(function (item) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'inline-flex items-center gap-1 px-2 py-1 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs hover:bg-emerald-100';
+          btn.textContent = '+ ' + item.label;
+          btn.title = item.reason || 'Recommended connection';
+          btn.addEventListener('click', function () {
+            selectedTokens.add(item.token);
+            tokenLabels[item.token] = item.label + ' (' + item.typeLabel + ')';
+            syncHiddenField();
+            renderSelected();
+          });
+          recommendedEl.appendChild(btn);
+        });
+      }
+
+      function renderResults(results) {
+        resultsEl.innerHTML = '';
+        if (!results || results.length === 0) {
+          resultsEl.innerHTML = '<span class="text-xs text-gray-500">No matches found.</span>';
+          return;
+        }
+
+        results.forEach(function (item) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'w-full text-left px-2 py-1 rounded hover:bg-gray-100 text-sm';
+          btn.innerHTML = '<span class="font-medium">' + item.label + '</span>' +
+            ' <span class="text-xs text-gray-500">(' + item.typeLabel + ' #' + item.id + ')</span>';
+
+          btn.addEventListener('click', function () {
+            selectedTokens.add(item.token);
+            tokenLabels[item.token] = item.label + ' (' + item.typeLabel + ')';
+            syncHiddenField();
+            renderSelected();
+          });
+
+          resultsEl.appendChild(btn);
+        });
+      }
+
+      function fetchOptions() {
+        var typeValue = typeSelect.value;
+        var queryValue = searchInput.value || '';
+        if (!typeValue) {
+          resultsEl.innerHTML = 'Select a type to begin.';
+          return;
+        }
+
+        var url = '{% url "story_attachment_options" %}?type=' + encodeURIComponent(typeValue) + '&q=' + encodeURIComponent(queryValue);
+        fetch(url, { headers: { 'Accept': 'application/json' } })
+          .then(function (response) { return response.json(); })
+          .then(function (payload) {
+            renderResults(payload.results || []);
+          })
+          .catch(function () {
+            resultsEl.innerHTML = '<span class="text-xs text-red-600">Could not load options.</span>';
+          });
+      }
+
+      typeSelect.addEventListener('change', function () {
+        searchInput.disabled = !typeSelect.value;
+        searchInput.value = '';
+        fetchOptions();
+      });
+
+      searchInput.addEventListener('input', function () {
+        if (fetchTimer) {
+          clearTimeout(fetchTimer);
+        }
+        fetchTimer = setTimeout(fetchOptions, 250);
+      });
+
+      hiddenField.addEventListener('change', function () {
+        selectedTokens.clear();
+        tokenLabels = {};
+        (hiddenField.value || '').split(/\r?\n/).forEach(function (line) {
+          var token = line.trim();
+          if (token) {
+            selectedTokens.add(token);
+            tokenLabels[token] = token;
+          }
+        });
+        renderSelected();
+      });
+
+      renderSelected();
+      renderRecommended();
+      syncHiddenField();
+    })();
+  </script>
 {% endblock %}
