@@ -2,10 +2,15 @@ import json
 import re
 import unicodedata
 from copy import deepcopy
+from urllib.error import URLError, HTTPError
+from urllib.request import Request, urlopen
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.core.cache import caches
+from django.conf import settings
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from .models import Bioregion
 from .forms import BioregionForm
@@ -14,6 +19,74 @@ from django.db import transaction
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
+
+
+TILE_PROVIDER_URLS = {
+    "osm": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "carto": "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+    "esri": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+}
+
+
+def bioregion_tile_proxy_view(request, provider, z, x, y):
+    template = TILE_PROVIDER_URLS.get(provider)
+    if not template:
+        return HttpResponse("Unknown tile provider", status=404, content_type="text/plain")
+
+    if z < 0 or z > 22 or x < 0 or y < 0:
+        return HttpResponse("Invalid tile coordinates", status=400, content_type="text/plain")
+
+    try:
+        tile_cache = caches["tiles"]
+    except Exception:
+        tile_cache = caches["default"]
+
+    cache_key = f"tile:{provider}:{z}:{x}:{y}"
+    cached_tile = tile_cache.get(cache_key)
+    if cached_tile:
+        body, content_type = cached_tile
+        cached_response = HttpResponse(body, content_type=content_type)
+        cached_response["Cache-Control"] = "public, max-age=300"
+        cached_response["X-Tile-Cache"] = "HIT"
+        return cached_response
+
+    tile_url = template.format(z=z, x=x, y=y)
+    upstream_request = Request(
+        tile_url,
+        headers={
+            "User-Agent": "CommunityMyceliumTileProxy/1.0",
+            "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+        },
+    )
+
+    try:
+        with urlopen(upstream_request, timeout=10) as response:
+            body = response.read()
+            content_type = response.headers.get("Content-Type", "image/png")
+
+        tile_cache.set(
+            cache_key,
+            (body, content_type),
+            timeout=getattr(settings, "MAP_TILE_CACHE_TIMEOUT", 900),
+        )
+
+        proxy_response = HttpResponse(body, content_type=content_type)
+        # Client can re-use tiles briefly while server keeps a short bounded cache.
+        proxy_response["Cache-Control"] = "public, max-age=300"
+        proxy_response["X-Tile-Cache"] = "MISS"
+        return proxy_response
+    except HTTPError as exc:
+        return HttpResponse(
+            f"Upstream tile error ({exc.code})",
+            status=502,
+            content_type="text/plain",
+        )
+    except URLError:
+        return HttpResponse(
+            "Unable to reach tile provider",
+            status=502,
+            content_type="text/plain",
+        )
 
 
 CHALLENGE_IMPORT_SCHEMA = {

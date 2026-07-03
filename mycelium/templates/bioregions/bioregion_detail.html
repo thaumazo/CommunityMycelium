@@ -91,6 +91,24 @@
                   </div>
                   {% endif %}
                 </dl>
+
+                {% if bioregion.latitude and bioregion.longitude and bioregion.radius_km %}
+                <div class="mt-6">
+                  <h3 class="text-sm font-medium text-gray-500">Bioregion Map</h3>
+                  <p class="mt-1 text-xs text-gray-500">OpenStreetMap base layer with bioregion center and radius. Additional overlays can be added later.</p>
+                  <div
+                    id="bioregion-map"
+                    class="mt-3 w-full h-80 rounded-lg border border-gray-200"
+                    style="height: 20rem;"
+                    data-latitude="{{ bioregion.latitude }}"
+                    data-longitude="{{ bioregion.longitude }}"
+                    data-radius-km="{{ bioregion.radius_km }}"
+                    data-title="{{ bioregion.title|escape }}"
+                  ></div>
+                  <p id="bioregion-map-error" class="hidden mt-2 text-xs text-red-600">Map could not be loaded from the current bioregion coordinates.</p>
+                  <p id="bioregion-map-debug" class="mt-1 text-xs text-gray-500"></p>
+                </div>
+                {% endif %}
               </div>
               {% else %}
               {# Anonymous users only see title and description #}
@@ -425,4 +443,274 @@
       </div>
     </div>
   </div>
+
+  {% if bioregion.latitude and bioregion.longitude and bioregion.radius_km %}
+  <style>
+    /* Tailwind preflight sets img max-width/height auto, which breaks Leaflet tile sizing. */
+    #bioregion-map.leaflet-container img,
+    #bioregion-map .leaflet-tile,
+    #bioregion-map .leaflet-marker-icon,
+    #bioregion-map .leaflet-marker-shadow {
+      max-width: none !important;
+      max-height: none !important;
+      height: auto;
+      width: auto;
+    }
+  </style>
+  <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}">
+  <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
+  <script>
+    (function () {
+      var mapEl = document.getElementById('bioregion-map');
+      if (!mapEl) {
+        return;
+      }
+
+      if (mapEl.dataset.mapInitialized === '1') {
+        return;
+      }
+      mapEl.dataset.mapInitialized = '1';
+
+      var errorEl = document.getElementById('bioregion-map-error');
+      var debugEl = document.getElementById('bioregion-map-debug');
+      if (errorEl) {
+        errorEl.classList.add('hidden');
+      }
+      var rawLat = mapEl.dataset.latitude || '';
+      var rawLng = mapEl.dataset.longitude || '';
+      var rawRadiusKm = mapEl.dataset.radiusKm || '';
+      var title = mapEl.dataset.title || 'Bioregion';
+
+      function parseCoordinate(rawValue, axis) {
+        if (rawValue === null || rawValue === undefined) {
+          return NaN;
+        }
+
+        var text = String(rawValue).trim();
+        if (!text) {
+          return NaN;
+        }
+
+        var numericMatch = text.match(/[-+]?\d+(?:\.\d+)?/);
+        if (!numericMatch) {
+          return NaN;
+        }
+
+        var value = parseFloat(numericMatch[0]);
+        if (!Number.isFinite(value)) {
+          return NaN;
+        }
+
+        var upper = text.toUpperCase();
+        if (axis === 'lat') {
+          if (upper.indexOf('S') !== -1) {
+            value = -Math.abs(value);
+          } else if (upper.indexOf('N') !== -1) {
+            value = Math.abs(value);
+          }
+        }
+
+        if (axis === 'lng') {
+          if (upper.indexOf('W') !== -1) {
+            value = -Math.abs(value);
+          } else if (upper.indexOf('E') !== -1) {
+            value = Math.abs(value);
+          }
+        }
+
+        return value;
+      }
+
+      function parseRadiusKm(rawValue) {
+        if (rawValue === null || rawValue === undefined) {
+          return NaN;
+        }
+        var text = String(rawValue).trim();
+        var match = text.match(/[-+]?\d+(?:\.\d+)?/);
+        return match ? parseFloat(match[0]) : NaN;
+      }
+
+      var lat = parseCoordinate(rawLat, 'lat');
+      var lng = parseCoordinate(rawLng, 'lng');
+      var radiusKm = parseRadiusKm(rawRadiusKm);
+
+      function setDebug(text) {
+        if (debugEl) {
+          debugEl.textContent = text;
+        }
+      }
+
+      setDebug('raw lat/lng/radius: ' + rawLat + ' | ' + rawLng + ' | ' + rawRadiusKm + ' ; parsed: ' + lat + ', ' + lng + ', ' + radiusKm);
+
+      if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng) ||
+        Math.abs(lat) > 90 ||
+        Math.abs(lng) > 180 ||
+        !Number.isFinite(radiusKm) ||
+        radiusKm <= 0
+      ) {
+        if (errorEl) {
+          errorEl.classList.remove('hidden');
+        }
+        setDebug('invalid coordinates or radius after parsing');
+        return;
+      }
+
+      function addCircleAndFit(map, latitude, longitude, radiusKmValue) {
+        var center = [latitude, longitude];
+        var radiusMeters = radiusKmValue * 1000;
+
+        // Establish an initial view immediately so Leaflet begins tile requests.
+        map.setView(center, 8);
+
+        var centerMarker = window.L.marker(center, {
+          title: title
+        }).addTo(map);
+        centerMarker.bindPopup('<strong>' + title + '</strong><br>Center point');
+
+        var circle = window.L.circle(center, {
+          radius: radiusMeters,
+          color: '#2563eb',
+          weight: 2,
+          fillColor: '#60a5fa',
+          fillOpacity: 0.16
+        }).addTo(map);
+
+        // Fit to region once layout settles.
+        map.whenReady(function () {
+          map.invalidateSize();
+          setTimeout(function () {
+            map.fitBounds(circle.getBounds(), { padding: [24, 24] });
+          }, 50);
+        });
+        return circle;
+      }
+
+      function buildOverlayAPI(mapInstance) {
+        var overlayGroups = {};
+
+        function ensureGroup(layerName) {
+          if (!overlayGroups[layerName]) {
+            overlayGroups[layerName] = window.L.layerGroup().addTo(mapInstance);
+          }
+          return overlayGroups[layerName];
+        }
+
+        window.bioregionMap = {
+          map: mapInstance,
+          overlays: overlayGroups,
+          addOverlayMarkers: function (layerName, points) {
+            var group = ensureGroup(layerName);
+            group.clearLayers();
+            (points || []).forEach(function (point) {
+              var pointLat = parseFloat(point.latitude);
+              var pointLng = parseFloat(point.longitude);
+              if (!Number.isFinite(pointLat) || !Number.isFinite(pointLng)) {
+                return;
+              }
+
+              var marker = window.L.marker([pointLat, pointLng]);
+              if (point.title) {
+                marker.bindPopup(point.title);
+              }
+              marker.addTo(group);
+            });
+          },
+          clearOverlay: function (layerName) {
+            if (overlayGroups[layerName]) {
+              overlayGroups[layerName].clearLayers();
+            }
+          },
+          clearAllOverlays: function () {
+            Object.keys(overlayGroups).forEach(function (layerName) {
+              overlayGroups[layerName].clearLayers();
+            });
+          },
+          fitToBaseRegion: function () {
+            if (window.bioregionMap.baseCircle) {
+              mapInstance.fitBounds(window.bioregionMap.baseCircle.getBounds(), { padding: [24, 24] });
+            }
+          },
+          baseCircle: null
+        };
+      }
+
+      try {
+          if (!window.L) {
+            throw new Error('Leaflet global (window.L) not available');
+          }
+
+          if (mapEl._leaflet_id) {
+            return;
+          }
+          setDebug('step 1: creating map instance');
+
+          var map = window.L.map('bioregion-map', {
+            scrollWheelZoom: false
+          });
+          setDebug('step 2: map instance ready');
+
+          var tileLayer = null;
+          var tileLoadCount = 0;
+          var tileErrorCount = 0;
+
+          tileLayer = window.L.tileLayer('/bioregions/tiles/osm/{z}/{x}/{y}/', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+          setDebug('step 3: tile layer attached');
+
+          tileLayer.on('tileerror', function () {
+            tileErrorCount += 1;
+            if (tileErrorCount <= 3 || tileErrorCount % 10 === 0) {
+              setDebug('tile loading issues detected; loaded=' + tileLoadCount + ' errors=' + tileErrorCount);
+            }
+          });
+
+          tileLayer.on('tileload', function () {
+            tileLoadCount += 1;
+            if (tileLoadCount <= 3 || tileLoadCount % 20 === 0) {
+              setDebug('tiles loading... loaded=' + tileLoadCount + ' errors=' + tileErrorCount);
+            }
+          });
+
+          tileLayer.on('load', function () {
+            if (errorEl) {
+              errorEl.classList.add('hidden');
+            }
+            setDebug('tiles loaded successfully; loaded=' + tileLoadCount + ' errors=' + tileErrorCount);
+          });
+
+          setDebug('step 4: adding center marker and region circle');
+          var circle = addCircleAndFit(map, lat, lng, radiusKm);
+          setDebug('step 5: base region rendered and initial view set');
+          buildOverlayAPI(map);
+          window.bioregionMap.baseCircle = circle;
+          if (errorEl) {
+            errorEl.classList.add('hidden');
+          }
+
+          var detailsTabButton = document.querySelector('.tab[data-tab="details"]');
+          if (detailsTabButton) {
+            detailsTabButton.addEventListener('click', function () {
+              setTimeout(function () {
+                map.invalidateSize();
+                if (window.bioregionMap && window.bioregionMap.baseCircle) {
+                  map.fitBounds(window.bioregionMap.baseCircle.getBounds(), { padding: [24, 24] });
+                }
+              }, 150);
+            });
+          }
+        } catch (err) {
+          if (errorEl && !mapEl.querySelector('.leaflet-pane')) {
+            errorEl.classList.remove('hidden');
+          }
+          var message = (err && err.message) ? err.message : String(err);
+          var stack = (err && err.stack) ? (' | stack: ' + err.stack.split('\n')[0]) : '';
+          setDebug('map init error: ' + message + stack);
+        }
+    })();
+  </script>
+  {% endif %}
 {% endblock %}

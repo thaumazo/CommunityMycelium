@@ -198,3 +198,23 @@ GOOGLE_OAUTH_ENCRYPTION_KEY = env("GOOGLE_OAUTH_ENCRYPTION_KEY", default="")
 
 # Google Analytics
 GOOGLE_ANALYTICS_ID = env("GOOGLE_ANALYTICS_ID", default="")
+
+# Tile cache settings (short-lived, bounded in-memory cache)
+MAP_TILE_CACHE_TIMEOUT = env.int("MAP_TILE_CACHE_TIMEOUT", default=900)
+MAP_TILE_CACHE_MAX_ENTRIES = env.int("MAP_TILE_CACHE_MAX_ENTRIES", default=2000)
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "mycelium-default-cache",
+    },
+    "tiles": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "mycelium-tile-cache",
+        "TIMEOUT": MAP_TILE_CACHE_TIMEOUT,
+        "OPTIONS": {
+            "MAX_ENTRIES": MAP_TILE_CACHE_MAX_ENTRIES,
+            "CULL_FREQUENCY": 3,
+        },
+    },
+}
