@@ -202,6 +202,12 @@ GOOGLE_ANALYTICS_ID = env("GOOGLE_ANALYTICS_ID", default="")
 # Tile cache settings (short-lived, bounded in-memory cache)
 MAP_TILE_CACHE_TIMEOUT = env.int("MAP_TILE_CACHE_TIMEOUT", default=900)
 MAP_TILE_CACHE_MAX_ENTRIES = env.int("MAP_TILE_CACHE_MAX_ENTRIES", default=2000)
+NOMINATIM_GEOCODE_URL = env("NOMINATIM_GEOCODE_URL", default="https://nominatim.openstreetmap.org/search")
+NOMINATIM_CONTACT_EMAIL = env("NOMINATIM_CONTACT_EMAIL", default="")
+NOMINATIM_TIMEOUT_SECONDS = env.int("NOMINATIM_TIMEOUT_SECONDS", default=10)
+NOMINATIM_MIN_INTERVAL_SECONDS = env.float("NOMINATIM_MIN_INTERVAL_SECONDS", default=1.1)
+NOMINATIM_CACHE_TIMEOUT = env.int("NOMINATIM_CACHE_TIMEOUT", default=60 * 60 * 24 * 30)
+GEOCODING_CACHE_MAX_ENTRIES = env.int("GEOCODING_CACHE_MAX_ENTRIES", default=5000)
 
 CACHES = {
     "default": {
@@ -214,6 +220,15 @@ CACHES = {
         "TIMEOUT": MAP_TILE_CACHE_TIMEOUT,
         "OPTIONS": {
             "MAX_ENTRIES": MAP_TILE_CACHE_MAX_ENTRIES,
+            "CULL_FREQUENCY": 3,
+        },
+    },
+    "geocoding": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "mycelium-geocoding-cache",
+        "TIMEOUT": NOMINATIM_CACHE_TIMEOUT,
+        "OPTIONS": {
+            "MAX_ENTRIES": GEOCODING_CACHE_MAX_ENTRIES,
             "CULL_FREQUENCY": 3,
         },
     },

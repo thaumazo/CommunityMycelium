@@ -1,5 +1,6 @@
 from django import forms
 from .models import Story, StoryMedia, StoryLink
+from apps.locations.models import Location
 
 
 class StoryForm(forms.ModelForm):
@@ -44,6 +45,21 @@ class StoryForm(forms.ModelForm):
         label="Link Relation",
         initial=StoryLink.RELATION_CONTINUATION,
     )
+
+    primary_location = forms.ModelChoiceField(
+        queryset=Location.objects.all().order_by("title"),
+        required=False,
+        label="Primary Location",
+        help_text="Primary map location for this story.",
+    )
+
+    locations = forms.ModelMultipleChoiceField(
+        queryset=Location.objects.all().order_by("title"),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        label="Locations",
+        help_text="Locations connected to this story.",
+    )
     
     class Meta:
         model = Story
@@ -51,6 +67,8 @@ class StoryForm(forms.ModelForm):
             "title",
             "text_content",
             "youtube_url",
+            "primary_location",
+            "locations",
             "view_members",
             "view_public",
             "time_precision",
@@ -114,6 +132,11 @@ class StoryForm(forms.ModelForm):
         if time_precision == Story.TIME_PRECISION_NONE:
             cleaned["event_start_at"] = None
             cleaned["event_end_at"] = None
+
+        primary_location = cleaned.get("primary_location")
+        locations = cleaned.get("locations")
+        if primary_location and locations is not None and primary_location not in locations:
+            cleaned["locations"] = locations | Location.objects.filter(pk=primary_location.pk)
 
         return cleaned
 

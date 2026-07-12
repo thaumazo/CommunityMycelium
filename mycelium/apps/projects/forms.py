@@ -1,6 +1,7 @@
 from django import forms
 from .models import Project, ProjectCapitalIn, ProjectCapitalOut
 from apps.capitals.models import Capital
+from apps.locations.models import Location
 
 
 class ProjectForm(forms.ModelForm):
@@ -33,6 +34,21 @@ class ProjectForm(forms.ModelForm):
         label="Capitals Out",
         help_text="Select capitals that this project produces or outputs"
     )
+
+    primary_location = forms.ModelChoiceField(
+        queryset=Location.objects.all().order_by("title"),
+        required=False,
+        label="Primary Location",
+        help_text="Primary map location for this project",
+    )
+
+    locations = forms.ModelMultipleChoiceField(
+        queryset=Location.objects.all().order_by("title"),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+        label="Locations",
+        help_text="Locations connected to this project",
+    )
     
     class Meta:
         model = Project
@@ -45,6 +61,8 @@ class ProjectForm(forms.ModelForm):
             "owners",
             "admins",
             "bioregions",
+            "primary_location",
+            "locations",
             "url",
             "view_members",
             "view_public",
@@ -72,6 +90,14 @@ class ProjectForm(forms.ModelForm):
                 pc.capital.id for pc in self.instance.project_capital_out_relationships.all()
             ]
 
+    def clean(self):
+        cleaned = super().clean()
+        primary_location = cleaned.get("primary_location")
+        locations = cleaned.get("locations")
+        if primary_location and locations is not None and primary_location not in locations:
+            cleaned["locations"] = locations | Location.objects.filter(pk=primary_location.pk)
+        return cleaned
+
     def save(self, commit=True):
         project = super().save(commit=False)
         
@@ -82,6 +108,10 @@ class ProjectForm(forms.ModelForm):
         if commit:
             project.save()
             self.save_m2m()
+
+            primary_location = self.cleaned_data.get("primary_location")
+            if primary_location:
+                project.locations.add(primary_location)
             
             # Handle capitals_in through model - sync instead of delete/recreate
             selected_capitals_in = set(self.cleaned_data.get('capitals_in', []))

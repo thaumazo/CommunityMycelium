@@ -33,6 +33,20 @@ class Community(models.Model):
         blank=True,
         help_text="Bioregions this community is connected to"
     )
+    locations = models.ManyToManyField(
+        "locations.Location",
+        related_name="communities",
+        blank=True,
+        help_text="Locations this community is connected to",
+    )
+    primary_location = models.ForeignKey(
+        "locations.Location",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="primary_communities",
+        help_text="Primary map location for this community",
+    )
     url = models.TextField(blank=True, null=True)
     
     picture = models.ImageField(

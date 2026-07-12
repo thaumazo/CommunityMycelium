@@ -36,6 +36,7 @@
                   {% if is_project_admin_or_owner %}
                     <li class="tab" data-tab="community-notes">Community Notes</li>
                   {% endif %}
+                  <li class="tab" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ project_location_count }}</span></li>
                   <li class="tab" data-tab="connections">Connections</li>
                 </ul>
               </div>
@@ -436,7 +437,7 @@
                   <h2 class="text-lg leading-6 font-medium text-gray-900">Stories</h2>
                   {% can request.user 'add' 'stories.story' as can_add_story %}
                   {% if can_add_story %}
-                    <a href="{% url 'story_create' %}?attach_to_type=projects.project&attach_to_id={{ project.pk }}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Attach Story</a>
+                    <a href="{% url 'story_create' %}?attach_to_type=projects.project&attach_to_id={{ project.pk }}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Add Story</a>
                   {% endif %}
                 </div>
 
@@ -588,6 +589,48 @@
                 </div>
               </div>
             {% endif %}
+
+            <div class="tab-content hidden" id="locations">
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg leading-6 font-medium text-gray-900">Locations</h2>
+                {% can request.user 'add' 'locations.location' as can_add_location %}
+                {% if can_add_location %}
+                  <a href="{% url 'location_create' %}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Add Location</a>
+                {% endif %}
+              </div>
+
+              <div class="bg-white overflow-hidden">
+                <ul class="divide-y divide-gray-200">
+                  {% for location in project_locations %}
+                    <li class="py-4">
+                      <div class="flex items-start gap-4">
+                        <div class="shrink-0">
+                          {% if location.picture_thumbnail %}
+                            <img src="{{ location.picture_thumbnail.url }}" alt="{{ location.title }}" class="w-10 h-10 rounded-full object-cover border-2 border-indigo-200" />
+                          {% elif location.picture %}
+                            <img src="{{ location.picture.url }}" alt="{{ location.title }}" class="w-10 h-10 rounded-full object-cover border-2 border-indigo-200" />
+                          {% else %}
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                              <span class="text-sm font-semibold text-indigo-600">{{ location.title|first|upper }}</span>
+                            </div>
+                          {% endif %}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <h3 class="text-sm font-medium text-indigo-600">
+                            <a href="{% url 'location_detail' location.pk %}" class="hover:text-indigo-900 hover:underline">{{ location.title }}</a>
+                          </h3>
+                          {% if location.address %}
+                            <p class="text-sm text-gray-500 mt-1">{{ location.address }}</p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </li>
+                  {% empty %}
+                    <li class="py-4 text-center text-gray-500">No locations found.</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
 
             <!-- Connections Tab -->
             <div class="tab-content hidden" id="connections">

@@ -16,6 +16,7 @@ from .models import Bioregion
 from .forms import BioregionForm
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.urls import reverse
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
@@ -335,15 +336,140 @@ def bioregion_detail_view(request, pk):
     
     challenge_import_schema = json.dumps(_bioregion_challenge_import_schema_for(bioregion), indent=2)
 
+    map_locations = []
+    visible_locations_by_id = {}
+    for location in locations:
+        if location.latitude is None or location.longitude is None:
+            continue
+        visible_locations_by_id[location.pk] = location
+        map_locations.append({
+            "title": location.title,
+            "description": (location.description or "")[:180],
+            "latitude": float(location.latitude),
+            "longitude": float(location.longitude),
+            "url": reverse("location_detail", kwargs={"pk": location.pk}),
+        })
+
+    map_projects = []
+    for project in projects.select_related("primary_location"):
+        primary_location = project.primary_location
+        if not primary_location:
+            continue
+        if not primary_location.bioregions.filter(pk=bioregion.pk).exists():
+            continue
+        if primary_location.latitude is None or primary_location.longitude is None:
+            continue
+        map_projects.append({
+            "title": project.title,
+            "description": (project.description or "")[:180],
+            "latitude": float(primary_location.latitude),
+            "longitude": float(primary_location.longitude),
+            "url": reverse("project_detail", kwargs={"pk": project.pk}),
+        })
+
+    map_communities = []
+    for community in communities.select_related("primary_location"):
+        primary_location = community.primary_location
+        if not primary_location:
+            continue
+        if not primary_location.bioregions.filter(pk=bioregion.pk).exists():
+            continue
+        if primary_location.latitude is None or primary_location.longitude is None:
+            continue
+        map_communities.append({
+            "title": community.title,
+            "description": (community.description or "")[:180],
+            "latitude": float(primary_location.latitude),
+            "longitude": float(primary_location.longitude),
+            "url": reverse("community_detail", kwargs={"pk": community.pk}),
+        })
+
+    map_people = []
+    for person in people.select_related("primary_location"):
+        primary_location = person.primary_location
+        if not primary_location:
+            continue
+        if not primary_location.bioregions.filter(pk=bioregion.pk).exists():
+            continue
+        if primary_location.latitude is None or primary_location.longitude is None:
+            continue
+        map_people.append({
+            "title": person.get_full_name() or person.username,
+            "description": (person.bio or person.user_location or "")[:180],
+            "latitude": float(primary_location.latitude),
+            "longitude": float(primary_location.longitude),
+            "url": reverse("user_detail", kwargs={"pk": person.pk}),
+        })
+
+    if request.user.is_authenticated:
+        visible_stories = get_permitted_objects(request.user, "view", Story)
+        if hasattr(visible_stories, "filter"):
+            stories_qs = visible_stories.select_related("primary_location").prefetch_related("locations")
+        else:
+            visible_story_ids = [s.pk for s in visible_stories]
+            stories_qs = Story.objects.filter(pk__in=visible_story_ids).select_related("primary_location").prefetch_related("locations")
+    else:
+        stories_qs = Story.objects.filter(view_public=True).select_related("primary_location").prefetch_related("locations")
+
+    from apps.locations.models import Location
+    location_content_type = ContentType.objects.get_for_model(Location)
+    visible_location_ids = set(visible_locations_by_id.keys())
+    story_ids = list(stories_qs.values_list("id", flat=True))
+    attached_story_location_pairs = StoryAttachment.objects.filter(
+        story_id__in=story_ids,
+        content_type=location_content_type,
+        object_id__in=visible_location_ids,
+    ).values_list("story_id", "object_id")
+    attached_story_location_map = {}
+    for story_id, object_id in attached_story_location_pairs:
+        if story_id not in attached_story_location_map:
+            attached_story_location_map[story_id] = object_id
+
+    map_stories = []
+    for story in stories_qs:
+        marker_location = None
+        primary_location = story.primary_location
+        if primary_location and primary_location.pk in visible_location_ids:
+            marker_location = primary_location
+
+        if marker_location is None:
+            for linked_location in story.locations.all():
+                if linked_location.pk in visible_location_ids:
+                    marker_location = linked_location
+                    break
+
+        if marker_location is None:
+            attached_location_id = attached_story_location_map.get(story.pk)
+            marker_location = visible_locations_by_id.get(attached_location_id)
+
+        if marker_location is None:
+            continue
+        if marker_location.latitude is None or marker_location.longitude is None:
+            continue
+
+        map_stories.append({
+            "title": story.title,
+            "description": (story.text_content or "")[:180],
+            "latitude": float(marker_location.latitude),
+            "longitude": float(marker_location.longitude),
+            "url": reverse("story_detail", kwargs={"pk": story.pk}),
+        })
+
     return render(request, "bioregions/bioregion_detail.html", {
         "bioregion": bioregion,
         "communities": communities,
         "locations": locations,
+        "locations_count": locations.count() if hasattr(locations, "count") else len(locations),
         "projects": projects,
         "people": people,
         "bioregion_story_count": bioregion_story_count,
         "bioregion_stories_preview": bioregion_stories_preview,
         "challenge_import_schema": challenge_import_schema,
+        "map_locations_json": map_locations,
+        "map_projects_json": map_projects,
+        "map_communities_json": map_communities,
+        "map_people_json": map_people,
+        "map_stories_json": map_stories,
     })
 
 

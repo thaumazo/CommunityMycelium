@@ -47,7 +47,7 @@
                   <li class="tab" data-tab="people">People</li>
                   <li class="tab" data-tab="organizations">Orgs</li>
                   <li class="tab" data-tab="projects">Projects</li>
-                  <li class="tab" data-tab="locations">Locations</li>
+                  <li class="tab" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ locations_count }}</span></li>
                 </ul>
               </div>
 
@@ -96,7 +96,30 @@
                 {% if bioregion.latitude and bioregion.longitude and bioregion.radius_km %}
                 <div class="mt-6">
                   <h3 class="text-sm font-medium text-gray-500">Bioregion Map</h3>
-                  <p class="mt-1 text-xs text-gray-500">OpenStreetMap base layer with bioregion center and radius. Additional overlays can be added later.</p>
+                  <p class="mt-1 text-xs text-gray-500">OpenStreetMap base layer with visible overlays for locations, communities, projects, and people.</p>
+                  <div class="mt-3 flex flex-wrap items-center gap-3 text-xs">
+                    <label class="inline-flex items-center gap-1">
+                      <input type="checkbox" id="map-filter-locations" checked class="h-3.5 w-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                      <span>Locations</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1">
+                      <input type="checkbox" id="map-filter-communities" checked class="h-3.5 w-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                      <span>Communities</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1">
+                      <input type="checkbox" id="map-filter-projects" checked class="h-3.5 w-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                      <span>Projects</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1">
+                      <input type="checkbox" id="map-filter-people" checked class="h-3.5 w-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                      <span>People</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1">
+                      <input type="checkbox" id="map-filter-stories" checked class="h-3.5 w-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                      <span>Stories</span>
+                    </label>
+                    <button type="button" id="bioregion-map-fullscreen" class="px-2 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-50">Fullscreen</button>
+                  </div>
                   <div
                     id="bioregion-map"
                     class="mt-3 w-full h-80 rounded-lg border border-gray-200"
@@ -117,7 +140,7 @@
                   <h2 class="text-lg leading-6 font-medium text-gray-900">Stories</h2>
                   {% can request.user 'add' 'stories.story' as can_add_story %}
                   {% if can_add_story %}
-                    <a href="{% url 'story_create' %}?attach_to_type=bioregions.bioregion&attach_to_id={{ bioregion.pk }}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Attach Story</a>
+                    <a href="{% url 'story_create' %}?attach_to_type=bioregions.bioregion&attach_to_id={{ bioregion.pk }}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Add Story</a>
                   {% endif %}
                 </div>
 
@@ -402,7 +425,13 @@
               </div>
 
               <div class="tab-content hidden" id="locations">
-                <h2 class="text-lg leading-6 font-medium text-gray-900 mb-4">Locations</h2>
+                <div class="flex items-center justify-between mb-3">
+                  <h2 class="text-lg leading-6 font-medium text-gray-900">Locations</h2>
+                  {% can request.user 'add' 'locations.location' as can_add_location %}
+                  {% if can_add_location %}
+                    <a href="{% url 'location_create' %}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Add Location</a>
+                  {% endif %}
+                </div>
                 <div class="bg-white overflow-hidden">
                   <ul class="divide-y divide-gray-200">
                     {% for location in locations %}
@@ -488,6 +517,12 @@
     </div>
   </div>
 
+  {{ map_locations_json|json_script:"bioregion-map-locations-data" }}
+  {{ map_communities_json|json_script:"bioregion-map-communities-data" }}
+  {{ map_projects_json|json_script:"bioregion-map-projects-data" }}
+  {{ map_people_json|json_script:"bioregion-map-people-data" }}
+  {{ map_stories_json|json_script:"bioregion-map-stories-data" }}
+
   {% if bioregion.latitude and bioregion.longitude and bioregion.radius_km %}
   <style>
     /* Tailwind preflight sets img max-width/height auto, which breaks Leaflet tile sizing. */
@@ -499,6 +534,14 @@
       max-height: none !important;
       height: auto;
       width: auto;
+    }
+
+    #bioregion-map:fullscreen {
+      width: 100vw;
+      height: 100vh !important;
+      margin: 0;
+      border-radius: 0;
+      border: none;
     }
   </style>
   <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}">
@@ -654,9 +697,35 @@
                 return;
               }
 
-              var marker = window.L.marker([pointLat, pointLng]);
-              if (point.title) {
-                marker.bindPopup(point.title);
+              var markerOptions = {};
+              if (point.iconHtml) {
+                markerOptions.icon = window.L.divIcon({
+                  className: 'bioregion-overlay-icon',
+                  html: point.iconHtml,
+                  iconSize: [20, 20],
+                  iconAnchor: [10, 10]
+                });
+              }
+              var marker = window.L.marker([pointLat, pointLng], markerOptions);
+              var safeTitle = escapeHtml(point.title || 'Untitled');
+              var description = escapeHtml(point.description || '');
+              var popupHtml = '<strong>' + safeTitle + '</strong>';
+              if (description) {
+                popupHtml += '<br><span style="font-size:12px;color:#4b5563;">' + description + '</span>';
+              }
+              if (point.url) {
+                popupHtml += '<br><a href="' + point.url + '">Open</a>';
+              }
+              marker.bindPopup(popupHtml);
+              marker.bindTooltip(safeTitle + (description ? ' - ' + description : ''), {
+                direction: 'top',
+                offset: [0, -8],
+                opacity: 0.9
+              });
+              if (point.url) {
+                marker.on('click', function () {
+                  window.location.href = point.url;
+                });
               }
               marker.addTo(group);
             });
@@ -678,6 +747,38 @@
           },
           baseCircle: null
         };
+      }
+
+      function parseOverlayJson(rawValue) {
+        if (!rawValue) {
+          return [];
+        }
+        try {
+          var parsed = JSON.parse(rawValue);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (err) {
+          return [];
+        }
+      }
+
+      function overlayPointWithIcon(points, color, glyph) {
+        return (points || []).map(function (point) {
+          var copy = Object.assign({}, point);
+          copy.iconHtml = '<div style="width:20px;height:20px;border-radius:9999px;background:' + color + ';border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;">' + glyph + '</div>';
+          return copy;
+        });
+      }
+
+      function escapeHtml(text) {
+        return String(text || '').replace(/[&<>"']/g, function (char) {
+          return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+          }[char];
+        });
       }
 
       try {
@@ -731,6 +832,55 @@
           setDebug('step 5: base region rendered and initial view set');
           buildOverlayAPI(map);
           window.bioregionMap.baseCircle = circle;
+
+          var locationPoints = overlayPointWithIcon(parseOverlayJson(document.getElementById('bioregion-map-locations-data') ? document.getElementById('bioregion-map-locations-data').textContent : ''), '#2563eb', 'L');
+          var communityPoints = overlayPointWithIcon(parseOverlayJson(document.getElementById('bioregion-map-communities-data') ? document.getElementById('bioregion-map-communities-data').textContent : ''), '#059669', 'C');
+          var projectPoints = overlayPointWithIcon(parseOverlayJson(document.getElementById('bioregion-map-projects-data') ? document.getElementById('bioregion-map-projects-data').textContent : ''), '#7c3aed', 'P');
+          var peoplePoints = overlayPointWithIcon(parseOverlayJson(document.getElementById('bioregion-map-people-data') ? document.getElementById('bioregion-map-people-data').textContent : ''), '#ea580c', 'U');
+          var storyPoints = overlayPointWithIcon(parseOverlayJson(document.getElementById('bioregion-map-stories-data') ? document.getElementById('bioregion-map-stories-data').textContent : ''), '#0f766e', 'S');
+
+          function syncLayer(layerName, enabled, points) {
+            if (enabled) {
+              window.bioregionMap.addOverlayMarkers(layerName, points);
+            } else {
+              window.bioregionMap.clearOverlay(layerName);
+            }
+          }
+
+          var locationFilter = document.getElementById('map-filter-locations');
+          var communityFilter = document.getElementById('map-filter-communities');
+          var projectFilter = document.getElementById('map-filter-projects');
+          var peopleFilter = document.getElementById('map-filter-people');
+          var storyFilter = document.getElementById('map-filter-stories');
+
+          function applyFilters() {
+            syncLayer('locations', !locationFilter || locationFilter.checked, locationPoints);
+            syncLayer('communities', !communityFilter || communityFilter.checked, communityPoints);
+            syncLayer('projects', !projectFilter || projectFilter.checked, projectPoints);
+            syncLayer('people', !peopleFilter || peopleFilter.checked, peoplePoints);
+            syncLayer('stories', !storyFilter || storyFilter.checked, storyPoints);
+          }
+
+          [locationFilter, communityFilter, projectFilter, peopleFilter, storyFilter].forEach(function (checkbox) {
+            if (checkbox) {
+              checkbox.addEventListener('change', applyFilters);
+            }
+          });
+
+          applyFilters();
+
+          var fullscreenButton = document.getElementById('bioregion-map-fullscreen');
+          if (fullscreenButton && mapEl.requestFullscreen) {
+            fullscreenButton.addEventListener('click', function () {
+              mapEl.requestFullscreen();
+            });
+            document.addEventListener('fullscreenchange', function () {
+              setTimeout(function () {
+                map.invalidateSize();
+              }, 80);
+            });
+          }
+
           if (errorEl) {
             errorEl.classList.add('hidden');
           }

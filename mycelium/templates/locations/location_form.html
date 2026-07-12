@@ -61,6 +61,10 @@
                       <div class="mt-1">
                         <textarea name="{{ form.address.html_name }}" id="{{ form.address.id_for_label }}" rows="2" class="w-full">{{ form.address.value|default:'' }}</textarea>
                       </div>
+                      <div class="mt-2 flex items-center gap-3">
+                        <button type="button" id="location-geocode-button" class="px-3 py-2 text-sm rounded-md border border-indigo-600 text-indigo-700 hover:bg-indigo-50">Geocode Address</button>
+                        <span id="location-geocode-status" class="text-xs text-gray-500"></span>
+                      </div>
                       {% if form.address.errors %}
                         <div class="mt-1 text-sm text-red-600">{{ form.address.errors|join:', ' }}</div>
                       {% endif %}
@@ -214,4 +218,62 @@
       </div>
     </div>
   </div>
+  <script>
+    (function () {
+      var button = document.getElementById('location-geocode-button');
+      var addressInput = document.getElementById('{{ form.address.id_for_label }}');
+      var latitudeInput = document.getElementById('{{ form.latitude.id_for_label }}');
+      var longitudeInput = document.getElementById('{{ form.longitude.id_for_label }}');
+      var statusEl = document.getElementById('location-geocode-status');
+
+      if (!button || !addressInput || !latitudeInput || !longitudeInput || !statusEl) {
+        return;
+      }
+
+      button.addEventListener('click', function () {
+        var address = (addressInput.value || '').trim();
+        if (!address) {
+          statusEl.textContent = 'Enter an address first.';
+          statusEl.className = 'text-xs text-red-600';
+          return;
+        }
+
+        button.disabled = true;
+        statusEl.textContent = 'Looking up coordinates...';
+        statusEl.className = 'text-xs text-gray-500';
+
+        var formData = new FormData();
+        formData.append('address', address);
+
+        fetch('{% url "location_geocode_lookup" %}', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+          },
+          body: formData
+        })
+          .then(function (response) {
+            return response.json().then(function (payload) {
+              if (!response.ok) {
+                throw new Error(payload.error || 'Geocoding failed.');
+              }
+              return payload;
+            });
+          })
+          .then(function (payload) {
+            latitudeInput.value = payload.latitude;
+            longitudeInput.value = payload.longitude;
+            statusEl.textContent = 'Coordinates found' + (payload.cached ? ' (cached).' : '.') + ' ' + (payload.display_name || '');
+            statusEl.className = 'text-xs text-green-700';
+          })
+          .catch(function (error) {
+            statusEl.textContent = error.message;
+            statusEl.className = 'text-xs text-red-600';
+          })
+          .finally(function () {
+            button.disabled = false;
+          });
+      });
+    })();
+  </script>
 {% endblock %}

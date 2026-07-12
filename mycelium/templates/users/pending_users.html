@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load user_tags %}
 
 {% block content %}
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -36,6 +37,22 @@
                           <div class="flex">
                             <dt class="text-sm font-medium text-gray-500 w-32">Registered:</dt>
                             <dd class="text-sm text-gray-900">{{ user.date_joined|date:"F d, Y g:i A" }}</dd>
+                          </div>
+                          <div class="flex">
+                            <dt class="text-sm font-medium text-gray-500 w-32">Invited By:</dt>
+                            <dd class="text-sm text-gray-900">
+                              {% if user.invited_by %}
+                                {{ user.invited_by.full_name|default:user.invited_by.username }}
+                              {% else %}
+                                Cold registration
+                              {% endif %}
+                            </dd>
+                          </div>
+                          <div class="flex">
+                            <dt class="text-sm font-medium text-gray-500 w-32">Invite Bioregion:</dt>
+                            {% with invite=pending_invites_by_user|get_item:user.id %}
+                              <dd class="text-sm text-gray-900">{{ invite.bioregion.title|default:"Not specified" }}</dd>
+                            {% endwith %}
                           </div>
                         </dl>
                       </div>

@@ -174,6 +174,25 @@
             </div>
           {% endif %}
 
+          {% if story.primary_location or story.locations.all %}
+            <div class="mb-6">
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">Locations</h2>
+              <div class="space-y-2">
+                {% if story.primary_location %}
+                  <div class="p-3 bg-indigo-50 rounded-lg text-sm text-indigo-900">
+                    Primary: <a href="{% url 'location_detail' story.primary_location.pk %}" class="underline">{{ story.primary_location.title }}</a>
+                  </div>
+                {% endif %}
+                {% for location in story.locations.all %}
+                  <div class="p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
+                    <a href="{% url 'location_detail' location.pk %}" class="text-indigo-600 hover:underline">{{ location.title }}</a>
+                  </div>
+                {% empty %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
           {% if story.outbound_links.all or story.inbound_links.all %}
             <div class="mb-6">
               <h2 class="text-lg font-semibold text-gray-900 mb-4">Linked Stories</h2>

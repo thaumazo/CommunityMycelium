@@ -48,6 +48,22 @@ class Story(models.Model):
         on_delete=models.CASCADE,
         related_name="authored_stories"
     )
+
+    locations = models.ManyToManyField(
+        "locations.Location",
+        blank=True,
+        related_name="stories",
+        help_text="Locations connected to this story.",
+    )
+
+    primary_location = models.ForeignKey(
+        "locations.Location",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="primary_stories",
+        help_text="Primary map location for this story.",
+    )
     
     view_members = models.BooleanField(
         default=False,

@@ -77,6 +77,20 @@ class Project(models.Model):
         blank=True,
         help_text="Bioregions this project is connected to"
     )
+    locations = models.ManyToManyField(
+        "locations.Location",
+        related_name="projects",
+        blank=True,
+        help_text="Locations this project is connected to",
+    )
+    primary_location = models.ForeignKey(
+        "locations.Location",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="primary_projects",
+        help_text="Primary map location for this project",
+    )
     url = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="projects"

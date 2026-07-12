@@ -150,6 +150,40 @@
                 <div class="tab-content hidden" id="connections">
                   <div class="space-y-4">
                     <div>
+                      <label for="{{ form.primary_location.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.primary_location.label }}</label>
+                      <div class="mt-1">
+                        {{ form.primary_location }}
+                      </div>
+                      {% if form.primary_location.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.primary_location.help_text }}</p>
+                      {% endif %}
+                      {% if form.primary_location.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.primary_location.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700">{{ form.locations.label }}</label>
+                      <div class="mt-1 space-y-2 max-h-56 overflow-y-auto border border-gray-200 rounded-md p-3">
+                        {% if form.fields.locations.queryset.exists %}
+                          {{ form.locations }}
+                        {% else %}
+                          <p class="text-sm text-gray-500">
+                            No locations available yet.
+                            <a href="{% url 'location_create' %}" class="text-indigo-600 hover:text-indigo-800 underline">Create Location</a>
+                            and then assign it here.
+                          </p>
+                        {% endif %}
+                      </div>
+                      {% if form.locations.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.locations.help_text }}</p>
+                      {% endif %}
+                      {% if form.locations.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.locations.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
                       <label for="{{ form.bioregions.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.bioregions.label }}</label>
                       <div class="mt-1 space-y-2">
                         {% for choice in form.bioregions %}

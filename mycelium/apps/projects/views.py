@@ -249,8 +249,19 @@ def project_list_view(request):
 def project_detail_view(request, pk):
     from apps.stories.models import Story, StoryAttachment
     from django.contrib.contenttypes.models import ContentType
+    from apps.locations.models import Location
     
     project = get_permitted_object(request.user, "view", Project, pk)
+
+    permitted_locations = get_permitted_objects(request.user, "view", Location)
+    project_location_ids = project.locations.values_list("pk", flat=True)
+    if hasattr(permitted_locations, "filter"):
+        project_locations = permitted_locations.filter(pk__in=project_location_ids).order_by("title")
+        project_location_count = project_locations.count()
+    else:
+        permitted_location_ids = {loc.pk for loc in permitted_locations}
+        project_locations = list(project.locations.filter(pk__in=permitted_location_ids).order_by("title"))
+        project_location_count = len(project_locations)
     
     # Get through model instances for capitals
     project_capitals_in = ProjectCapitalIn.objects.filter(project=project).select_related('capital')
@@ -364,6 +375,8 @@ def project_detail_view(request, pk):
         "community_note_attachments": community_note_attachments,
         "project_capitals_in": project_capitals_in,
         "project_capitals_out": project_capitals_out,
+        "project_locations": project_locations,
+        "project_location_count": project_location_count,
         "is_project_admin_or_owner": is_project_admin_or_owner,
         "can_submit_community_notes": can_submit_community_notes,
         "show_promoted_only": show_promoted_only,

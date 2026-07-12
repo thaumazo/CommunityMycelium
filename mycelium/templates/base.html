@@ -221,7 +221,7 @@
                   <span class="flex-1 ms-3 whitespace-nowrap">Tasks</span>
                 </a>
               </li>
-              {% if request.user.is_superuser %}
+              {% if request.user.is_superuser or request.user.invite_role == 'approve' %}
               <li>
                 <a href="{% url 'pending_users' %}" class="{% active_class 'pending_users' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/users.html' %}

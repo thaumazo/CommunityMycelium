@@ -80,6 +80,39 @@
               <label class="block text-sm font-medium text-gray-700">Connections</label>
               <p class="mt-1 text-xs text-gray-500">Choose a type, search, then click results to tag them to this story.</p>
 
+              <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label for="{{ form.primary_location.id_for_label }}" class="block text-xs font-medium text-gray-600 mb-1">{{ form.primary_location.label }}</label>
+                  {{ form.primary_location }}
+                  {% if form.primary_location.help_text %}
+                    <p class="mt-1 text-xs text-gray-500">{{ form.primary_location.help_text }}</p>
+                  {% endif %}
+                  {% if form.primary_location.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.primary_location.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">{{ form.locations.label }}</label>
+                  <div class="border border-gray-200 rounded-md p-2 max-h-32 overflow-y-auto">
+                    {% if form.fields.locations.queryset.exists %}
+                      {{ form.locations }}
+                    {% else %}
+                      <p class="text-xs text-gray-500">
+                        No locations available yet.
+                        <a href="{% url 'location_create' %}" class="text-indigo-600 hover:text-indigo-800 underline">Create Location</a>
+                        and then assign it here.
+                      </p>
+                    {% endif %}
+                  </div>
+                  {% if form.locations.help_text %}
+                    <p class="mt-1 text-xs text-gray-500">{{ form.locations.help_text }}</p>
+                  {% endif %}
+                  {% if form.locations.errors %}
+                    <div class="mt-1 text-sm text-red-600">{{ form.locations.errors|join:', ' }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
               <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
                   <label for="story-attachment-type" class="block text-xs font-medium text-gray-600 mb-1">Type</label>

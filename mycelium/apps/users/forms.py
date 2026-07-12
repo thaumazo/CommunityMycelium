@@ -5,6 +5,7 @@ from apps.relationships.models import Relationship
 from apps.socialroles.models import Socialrole
 from apps.metacrisis_facets.models import Metacrisis_facet
 from apps.maladaptives.models import Maladaptive
+from apps.locations.models import Location
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
@@ -113,6 +114,27 @@ class UserForm(forms.ModelForm):
         label="Invited by",
     )
 
+    invite_role = forms.ChoiceField(
+        choices=User.INVITE_ROLE_CHOICES,
+        required=False,
+        label="Invite Role",
+        help_text="Can Invite can generate invites. Can Approve can invite and approve registrations.",
+    )
+
+    primary_location = forms.ModelChoiceField(
+        queryset=Location.objects.all().order_by("title"),
+        widget=forms.Select(attrs={"class": "w-full"}),
+        required=False,
+        label="Primary Location",
+    )
+
+    user_locations = forms.ModelMultipleChoiceField(
+        queryset=Location.objects.all().order_by("title"),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        required=False,
+        label="Locations",
+    )
+
     user_bioregions = forms.ModelMultipleChoiceField(
         queryset=Bioregion.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
@@ -217,6 +239,9 @@ class UserForm(forms.ModelForm):
             "full_name",
             "user_location",
             "invited_by",
+            "invite_role",
+            "primary_location",
+            "user_locations",
             "user_bioregions",
             "user_communities",
             "user_relationships",
@@ -233,11 +258,22 @@ class UserForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.current_user = kwargs.pop("current_user", None)
         super().__init__(*args, **kwargs)
 
         # If editing, don't allow "invited_by" to be self
         if self.instance and self.instance.pk:
             self.fields["invited_by"].queryset = User.objects.exclude(pk=self.instance.pk)
+
+        is_admin_editor = bool(
+            self.current_user and (
+                self.current_user.is_superuser or self.current_user.is_admin()
+            )
+        )
+
+        if not is_admin_editor:
+            self.fields.pop("invited_by", None)
+            self.fields.pop("invite_role", None)
 
     def clean(self):
         cleaned = super().clean()
@@ -249,6 +285,12 @@ class UserForm(forms.ModelForm):
                 raise forms.ValidationError("Passwords don't match.")
             if len(pwd) < 8:
                 raise forms.ValidationError("Password must be at least 8 characters long.")
+
+        primary_location = cleaned.get("primary_location")
+        selected_locations = cleaned.get("user_locations")
+        if primary_location and selected_locations is not None and primary_location not in selected_locations:
+            cleaned["user_locations"] = selected_locations | Location.objects.filter(pk=primary_location.pk)
+
         return cleaned
 
     def save(self, commit=True):
@@ -262,6 +304,9 @@ class UserForm(forms.ModelForm):
         user.view_members = self.cleaned_data.get("view_members", user.view_members)
         user.view_public = self.cleaned_data.get("view_public", user.view_public)
         user.ai_transcript_processing = self.cleaned_data.get("ai_transcript_processing", user.ai_transcript_processing)
+
+        if "invite_role" in self.cleaned_data:
+            user.invite_role = self.cleaned_data.get("invite_role", user.invite_role)
 
         if commit:
             user.save()

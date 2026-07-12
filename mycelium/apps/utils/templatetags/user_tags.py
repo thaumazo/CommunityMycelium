@@ -72,21 +72,16 @@ def youtube_embed(url):
 
 @register.filter
 def get_pending_users_count(user):
-    """Get count of users pending approval (for superuser badge).
+    """Get count of pending user registrations for approvers and superusers.
     Usage: {{ request.user|get_pending_users_count }}
     """
-    if not user.is_superuser:
+    if not user.is_authenticated:
         return 0
-    
-    return User.objects.filter(is_approved=False, is_active=False).count()
 
-
-@register.filter
-def get_pending_users_count(user):
-    """Get count of pending user registrations (superuser only).
-    Usage: {{ request.user|get_pending_users_count }}
-    """
-    if not user.is_authenticated or not user.is_superuser:
+    if not (user.is_superuser or user.can_approve_people()):
         return 0
-    
-    return User.objects.filter(is_approved=False, is_active=False).count()
+
+    pending_qs = User.objects.filter(is_approved=False, is_active=False)
+    if user.is_superuser or user.is_admin():
+        return pending_qs.count()
+    return pending_qs.filter(invited_by=user).count()

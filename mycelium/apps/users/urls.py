@@ -18,6 +18,7 @@ from .views import (
     pending_users_view,
     approve_user_view,
     reject_user_view,
+    create_invite_view,
 )
 from .views.google_auth import (
     google_auth_start,
@@ -40,6 +41,8 @@ urlpatterns = [
     path("logout/", logout_view, name="logout"),
     path("login/", login_view, name="login"),
     path("register/", register_view, name="register"),
+    path("register/<str:token>/", register_view, name="register_with_token"),
+    path("invite/create/", create_invite_view, name="invite_create"),
     path("<int:pk>/character/", user_character_view, name="user_character"),
     path("pending/", pending_users_view, name="pending_users"),
     path("<int:pk>/approve/", approve_user_view, name="approve_user"),

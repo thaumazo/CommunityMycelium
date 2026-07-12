@@ -124,7 +124,7 @@
                       {% endif %}
                     </div>
 
-                    <!-- Invited by -->
+                    {% if 'invited_by' in form.fields %}
                     <div>
                       <label for="{{ form.invited_by.id_for_label }}" class="block text-sm font-medium text-gray-700">
                         {{ form.invited_by.label }}
@@ -134,6 +134,55 @@
                       </div>
                       {% if form.invited_by.errors %}
                         <div class="mt-1 text-sm text-red-600">{{ form.invited_by.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.invite_role.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.invite_role.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.invite_role }}
+                      </div>
+                      {% if form.invite_role.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.invite_role.help_text }}</p>
+                      {% endif %}
+                      {% if form.invite_role.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.invite_role.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div>
+                      <label for="{{ form.primary_location.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.primary_location.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.primary_location }}
+                      </div>
+                      {% if form.primary_location.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.primary_location.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">{{ form.user_locations.label }}</label>
+                      <div class="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-md p-3">
+                        {% if form.fields.user_locations.queryset.exists %}
+                          {{ form.user_locations }}
+                        {% else %}
+                          <p class="text-sm text-gray-500">
+                            No locations available yet.
+                            <a href="{% url 'location_create' %}" class="text-indigo-600 hover:text-indigo-800 underline">Create Location</a>
+                            and then return here to assign it.
+                          </p>
+                        {% endif %}
+                      </div>
+                      {% if form.user_locations.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.user_locations.help_text }}</p>
+                      {% endif %}
+                      {% if form.user_locations.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.user_locations.errors|join:', ' }}</div>
                       {% endif %}
                     </div>
 

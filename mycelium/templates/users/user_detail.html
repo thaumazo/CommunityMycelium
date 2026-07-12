@@ -36,6 +36,7 @@
                   <li class="tab" data-tab="connections">Connections</li>
                   <li class="tab" data-tab="projects">Projects</li>
                   <li class="tab" data-tab="organizations">Organizations</li>
+                  <li class="tab" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ user_location_count }}</span></li>
                   <li class="tab" data-tab="character">Character Class</li>
                   <li class="tab" data-tab="pitfalls">Pitfalls</li>
                   <li class="tab" data-tab="metacrisis">Metacrisis</li>
@@ -78,6 +79,52 @@
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.invited_by.full_name|default:'–' }}</dd>
                   </div>
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Invite Role</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.get_invite_role_display }}</dd>
+                  </div>
+                  {% if can_invite %}
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Invite Link</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      <form method="post" action="{% url 'invite_create' %}" class="mb-3">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-end">
+                          <div>
+                            <label for="invite_bioregion" class="block text-xs text-gray-500">Bioregion</label>
+                            <select id="invite_bioregion" name="bioregion" required class="w-full">
+                              <option value="">Select bioregion</option>
+                              {% for invite_bioregion in invite_bioregions %}
+                                <option value="{{ invite_bioregion.pk }}">{{ invite_bioregion.title }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="flex-1">
+                            <label for="invited_email" class="block text-xs text-gray-500">Optional invited email</label>
+                            <input id="invited_email" name="invited_email" type="email" class="w-full" placeholder="name@example.com">
+                          </div>
+                          <button type="submit" {% if not invite_bioregions %}disabled{% endif %} class="px-3 py-2 text-sm rounded-md border border-indigo-600 text-indigo-700 hover:bg-indigo-50 disabled:opacity-50 disabled:cursor-not-allowed">Generate Invite</button>
+                        </div>
+                        {% if not invite_bioregions %}
+                          <p class="mt-2 text-xs text-amber-700">You need at least one assigned bioregion before creating invites.</p>
+                        {% endif %}
+                      </form>
+                      {% if invite_url %}
+                        <div class="space-y-2">
+                          <a href="{{ invite_url }}" class="text-indigo-600 hover:underline break-all">{{ invite_url }}</a>
+                          {% if pending_invite_bioregion_title %}
+                            <p class="text-xs text-gray-500">Bioregion: {{ pending_invite_bioregion_title }}</p>
+                          {% endif %}
+                          {% if invite_qr_b64 %}
+                            <img src="data:image/png;base64,{{ invite_qr_b64 }}" alt="Invite QR code" class="w-40 h-40 border border-gray-200 rounded-md bg-white p-2" />
+                          {% endif %}
+                        </div>
+                      {% else %}
+                        <span class="text-gray-500">Generate an invite link to get a QR code.</span>
+                      {% endif %}
+                    </dd>
+                  </div>
+                  {% endif %}
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Date Joined</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.date_joined|date:'F j, Y' }}</dd>
                   </div>
@@ -103,7 +150,7 @@
                   <h2 class="text-lg leading-6 font-medium text-gray-900">Stories</h2>
                   {% can request.user 'add' 'stories.story' as can_add_story %}
                   {% if can_add_story %}
-                    <a href="{% url 'story_create' %}?attach_to_type=users.user&attach_to_id={{ user.pk }}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Attach Story</a>
+                    <a href="{% url 'story_create' %}?attach_to_type=users.user&attach_to_id={{ user.pk }}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Add Story</a>
                   {% endif %}
                 </div>
 
@@ -308,6 +355,48 @@
                       </li>
                     {% empty %}
                       <li class="py-4 text-center text-gray-500">No organizations found.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Locations Tab -->
+              <div class="tab-content hidden" id="locations">
+                <div class="flex items-center justify-between mb-3">
+                  <h2 class="text-lg leading-6 font-medium text-gray-900">Locations</h2>
+                  {% can request.user 'add' 'locations.location' as can_add_location %}
+                  {% if can_add_location %}
+                    <a href="{% url 'location_create' %}" class="text-sm text-indigo-600 hover:text-indigo-900">+ Add Location</a>
+                  {% endif %}
+                </div>
+                <div class="bg-white overflow-hidden">
+                  <ul class="divide-y divide-gray-200">
+                    {% for location in user_locations %}
+                      <li class="py-4">
+                        <div class="flex items-start gap-4">
+                          <div class="shrink-0">
+                            {% if location.picture_thumbnail %}
+                              <img src="{{ location.picture_thumbnail.url }}" alt="{{ location.title }}" class="w-10 h-10 rounded-full object-cover border-2 border-indigo-200" />
+                            {% elif location.picture %}
+                              <img src="{{ location.picture.url }}" alt="{{ location.title }}" class="w-10 h-10 rounded-full object-cover border-2 border-indigo-200" />
+                            {% else %}
+                              <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <span class="text-sm font-semibold text-indigo-600">{{ location.title|first|upper }}</span>
+                              </div>
+                            {% endif %}
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-indigo-600">
+                              <a href="{% url 'location_detail' location.pk %}" class="hover:text-indigo-900 hover:underline">{{ location.title }}</a>
+                            </h3>
+                            {% if location.address %}
+                              <p class="text-sm text-gray-500 mt-1">{{ location.address }}</p>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </li>
+                    {% empty %}
+                      <li class="py-4 text-center text-gray-500">No locations found.</li>
                     {% endfor %}
                   </ul>
                 </div>

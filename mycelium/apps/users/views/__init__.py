@@ -17,6 +17,7 @@ from .main import (
     pending_users_view,
     approve_user_view,
     reject_user_view,
+    create_invite_view,
 )
 
 # Make them available when importing from apps.users.views
@@ -34,4 +35,5 @@ __all__ = [
     'pending_users_view',
     'approve_user_view',
     'reject_user_view',
+    'create_invite_view',
 ]
