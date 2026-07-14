@@ -47,6 +47,17 @@
             </div>
           {% endif %}
 
+          {% if story.relevant_tags %}
+            <div class="mb-6 p-3 bg-gray-50 rounded-lg">
+              <h2 class="text-sm font-semibold text-gray-900 mb-2">Relevant Tags</h2>
+              <div class="flex flex-wrap gap-2">
+                {% for tag in story.relevant_tags %}
+                  <span class="inline-flex items-center px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium">{{ tag }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
           <!-- YouTube Video -->
           {% if story.youtube_url %}
             <div class="mb-6 max-w-md">

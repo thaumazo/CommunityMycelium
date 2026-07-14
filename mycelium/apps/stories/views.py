@@ -317,6 +317,8 @@ def _sync_story_contexts(story, cleaned_data, user):
 def story_list_view(request):
     """View a list of all stories the user has access to."""
     stories = get_permitted_objects(request.user, "view", Story)
+    if hasattr(stories, "prefetch_related"):
+        stories = stories.prefetch_related("attachments__content_type", "attachments__content_object")
 
     attached_to = (request.GET.get("attached_to") or "").strip()
     attached_to_label = ""
@@ -361,6 +363,10 @@ def story_list_view(request):
 def story_detail_view(request, pk):
     """View a story's details."""
     story = get_permitted_object(request.user, "view", Story, pk)
+    try:
+        story = Story.objects.prefetch_related("attachments__content_type", "attachments__content_object").get(pk=story.pk)
+    except Story.DoesNotExist:
+        pass
     
     # Capture the 'next' parameter for contextual back navigation
     # Fall back to HTTP referer if no 'next' parameter

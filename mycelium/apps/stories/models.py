@@ -149,6 +149,32 @@ class Story(models.Model):
     def __str__(self):
         return f"{self.title} by {self.created_by.username}"
 
+    @property
+    def relevant_tags(self):
+        tags = []
+        seen = set()
+
+        for attachment in self.attachments.select_related("content_type").all():
+            context = (attachment.attachment_context or "").strip()
+            if context and context not in seen:
+                seen.add(context)
+                tags.append(context)
+
+            try:
+                content_object = attachment.content_object
+            except Exception:
+                content_object = None
+
+            if content_object is None:
+                continue
+
+            label = str(content_object).strip()
+            if label and label not in seen:
+                seen.add(label)
+                tags.append(label)
+
+        return tags
+
     def clean(self):
         if self.event_end_at and not self.event_start_at:
             raise ValidationError("event_start_at is required when event_end_at is set.")

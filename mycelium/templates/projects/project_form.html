@@ -27,6 +27,7 @@
                 <div class="tabs-container">
                   <ul class="tab-list">
                     <li class="tab active" data-tab="description">Description</li>
+                    <li class="tab" data-tab="timeline">Timeline</li>
                     <li class="tab" data-tab="people">People</li>
                     <li class="tab" data-tab="connections">Connections</li>
                     <li class="tab" data-tab="visibility">Visibility</li>
@@ -91,6 +92,50 @@
                       </div>
                       {% if form.url.errors %}
                         <div class="mt-1 text-sm text-red-600">{{ form.url.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Timeline Tab -->
+                <div class="tab-content hidden" id="timeline">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.time_precision.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.time_precision.label }}</label>
+                      <div class="mt-1">
+                        {{ form.time_precision }}
+                      </div>
+                      {% if form.time_precision.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.time_precision.help_text }}</p>
+                      {% endif %}
+                      {% if form.time_precision.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.time_precision.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.project_start_at.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.project_start_at.label }}</label>
+                      <div class="mt-1">
+                        {{ form.project_start_at }}
+                      </div>
+                      {% if form.project_start_at.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.project_start_at.help_text }}</p>
+                      {% endif %}
+                      {% if form.project_start_at.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.project_start_at.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.project_end_at.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.project_end_at.label }}</label>
+                      <div class="mt-1">
+                        {{ form.project_end_at }}
+                      </div>
+                      {% if form.project_end_at.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.project_end_at.help_text }}</p>
+                      {% endif %}
+                      {% if form.project_end_at.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.project_end_at.errors|join:', ' }}</div>
                       {% endif %}
                     </div>
                   </div>

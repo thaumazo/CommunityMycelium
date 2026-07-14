@@ -281,7 +281,7 @@ def project_detail_view(request, pk):
 
     permitted_project_stories = get_permitted_objects(request.user, "view", Story)
     if hasattr(permitted_project_stories, "filter"):
-        project_stories = permitted_project_stories.filter(pk__in=project_attached_story_ids).order_by("-created_at")
+        project_stories = permitted_project_stories.filter(pk__in=project_attached_story_ids).prefetch_related("attachments__content_type", "attachments__content_object").order_by("-created_at")
         project_story_count = project_stories.count()
         project_stories_preview = project_stories[:3]
     else:

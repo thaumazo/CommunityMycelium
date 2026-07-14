@@ -164,6 +164,13 @@
                         {% if story.text_content %}
                           <p class="text-sm text-gray-700 mt-2">{{ story.text_content|markdown_to_html|striptags|truncatewords:24 }}</p>
                         {% endif %}
+                        {% if story.relevant_tags %}
+                          <div class="mt-2 flex flex-wrap gap-2">
+                            {% for tag in story.relevant_tags %}
+                              <span class="inline-flex items-center px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium">{{ tag }}</span>
+                            {% endfor %}
+                          </div>
+                        {% endif %}
                       </article>
                     {% endfor %}
                   </div>
@@ -676,6 +683,59 @@
 
       function buildOverlayAPI(mapInstance) {
         var overlayGroups = {};
+        var sharedPopup = window.L.popup({
+          closeButton: true,
+          autoClose: true,
+          closeOnClick: true,
+          className: 'bioregion-shared-popup'
+        });
+
+        function buildTagsHtml(tags) {
+          if (!tags || !tags.length) {
+            return '';
+          }
+
+          var chips = tags.map(function (tag) {
+            return '<span style="display:inline-block;margin:2px 4px 0 0;padding:2px 6px;border-radius:9999px;background:#e0e7ff;color:#3730a3;font-size:11px;line-height:1.2;">' + escapeHtml(tag) + '</span>';
+          }).join('');
+
+          return '<div style="margin-top:6px;">' + chips + '</div>';
+        }
+
+        function buildPopupHtml(entries) {
+          var html = '<div style="min-width:240px;max-width:340px;">';
+          html += '<div style="font-size:12px;font-weight:700;color:#111827;margin-bottom:6px;">Items at this location</div>';
+          entries.forEach(function (entry) {
+            var title = escapeHtml((entry.kind || 'Item') + ': ' + (entry.title || 'Untitled'));
+            var description = entry.description ? ('<div style="margin-top:4px;font-size:12px;color:#4b5563;">' + escapeHtml(entry.description) + '</div>') : '';
+            var tagsHtml = buildTagsHtml(entry.relevant_tags || []);
+            if (entry.url) {
+              html += '<div style="padding:6px 0;border-top:1px solid #e5e7eb;">';
+              html += '<a href="' + escapeHtml(entry.url) + '" style="font-size:13px;font-weight:600;color:#4338ca;text-decoration:none;">' + title + '</a>' + description + tagsHtml;
+              html += '</div>';
+            } else {
+              html += '<div style="padding:6px 0;border-top:1px solid #e5e7eb;">';
+              html += '<div style="font-size:13px;font-weight:600;color:#111827;">' + title + '</div>' + description + tagsHtml;
+              html += '</div>';
+            }
+          });
+          html += '</div>';
+          return html;
+        }
+
+        function openSharedPopup(latitude, longitude) {
+          var key = coordinateKey(latitude, longitude);
+          var entries = (window.bioregionMap && window.bioregionMap.hoverEntriesByCoordinate)
+            ? window.bioregionMap.hoverEntriesByCoordinate[key]
+            : null;
+          if (!entries || !entries.length) {
+            return;
+          }
+
+          sharedPopup.setLatLng([latitude, longitude]);
+          sharedPopup.setContent(buildPopupHtml(entries));
+          sharedPopup.openOn(mapInstance);
+        }
 
         function ensureGroup(layerName) {
           if (!overlayGroups[layerName]) {
@@ -707,26 +767,12 @@
                 });
               }
               var marker = window.L.marker([pointLat, pointLng], markerOptions);
-              var safeTitle = escapeHtml(point.title || 'Untitled');
-              var description = escapeHtml(point.description || '');
-              var popupHtml = '<strong>' + safeTitle + '</strong>';
-              if (description) {
-                popupHtml += '<br><span style="font-size:12px;color:#4b5563;">' + description + '</span>';
-              }
-              if (point.url) {
-                popupHtml += '<br><a href="' + point.url + '">Open</a>';
-              }
-              marker.bindPopup(popupHtml);
-              marker.bindTooltip(safeTitle + (description ? ' - ' + description : ''), {
-                direction: 'top',
-                offset: [0, -8],
-                opacity: 0.9
+              marker.on('mouseover', function () {
+                openSharedPopup(pointLat, pointLng);
               });
-              if (point.url) {
-                marker.on('click', function () {
-                  window.location.href = point.url;
-                });
-              }
+              marker.on('click', function () {
+                openSharedPopup(pointLat, pointLng);
+              });
               marker.addTo(group);
             });
           },
@@ -745,8 +791,33 @@
               mapInstance.fitBounds(window.bioregionMap.baseCircle.getBounds(), { padding: [24, 24] });
             }
           },
-          baseCircle: null
+          baseCircle: null,
+          hoverEntriesByCoordinate: {}
         };
+      }
+
+      function coordinateKey(latitude, longitude) {
+        return parseFloat(latitude).toFixed(6) + ',' + parseFloat(longitude).toFixed(6);
+      }
+
+      function buildHoverEntriesByCoordinate(points) {
+        var grouped = {};
+        (points || []).forEach(function (point) {
+          var pointLat = parseFloat(point.latitude);
+          var pointLng = parseFloat(point.longitude);
+          if (!Number.isFinite(pointLat) || !Number.isFinite(pointLng)) {
+            return;
+          }
+
+          var key = coordinateKey(pointLat, pointLng);
+          if (!grouped[key]) {
+            grouped[key] = [];
+          }
+
+          grouped[key].push(point);
+        });
+
+        return grouped;
       }
 
       function parseOverlayJson(rawValue) {
@@ -838,6 +909,7 @@
           var projectPoints = overlayPointWithIcon(parseOverlayJson(document.getElementById('bioregion-map-projects-data') ? document.getElementById('bioregion-map-projects-data').textContent : ''), '#7c3aed', 'P');
           var peoplePoints = overlayPointWithIcon(parseOverlayJson(document.getElementById('bioregion-map-people-data') ? document.getElementById('bioregion-map-people-data').textContent : ''), '#ea580c', 'U');
           var storyPoints = overlayPointWithIcon(parseOverlayJson(document.getElementById('bioregion-map-stories-data') ? document.getElementById('bioregion-map-stories-data').textContent : ''), '#0f766e', 'S');
+          var hoverEntriesByCoordinate = buildHoverEntriesByCoordinate([].concat(locationPoints, communityPoints, projectPoints, peoplePoints, storyPoints));
 
           function syncLayer(layerName, enabled, points) {
             if (enabled) {
@@ -866,6 +938,8 @@
               checkbox.addEventListener('change', applyFilters);
             }
           });
+
+          window.bioregionMap.hoverEntriesByCoordinate = hoverEntriesByCoordinate;
 
           applyFilters();
 

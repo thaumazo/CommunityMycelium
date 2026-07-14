@@ -5,6 +5,30 @@ from apps.locations.models import Location
 
 
 class ProjectForm(forms.ModelForm):
+    time_precision = forms.ChoiceField(
+        choices=Project.TIME_PRECISION_CHOICES,
+        required=False,
+        initial=Project.TIME_PRECISION_NONE,
+        label="Time Precision",
+        help_text="Whether this project happens at a single point in time or over a range.",
+    )
+
+    project_start_at = forms.DateTimeField(
+        required=False,
+        label="Project Start",
+        help_text="Optional start date/time for this project.",
+        widget=forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
+        input_formats=["%Y-%m-%dT%H:%M"],
+    )
+
+    project_end_at = forms.DateTimeField(
+        required=False,
+        label="Project End",
+        help_text="Optional end date/time for this project.",
+        widget=forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
+        input_formats=["%Y-%m-%dT%H:%M"],
+    )
+
     view_members = forms.BooleanField(
         required=False,
         initial=False,
@@ -55,6 +79,9 @@ class ProjectForm(forms.ModelForm):
         fields = [
             "title",
             "description",
+            "time_precision",
+            "project_start_at",
+            "project_end_at",
             "phase",
             "state",
             "members",
@@ -77,6 +104,26 @@ class ProjectForm(forms.ModelForm):
             "bioregions": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "url": forms.Textarea(attrs={"rows": 1}),
         }
+
+    def clean(self):
+        cleaned = super().clean()
+        project_start_at = cleaned.get("project_start_at")
+        project_end_at = cleaned.get("project_end_at")
+        time_precision = cleaned.get("time_precision") or Project.TIME_PRECISION_NONE
+
+        if project_end_at and not project_start_at:
+            self.add_error("project_start_at", "Project start is required when project end is set.")
+        if project_start_at and project_end_at and project_end_at < project_start_at:
+            self.add_error("project_end_at", "Project end must be after project start.")
+
+        if time_precision == Project.TIME_PRECISION_POINT and project_end_at:
+            self.add_error("project_end_at", "Point-in-time projects should not set an end time.")
+        if time_precision == Project.TIME_PRECISION_RANGE and not project_end_at:
+            self.add_error("project_end_at", "Range projects require an end time.")
+        if time_precision == Project.TIME_PRECISION_NONE and (project_start_at or project_end_at):
+            self.add_error("time_precision", "Set time precision to point or range when time fields are used.")
+
+        return cleaned
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

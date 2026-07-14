@@ -343,6 +343,7 @@ def bioregion_detail_view(request, pk):
             continue
         visible_locations_by_id[location.pk] = location
         map_locations.append({
+            "kind": "Location",
             "title": location.title,
             "description": (location.description or "")[:180],
             "latitude": float(location.latitude),
@@ -360,6 +361,7 @@ def bioregion_detail_view(request, pk):
         if primary_location.latitude is None or primary_location.longitude is None:
             continue
         map_projects.append({
+            "kind": "Project",
             "title": project.title,
             "description": (project.description or "")[:180],
             "latitude": float(primary_location.latitude),
@@ -377,6 +379,7 @@ def bioregion_detail_view(request, pk):
         if primary_location.latitude is None or primary_location.longitude is None:
             continue
         map_communities.append({
+            "kind": "Community",
             "title": community.title,
             "description": (community.description or "")[:180],
             "latitude": float(primary_location.latitude),
@@ -394,6 +397,7 @@ def bioregion_detail_view(request, pk):
         if primary_location.latitude is None or primary_location.longitude is None:
             continue
         map_people.append({
+            "kind": "Person",
             "title": person.get_full_name() or person.username,
             "description": (person.bio or person.user_location or "")[:180],
             "latitude": float(primary_location.latitude),
@@ -404,12 +408,12 @@ def bioregion_detail_view(request, pk):
     if request.user.is_authenticated:
         visible_stories = get_permitted_objects(request.user, "view", Story)
         if hasattr(visible_stories, "filter"):
-            stories_qs = visible_stories.select_related("primary_location").prefetch_related("locations")
+            stories_qs = visible_stories.select_related("primary_location").prefetch_related("locations", "attachments__content_type", "attachments__content_object")
         else:
             visible_story_ids = [s.pk for s in visible_stories]
-            stories_qs = Story.objects.filter(pk__in=visible_story_ids).select_related("primary_location").prefetch_related("locations")
+            stories_qs = Story.objects.filter(pk__in=visible_story_ids).select_related("primary_location").prefetch_related("locations", "attachments__content_type", "attachments__content_object")
     else:
-        stories_qs = Story.objects.filter(view_public=True).select_related("primary_location").prefetch_related("locations")
+        stories_qs = Story.objects.filter(view_public=True).select_related("primary_location").prefetch_related("locations", "attachments__content_type", "attachments__content_object")
 
     from apps.locations.models import Location
     location_content_type = ContentType.objects.get_for_model(Location)
@@ -448,11 +452,13 @@ def bioregion_detail_view(request, pk):
             continue
 
         map_stories.append({
+            "kind": "Story",
             "title": story.title,
             "description": (story.text_content or "")[:180],
             "latitude": float(marker_location.latitude),
             "longitude": float(marker_location.longitude),
             "url": reverse("story_detail", kwargs={"pk": story.pk}),
+            "relevant_tags": story.relevant_tags,
         })
 
     return render(request, "bioregions/bioregion_detail.html", {

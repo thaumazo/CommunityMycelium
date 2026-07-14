@@ -90,6 +90,22 @@
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.get_state_display }}</dd>
                   </div>
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Time Precision</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.get_time_precision_display }}</dd>
+                  </div>
+                  {% if project.project_start_at %}
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm font-medium text-gray-500">Project Start</dt>
+                      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.project_start_at|date:"F j, Y, g:i a" }}</dd>
+                    </div>
+                  {% endif %}
+                  {% if project.project_end_at %}
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm font-medium text-gray-500">Project End</dt>
+                      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.project_end_at|date:"F j, Y, g:i a" }}</dd>
+                    </div>
+                  {% endif %}
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Created by</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                       <a href="{% url 'user_detail' project.created_by.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ project.created_by.username }}</a>
@@ -460,6 +476,13 @@
                         {% endif %}
                         {% if story.text_content %}
                           <p class="text-sm text-gray-700 mt-2">{{ story.text_content|markdown_to_html|striptags|truncatewords:24 }}</p>
+                        {% endif %}
+                        {% if story.relevant_tags %}
+                          <div class="mt-2 flex flex-wrap gap-2">
+                            {% for tag in story.relevant_tags %}
+                              <span class="inline-flex items-center px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium">{{ tag }}</span>
+                            {% endfor %}
+                          </div>
                         {% endif %}
                       </article>
                     {% endfor %}

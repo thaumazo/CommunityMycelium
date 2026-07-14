@@ -7,6 +7,16 @@ User = get_user_model()
 
 
 class Project(models.Model):
+    TIME_PRECISION_NONE = "none"
+    TIME_PRECISION_POINT = "point"
+    TIME_PRECISION_RANGE = "range"
+
+    TIME_PRECISION_CHOICES = [
+        (TIME_PRECISION_NONE, "No time specified"),
+        (TIME_PRECISION_POINT, "Single point in time"),
+        (TIME_PRECISION_RANGE, "Time range"),
+    ]
+
     PHASE_UNKNOWN = "unknown"
     PHASE_IDEA = "idea"
     PHASE_SCOPING = "scoping"
@@ -41,6 +51,22 @@ class Project(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    time_precision = models.CharField(
+        max_length=20,
+        choices=TIME_PRECISION_CHOICES,
+        default=TIME_PRECISION_NONE,
+        help_text="Whether this project is anchored at a point in time or a range.",
+    )
+    project_start_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Optional start time for this project",
+    )
+    project_end_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Optional end time for this project (for ranges)",
+    )
     phase = models.CharField(
         max_length=20,
         choices=PHASE_CHOICES,
@@ -109,6 +135,21 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+
+        if self.project_end_at and not self.project_start_at:
+            raise ValidationError("project_start_at is required when project_end_at is set.")
+        if self.project_start_at and self.project_end_at and self.project_end_at < self.project_start_at:
+            raise ValidationError("project_end_at must be after project_start_at.")
+
+        if self.time_precision == self.TIME_PRECISION_POINT and self.project_end_at:
+            raise ValidationError("Point-in-time projects should not set project_end_at.")
+        if self.time_precision == self.TIME_PRECISION_RANGE and not self.project_end_at:
+            raise ValidationError("Range projects require project_end_at.")
+        if self.time_precision == self.TIME_PRECISION_NONE and (self.project_start_at or self.project_end_at):
+            raise ValidationError("Set time_precision to point or range when time fields are used.")
 
     class Meta:
         permissions = [
