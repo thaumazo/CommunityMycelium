@@ -13,7 +13,7 @@ urlpatterns = [
     path("people/", include("apps.users.urls")),  # Person management routes
     path("meetings/", include("apps.meetings.urls")),
     path("communities/", include("apps.communities.urls")),
-    path("projects/", include("apps.projects.urls")),
+    path("moves/", include("apps.projects.urls")),
     path("locations/", include("apps.locations.urls")),
     path("socialroles/", include("apps.socialroles.urls")),
     path("maladaptives/", include("apps.maladaptives.urls")),

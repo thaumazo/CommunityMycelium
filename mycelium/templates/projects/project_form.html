@@ -15,7 +15,7 @@
                 <h1 class="text-2xl font-semibold text-gray-900">{{ project.title }}</h1>
                 <h2 class="text-lg text-gray-500">Edit</h2>
               {% else %}
-                <h1 class="text-2xl font-semibold text-gray-900">Create Project</h1>
+                <h1 class="text-2xl font-semibold text-gray-900">Create Move</h1>
               {% endif %}
             </div>
 
@@ -46,6 +46,19 @@
                       </div>
                       {% if form.title.errors %}
                         <div class="mt-1 text-sm text-red-600">{{ form.title.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div>
+                      <label for="{{ form.parent.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.parent.label }}</label>
+                      <div class="mt-1">
+                        {{ form.parent }}
+                      </div>
+                      {% if form.parent.help_text %}
+                        <p class="mt-1 text-xs text-gray-500">{{ form.parent.help_text }}</p>
+                      {% endif %}
+                      {% if form.parent.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.parent.errors|join:', ' }}</div>
                       {% endif %}
                     </div>
 
@@ -287,7 +300,7 @@
                             <input type="checkbox" name="capitals_in" value="{{ capital.pk }}" id="id_capitals_in_{{ capital.pk }}" {% if form.instance.pk and capital.id in form.fields.capitals_in.initial %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
                             {% if capital.image_path %}
                               <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals_in.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
-                                <img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                                <img src="{% static capital.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                               </div>
                             {% else %}
                               <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals_in.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
@@ -321,7 +334,7 @@
                             <input type="checkbox" name="capitals_out" value="{{ capital.pk }}" id="id_capitals_out_{{ capital.pk }}" {% if form.instance.pk and capital.id in form.fields.capitals_out.initial %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
                             {% if capital.image_path %}
                               <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals_out.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
-                                <img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                                <img src="{% static capital.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                               </div>
                             {% else %}
                               <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals_out.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
@@ -346,8 +359,8 @@
               </div>
 
               <div class="flex justify-end space-x-3">
-                <a href="{% url 'project_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
-                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-loading-text="Saving...">Save Project</button>
+                <a href="{% url 'move_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</a>
+                <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-loading-text="Saving...">Save Move</button>
               </div>
             </form>
           </div>

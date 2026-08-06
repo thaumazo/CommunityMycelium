@@ -7,13 +7,13 @@
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
       <div class="sm:flex sm:justify-between sm:items-center space-y-2 mb-6">
-        <h1 class="text-2xl font-semibold text-gray-900">Projects</h1>
+        <h1 class="text-2xl font-semibold text-gray-900">Moves</h1>
         {% can request.user 'add' 'projects.project' as check %}
         {% if check %}
-          <a href="{% url 'project_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
+          <a href="{% url 'move_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block items-center gap-2">
             <span class="flex items-center gap-2">
               <span>{% include '_icons/plus.html' %}</span>
-              <span>Create New Project</span>
+              <span>Create New Move</span>
             </span>
           </a>
         {% endif %}
@@ -39,7 +39,14 @@
                       <!-- Project Title & People -->
                       <div class="">
                         <!-- Project Title -->
-                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'project_detail' project.pk %}" class="hover:text-indigo-900 hover:underline">{{ project.title }}</a></h3>
+                        <h3 class="text-lg font-medium text-indigo-600"><a href="{% url 'move_detail' project.pk %}" class="hover:text-indigo-900 hover:underline">{{ project.title }}</a></h3>
+                        <div class="mt-1 text-xs text-gray-500">
+                          {% if project.parent %}
+                            Sub-move of <a href="{% url 'move_detail' project.parent.pk %}" class="text-indigo-600 hover:underline">{{ project.parent.title }}</a>
+                          {% else %}
+                            Top-level move
+                          {% endif %}
+                        </div>
 
                         <!-- Project People (Owners, Admins, Members) -->
                         <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1">
@@ -86,7 +93,7 @@
                       {% if project.url %}
                         <div class="flex flex-wrap items-center gap-y-2 gap-x-4 pb-2">
                           <p class="text-sm text-indigo-600 flex items-start gap-1">
-                            <a href="{{ project.url }}" class="hover:underline" target="_blank" rel="noopener noreferrer">Project URL</a>
+                            <a href="{{ project.url }}" class="hover:underline" target="_blank" rel="noopener noreferrer">Move URL</a>
                             {% include '_icons/arrow-up-right.html' %}
                           </p>
                         </div>
@@ -108,8 +115,8 @@
                       <!-- Project Edit/Delete -->
                       {% can request.user 'change' project as check %}
                       {% if check %}
-                        <a href="{% url 'project_edit' project.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a>
-                        <a href="{% url 'project_delete' project.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a>
+                        <a href="{% url 'move_edit' project.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</a>
+                        <a href="{% url 'move_delete' project.pk %}" class="block px-2 py-1 text-xs font-semibold rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">Delete</a>
                       {% endif %}
                     </div>
                   </div>
@@ -117,7 +124,7 @@
               </div>
             </li>
           {% empty %}
-            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No projects found.</li>
+            <li class="px-4 py-4 sm:px-6 text-center text-gray-500">No moves found.</li>
           {% endfor %}
         </ul>
         {% include '_components/pagination.html' %}

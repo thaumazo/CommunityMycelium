@@ -9,6 +9,7 @@ from apps.locations.models import Location
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
+from django.utils.text import slugify
 
 User = get_user_model()
 
@@ -182,6 +183,13 @@ class UserForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "w-full"}),
         label="LinkedIn URL",
     )
+
+    alternate_deck = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class": "w-full", "placeholder": "moore"}),
+        label="Alternate Deck",
+        help_text="Optional deck subfolder name; it will be normalized to lowercase slug format.",
+    )
     
     bio = forms.CharField(
         required=False,
@@ -249,6 +257,7 @@ class UserForm(forms.ModelForm):
             "user_metacrisis_facets",
             "user_maladaptives",
             "linked_in",
+            "alternate_deck",
             "bio",
             "picture",
             # password fields are not model fields; they're above
@@ -290,6 +299,9 @@ class UserForm(forms.ModelForm):
         selected_locations = cleaned.get("user_locations")
         if primary_location and selected_locations is not None and primary_location not in selected_locations:
             cleaned["user_locations"] = selected_locations | Location.objects.filter(pk=primary_location.pk)
+
+        alternate_deck = cleaned.get("alternate_deck") or ""
+        cleaned["alternate_deck"] = slugify(alternate_deck)
 
         return cleaned
 

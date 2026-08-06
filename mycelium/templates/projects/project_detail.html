@@ -17,13 +17,13 @@
             <div class="flex justify-between items-start">
               <div class="space-y-2">
                 <h1 class="text-2xl font-semibold text-gray-900">{{ project.title }}</h1>
-                <p class="text-base text-gray-500">Details</p>
+                <p class="text-base text-gray-500">Move details</p>
               </div>
               <div class="flex items-center space-x-2">
                 {% can request.user 'change' project as check %}
                 {% if check %}
-                  <a href="{% url 'project_edit' project.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
-                  <a href="{% url 'project_delete' project.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
+                  <a href="{% url 'move_edit' project.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
+                  <a href="{% url 'move_delete' project.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
                 {% endif %}
               </div>
             </div>
@@ -73,6 +73,14 @@
                     </dd>
                   </div>
                   {% endif %}
+                  {% if project.parent %}
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Parent move</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      <a href="{% url 'move_detail' project.parent.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ project.parent.title }}</a>
+                    </dd>
+                  </div>
+                  {% endif %}
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Description</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 prose prose-sm">{{ project.description|markdown_to_html }}</dd>
@@ -95,13 +103,13 @@
                   </div>
                   {% if project.project_start_at %}
                     <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm font-medium text-gray-500">Project Start</dt>
+                      <dt class="text-sm font-medium text-gray-500">Move Start</dt>
                       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.project_start_at|date:"F j, Y, g:i a" }}</dd>
                     </div>
                   {% endif %}
                   {% if project.project_end_at %}
                     <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm font-medium text-gray-500">Project End</dt>
+                      <dt class="text-sm font-medium text-gray-500">Move End</dt>
                       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ project.project_end_at|date:"F j, Y, g:i a" }}</dd>
                     </div>
                   {% endif %}
@@ -115,14 +123,14 @@
 
                 {% can request.user 'change' project as can_manage_story_visibility_all %}
                 {% if can_manage_story_visibility_all %}
-                  {% url 'project_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url_all %}
+                  {% url 'move_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url_all %}
                   {% if project_story_visibility_bulk_url_all %}
                     <div class="mt-6 mb-4 p-3 rounded-lg border border-gray-200 bg-gray-50">
                       <form id="bulk-visibility-all-form" method="post" action="{{ project_story_visibility_bulk_url_all }}" class="flex flex-wrap items-center gap-2">
                         {% csrf_token %}
                         <input type="hidden" name="scope" value="all">
                         <input type="hidden" name="next" value="{{ request.path }}">
-                        <label for="bulk_visibility_level_all" class="text-xs font-medium text-gray-600">Bulk visibility (All project stories):</label>
+                        <label for="bulk_visibility_level_all" class="text-xs font-medium text-gray-600">Bulk visibility (All move stories):</label>
                         <select id="bulk_visibility_level_all" name="visibility_level" class="rounded-md border-gray-300 text-xs">
                           <option value="private">Private</option>
                           <option value="members">Members</option>
@@ -157,7 +165,7 @@
                     </div>
                       {% can request.user 'change' project as can_manage_story_visibility_in %}
                       {% if can_manage_story_visibility_in %}
-                        {% url 'project_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url %}
+                        {% url 'move_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url %}
                         {% if project_story_visibility_bulk_url %}
                           <form id="bulk-visibility-in-form" method="post" action="{{ project_story_visibility_bulk_url }}" class="mb-4 flex flex-wrap items-center gap-2">
                             {% csrf_token %}
@@ -181,7 +189,7 @@
                         <div class="flex-shrink-0">
                           {% if project_capital.capital.image_path %}
                             <div class="overflow-hidden rounded-lg border-2 border-gray-300" style="width: 60px; height: 60px;">
-                              <img src="{% static project_capital.capital.image_path|thumbnail %}" alt="{{ project_capital.capital.title }}" style="width: 60px; height: 60px; object-fit: contain;">
+                              <img src="{% static project_capital.capital.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ project_capital.capital.title }}" style="width: 60px; height: 60px; object-fit: contain;">
                             </div>
                           {% else %}
                             <div class="bg-gray-100 rounded-lg flex items-center justify-center border-2 border-gray-300" style="width: 60px; height: 60px;">
@@ -250,7 +258,7 @@
                                             <input type="checkbox" name="story_ids" value="{{ attachment.story.id }}" form="bulk-visibility-all-form" class="h-3.5 w-3.5 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500" title="Select for global bulk update">
                                           {% endif %}
 
-                                          {% url 'project_story_visibility_update' project.pk attachment.story.id as project_story_visibility_update_url %}
+                                          {% url 'move_story_visibility_update' project.pk attachment.story.id as project_story_visibility_update_url %}
                                           {% if project_story_visibility_update_url %}
                                             <form method="post" action="{{ project_story_visibility_update_url }}" class="inline-flex items-center gap-1">
                                               {% csrf_token %}
@@ -285,7 +293,7 @@
                   <h2 class="text-lg font-semibold text-gray-900 mb-4">Capitals Out</h2>
                   {% can request.user 'change' project as can_manage_story_visibility_out %}
                   {% if can_manage_story_visibility_out %}
-                    {% url 'project_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url_out %}
+                    {% url 'move_story_visibility_bulk_update' project.pk as project_story_visibility_bulk_url_out %}
                     {% if project_story_visibility_bulk_url_out %}
                       <form id="bulk-visibility-out-form" method="post" action="{{ project_story_visibility_bulk_url_out }}" class="mb-4 flex flex-wrap items-center gap-2">
                         {% csrf_token %}
@@ -309,7 +317,7 @@
                         <div class="flex-shrink-0">
                           {% if project_capital.capital.image_path %}
                             <div class="overflow-hidden rounded-lg border-2 border-gray-300" style="width: 60px; height: 60px;">
-                              <img src="{% static project_capital.capital.image_path|thumbnail %}" alt="{{ project_capital.capital.title }}" style="width: 60px; height: 60px; object-fit: contain;">
+                              <img src="{% static project_capital.capital.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ project_capital.capital.title }}" style="width: 60px; height: 60px; object-fit: contain;">
                             </div>
                           {% else %}
                             <div class="bg-gray-100 rounded-lg flex items-center justify-center border-2 border-gray-300" style="width: 60px; height: 60px;">
@@ -378,7 +386,7 @@
                                             <input type="checkbox" name="story_ids" value="{{ attachment.story.id }}" form="bulk-visibility-all-form" class="h-3.5 w-3.5 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500" title="Select for global bulk update">
                                           {% endif %}
 
-                                          {% url 'project_story_visibility_update' project.pk attachment.story.id as project_story_visibility_update_url_out %}
+                                          {% url 'move_story_visibility_update' project.pk attachment.story.id as project_story_visibility_update_url_out %}
                                           {% if project_story_visibility_update_url_out %}
                                             <form method="post" action="{{ project_story_visibility_update_url_out }}" class="inline-flex items-center gap-1">
                                               {% csrf_token %}
@@ -409,7 +417,7 @@
               {% endif %}
 
               {% can request.user 'change' project as can_import_stories %}
-              {% url 'project_story_import' project.pk as project_story_import_url %}
+              {% url 'move_story_import' project.pk as project_story_import_url %}
               {% if can_import_stories and project_story_import_url %}
                 <div class="mt-8 border border-gray-200 rounded-lg p-4 bg-gray-50">
                   <h2 class="text-lg font-semibold text-gray-900">Import Stories from JSON</h2>
@@ -494,7 +502,7 @@
                     </div>
                   {% endif %}
                 {% else %}
-                  <p class="text-sm text-gray-500">No stories connected to this project yet.</p>
+                  <p class="text-sm text-gray-500">No stories connected to this move yet.</p>
                 {% endif %}
               </div>
 
@@ -503,11 +511,11 @@
                 <div class="space-y-6">
                   <div>
                     <h2 class="text-lg font-semibold text-gray-900 mb-3">Community Notes</h2>
-                    <p class="text-sm text-gray-600">Idea and Offer submissions from project members. Promoted notes stay here and also appear in capital stories.</p>
+                    <p class="text-sm text-gray-600">Idea and Offer submissions from move members. Promoted notes stay here and also appear in capital stories.</p>
                   </div>
 
                   {% if not community_note_attachments %}
-                    <p class="text-sm text-gray-500">No community notes for this project yet.</p>
+                    <p class="text-sm text-gray-500">No community notes for this move yet.</p>
                   {% endif %}
 
                   {% if project_capitals_in %}
@@ -539,7 +547,7 @@
                                       <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:30 }}</p>
                                     </div>
                                     <div class="flex-shrink-0">
-                                      {% url 'project_community_note_decision' project.pk attachment.story.id as project_community_note_decision_url %}
+                                      {% url 'move_community_note_decision' project.pk attachment.story.id as project_community_note_decision_url %}
                                       {% if project_community_note_decision_url %}
                                         <form method="post" action="{{ project_community_note_decision_url }}" class="flex items-center gap-2">
                                           {% csrf_token %}
@@ -589,7 +597,7 @@
                                       <p class="text-xs text-gray-500 mt-1">{{ attachment.story.text_content|markdown_to_html|striptags|truncatewords:30 }}</p>
                                     </div>
                                     <div class="flex-shrink-0">
-                                      {% url 'project_community_note_decision' project.pk attachment.story.id as project_community_note_decision_url_out %}
+                                      {% url 'move_community_note_decision' project.pk attachment.story.id as project_community_note_decision_url_out %}
                                       {% if project_community_note_decision_url_out %}
                                         <form method="post" action="{{ project_community_note_decision_url_out }}" class="flex items-center gap-2">
                                           {% csrf_token %}
@@ -673,7 +681,7 @@
           </div>
 
             <div class="mt-6 flex justify-end">
-              <a href="{% url 'project_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Back to Projects</a>
+              <a href="{% url 'move_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Back to Moves</a>
             </div>
           </div>
         </div>

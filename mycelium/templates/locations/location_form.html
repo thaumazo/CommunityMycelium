@@ -183,7 +183,7 @@
                             <input type="checkbox" name="capitals" value="{{ capital.pk }}" id="id_capitals_{{ capital.pk }}" {% if form.instance.pk and capital.id in form.fields.capitals.initial %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
                             {% if capital.image_path %}
                               <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
-                                <img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                                <img src="{% static capital.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ capital.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                               </div>
                             {% else %}
                               <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if form.instance.pk and capital.id in form.fields.capitals.initial %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">

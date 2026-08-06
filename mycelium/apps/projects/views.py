@@ -219,6 +219,8 @@ def _normalize_story_import_payload(raw_payload):
 
 def project_list_view(request):
     projects = get_permitted_objects(request.user, "view", Project)
+    if hasattr(projects, "select_related"):
+        projects = projects.select_related("parent").order_by("parent_id", "title")
     
     # Float bookmarked projects to the top
     if request.user.is_authenticated:
@@ -694,10 +696,15 @@ def project_story_visibility_bulk_update_view(request, pk):
 
 @login_required
 def project_create_view(request):
+    initial_parent = None
+    parent_id = (request.GET.get("parent") or "").strip()
+    if parent_id.isdigit():
+        initial_parent = get_permitted_object(request.user, "view", Project, int(parent_id))
+
     if request.method == "POST":
         if not validate_form_token(request, 'project_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
-            form = ProjectForm()
+            form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None)
             form_token = get_form_token(request, 'project_create')
             return render(request, "projects/project_form.html", {"form": form, "form_token": form_token})
         
@@ -706,10 +713,10 @@ def project_create_view(request):
             project = form.save(commit=False)
             project.created_by = request.user
             form.save()  # This will save the project and m2m fields
-            messages.success(request, "Project created successfully!")
+            messages.success(request, "Move created successfully!")
             return redirect("project_detail", pk=project.pk)
     else:
-        form = ProjectForm()
+        form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None)
 
     form_token = get_form_token(request, 'project_create')
     return render(
@@ -727,7 +734,7 @@ def project_edit_view(request, pk):
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
-            messages.success(request, "Project updated successfully!")
+            messages.success(request, "Move updated successfully!")
             return redirect("project_detail", pk=project.pk)
     else:
         form = ProjectForm(instance=project)
@@ -745,7 +752,43 @@ def project_delete_view(request, pk):
 
     if request.method == "POST":
         project.delete()
-        messages.success(request, "Project deleted successfully!")
+        messages.success(request, "Move deleted successfully!")
         return redirect("project_list")
 
     return render(request, "projects/project_confirm_delete.html", {"project": project})
+
+
+def move_list_view(request):
+    return project_list_view(request)
+
+
+def move_create_view(request):
+    return project_create_view(request)
+
+
+def move_detail_view(request, pk):
+    return project_detail_view(request, pk)
+
+
+def move_edit_view(request, pk):
+    return project_edit_view(request, pk)
+
+
+def move_delete_view(request, pk):
+    return project_delete_view(request, pk)
+
+
+def move_story_import_view(request, pk):
+    return project_story_import_view(request, pk)
+
+
+def move_story_visibility_update_view(request, pk, story_pk):
+    return project_story_visibility_update_view(request, pk, story_pk)
+
+
+def move_story_visibility_bulk_update_view(request, pk):
+    return project_story_visibility_bulk_update_view(request, pk)
+
+
+def move_community_note_decision_view(request, pk, story_pk):
+    return project_community_note_decision_view(request, pk, story_pk)

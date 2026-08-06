@@ -87,6 +87,12 @@ class User(AbstractUser):
     )
 
     linked_in = models.URLField(blank=True, null=True)
+    alternate_deck = models.CharField(
+        max_length=64,
+        blank=True,
+        default="",
+        help_text="Optional alternate deck slug (e.g. 'moore') used for deck image overrides.",
+    )
     
     bio = models.TextField(
         blank=True,

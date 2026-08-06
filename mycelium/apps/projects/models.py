@@ -51,6 +51,14 @@ class Project(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="children",
+        help_text="Optional parent move for creating nested sub-moves.",
+    )
     time_precision = models.CharField(
         max_length=20,
         choices=TIME_PRECISION_CHOICES,
@@ -139,6 +147,15 @@ class Project(models.Model):
     def clean(self):
         from django.core.exceptions import ValidationError
 
+        if self.parent_id and self.pk and self.parent_id == self.pk:
+            raise ValidationError("A move cannot be its own parent.")
+
+        ancestor = self.parent
+        while ancestor is not None:
+            if self.pk and ancestor.pk == self.pk:
+                raise ValidationError("Parent relationship creates a cycle.")
+            ancestor = ancestor.parent
+
         if self.project_end_at and not self.project_start_at:
             raise ValidationError("project_start_at is required when project_end_at is set.")
         if self.project_start_at and self.project_end_at and self.project_end_at < self.project_start_at:
@@ -152,6 +169,8 @@ class Project(models.Model):
             raise ValidationError("Set time_precision to point or range when time fields are used.")
 
     class Meta:
+        verbose_name = "Move"
+        verbose_name_plural = "Moves"
         permissions = [
             ("delegate_project", "Can delegate project"),
         ]

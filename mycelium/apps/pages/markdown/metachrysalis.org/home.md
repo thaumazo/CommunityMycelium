@@ -5,13 +5,33 @@
 
 ![image info](../../../../static/img/misc/Metachrysalis_Image_Small.png)
 
+> And when we're in game worlds, I believe that many of us become the best version of ourselves:
+
+> The most likely to help at a moment's notice<br>
+> The most likely to stick with a problem as long at it takes<br>
+> To get up after failure and try again.<br><br>
+
+> And in real life, when we face failure,<br>
+> when we confront obstacles, we often don't feel that way.<br>
+> We feel overcome, we feel overwhelmed,<br>
+> we feel anxious, maybe depressed, frustrated or cynical.<br>
+> We never have those feelings when we're playing games,<br>
+> they just don't exist in games.<br>
+> &hellip;
+
+> How can we take those feelings from games
+> and apply them to real-world work?" 
+
+- **Jane McGonigal**, *Gaming can make a better world*
+
+
 ## Welcome
-Metachrysalis is a gameful framework for bioregional flourishing.
+Metachrysalis is an invitation to come together with people in your area, build community, and make your neighbourhood and region more healthy, thriving and fair.
+
+It's like a game, but you don’t play as a fictional hero. You play as your changemaker self.
+And "moves" in the game are real world actions.
 
 It helps people find a meaningful way in to the work of regeneration, resilience, and relief — grounded in place, informed by systems thinking, and powered by collaboration.
-
-You don’t play as a fictional hero.  
-You play as your changemaker self.
 
 At a time when top-down systems are too slow and brittle to meet the moment, Metachrysalis is designed to empower “trim tabs” — small, well-placed actions that help turn the larger ship.
 

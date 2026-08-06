@@ -60,7 +60,7 @@
               <a href="/pages/frameworks/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Framework</a>
               <a href="/pages/people/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">People</a>
               <a href="/pages/communities/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Communities</a>
-              <a href="/pages/projects/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Projects</a>
+              <a href="/pages/projects/" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Moves</a>
 
             {% elif request.get_host == 'fraserlowland.org' or URL_OVERRIDE == 'fraserlowland.org' %}
               {# Fraser Lowland-specific links #}
@@ -159,7 +159,7 @@
               <li><a href="/pages/frameworks/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Framework</a></li>
               <li><a href="/pages/people/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">People</a></li>
               <li><a href="/pages/communities/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Communities</a></li>
-              <li><a href="/pages/projects/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Projects</a></li>
+              <li><a href="/pages/projects/" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Moves</a></li>
             {% elif request.get_host == 'fraserlowland.org' or URL_OVERRIDE == 'fraserlowland.org' %}
               <li><a href="/pages/about" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">About</a></li>
               <li><a href="/pages/benefits" class="block px-3 py-2 rounded-md text-gray-900 hover:bg-gray-100">Member Benefits</a></li>
@@ -198,9 +198,9 @@
                 </a>
               </li>
               <li>
-                <a href="{% url 'project_list' %}" class="{% active_class 'project_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                <a href="{% url 'move_list' %}" class="{% active_class 'move_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/folder-open.html' %}
-                  <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Moves</span>
                 </a>
               </li>
               <li>

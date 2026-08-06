@@ -30,7 +30,7 @@
                 <div class="flex items-start gap-4">
                   <!-- Capital Icon -->
                   <div class="shrink-0">
-                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full "><img src="{% static capital.image_path|thumbnail %}" alt="{{ capital.title }}"></span>
+                    <span class="inline-flex items-center justify-center h-10 w-10 rounded-full "><img src="{% static capital.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ capital.title }}"></span>
                   </div>
 
                   <div class="flex-1 space-y-4 lg:flex lg:flex-row lg:justify-between lg:items-start lg:gap-4 lg:space-y-0">

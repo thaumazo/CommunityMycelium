@@ -93,7 +93,7 @@
                         <div class="flex-shrink-0">
                           {% if location_capital.capital.image_path %}
                             <div class="overflow-hidden rounded-lg border-2 border-gray-300" style="width: 60px; height: 60px;">
-                              <img src="{% static location_capital.capital.image_path|thumbnail %}" alt="{{ location_capital.capital.title }}" style="width: 60px; height: 60px; object-fit: contain;">
+                              <img src="{% static location_capital.capital.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ location_capital.capital.title }}" style="width: 60px; height: 60px; object-fit: contain;">
                             </div>
                           {% else %}
                             <div class="bg-gray-100 rounded-lg flex items-center justify-center border-2 border-gray-300" style="width: 60px; height: 60px;">

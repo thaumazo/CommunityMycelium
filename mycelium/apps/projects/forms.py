@@ -10,13 +10,13 @@ class ProjectForm(forms.ModelForm):
         required=False,
         initial=Project.TIME_PRECISION_NONE,
         label="Time Precision",
-        help_text="Whether this project happens at a single point in time or over a range.",
+        help_text="Whether this move happens at a single point in time or over a range.",
     )
 
     project_start_at = forms.DateTimeField(
         required=False,
         label="Project Start",
-        help_text="Optional start date/time for this project.",
+        help_text="Optional start date/time for this move.",
         widget=forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
         input_formats=["%Y-%m-%dT%H:%M"],
     )
@@ -24,7 +24,7 @@ class ProjectForm(forms.ModelForm):
     project_end_at = forms.DateTimeField(
         required=False,
         label="Project End",
-        help_text="Optional end date/time for this project.",
+        help_text="Optional end date/time for this move.",
         widget=forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
         input_formats=["%Y-%m-%dT%H:%M"],
     )
@@ -33,14 +33,14 @@ class ProjectForm(forms.ModelForm):
         required=False,
         initial=False,
         label="View Members",
-        help_text="Check if authenticated members can view this project.",
+        help_text="Check if authenticated members can view this move.",
     )
 
     view_public = forms.BooleanField(
         required=False,
         initial=False,
         label="View Public",
-        help_text="Check if public (unauthenticated) users can view this project.",
+        help_text="Check if public (unauthenticated) users can view this move.",
     )
     
     capitals_in = forms.ModelMultipleChoiceField(
@@ -48,7 +48,7 @@ class ProjectForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
         required=False,
         label="Capitals In",
-        help_text="Select capitals that this project takes in or uses"
+        help_text="Select capitals that this move takes in or uses"
     )
     
     capitals_out = forms.ModelMultipleChoiceField(
@@ -56,14 +56,14 @@ class ProjectForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
         required=False,
         label="Capitals Out",
-        help_text="Select capitals that this project produces or outputs"
+        help_text="Select capitals that this move produces or outputs"
     )
 
     primary_location = forms.ModelChoiceField(
         queryset=Location.objects.all().order_by("title"),
         required=False,
         label="Primary Location",
-        help_text="Primary map location for this project",
+        help_text="Primary map location for this move",
     )
 
     locations = forms.ModelMultipleChoiceField(
@@ -71,7 +71,7 @@ class ProjectForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
         required=False,
         label="Locations",
-        help_text="Locations connected to this project",
+        help_text="Locations connected to this move",
     )
     
     class Meta:
@@ -79,6 +79,7 @@ class ProjectForm(forms.ModelForm):
         fields = [
             "title",
             "description",
+            "parent",
             "time_precision",
             "project_start_at",
             "project_end_at",
@@ -110,6 +111,19 @@ class ProjectForm(forms.ModelForm):
         project_start_at = cleaned.get("project_start_at")
         project_end_at = cleaned.get("project_end_at")
         time_precision = cleaned.get("time_precision") or Project.TIME_PRECISION_NONE
+        parent = cleaned.get("parent")
+        primary_location = cleaned.get("primary_location")
+        locations = cleaned.get("locations")
+
+        if self.instance.pk and parent and parent.pk == self.instance.pk:
+            self.add_error("parent", "A move cannot be its own parent.")
+
+        ancestor = parent
+        while ancestor is not None and self.instance.pk:
+            if ancestor.pk == self.instance.pk:
+                self.add_error("parent", "Parent relationship creates a cycle.")
+                break
+            ancestor = ancestor.parent
 
         if project_end_at and not project_start_at:
             self.add_error("project_start_at", "Project start is required when project end is set.")
@@ -123,10 +137,20 @@ class ProjectForm(forms.ModelForm):
         if time_precision == Project.TIME_PRECISION_NONE and (project_start_at or project_end_at):
             self.add_error("time_precision", "Set time precision to point or range when time fields are used.")
 
+        if primary_location and locations is not None and primary_location not in locations:
+            cleaned["locations"] = locations | Location.objects.filter(pk=primary_location.pk)
+
         return cleaned
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.fields["parent"].required = False
+        self.fields["parent"].label = "Parent Move"
+        self.fields["parent"].help_text = "Optional parent move. Leave blank for a top-level move."
+        self.fields["parent"].queryset = Project.objects.order_by("title")
+        if self.instance.pk:
+            self.fields["parent"].queryset = self.fields["parent"].queryset.exclude(pk=self.instance.pk)
         
         # Set initial values for capitals from through models
         if self.instance.pk:
@@ -136,14 +160,6 @@ class ProjectForm(forms.ModelForm):
             self.fields['capitals_out'].initial = [
                 pc.capital.id for pc in self.instance.project_capital_out_relationships.all()
             ]
-
-    def clean(self):
-        cleaned = super().clean()
-        primary_location = cleaned.get("primary_location")
-        locations = cleaned.get("locations")
-        if primary_location and locations is not None and primary_location not in locations:
-            cleaned["locations"] = locations | Location.objects.filter(pk=primary_location.pk)
-        return cleaned
 
     def save(self, commit=True):
         project = super().save(commit=False)

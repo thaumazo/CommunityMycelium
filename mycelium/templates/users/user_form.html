@@ -31,6 +31,7 @@
                     <li class="tab" data-tab="character">Character Class</li>
                     <li class="tab" data-tab="pitfalls">Pitfalls</li>
                     <li class="tab" data-tab="metacrisis">Metacrisis</li>
+                    <li class="tab" data-tab="deck">Deck</li>
                   </ul>
                 </div>
 
@@ -349,7 +350,7 @@
                             <input type="checkbox" name="user_socialroles" value="{{ socialrole.pk }}" id="id_user_socialroles_{{ socialrole.pk }}" {% if socialrole in form.instance.user_socialroles.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
                             {% if socialrole.image_path %}
                               <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if socialrole in form.instance.user_socialroles.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
-                                <img src="{% static socialrole.image_path|thumbnail %}" alt="{{ socialrole.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                                <img src="{% static socialrole.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ socialrole.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                               </div>
                             {% else %}
                               <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if socialrole in form.instance.user_socialroles.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
@@ -383,7 +384,7 @@
                             <input type="checkbox" name="user_maladaptives" value="{{ maladaptive.pk }}" id="id_user_maladaptives_{{ maladaptive.pk }}" {% if maladaptive in form.instance.user_maladaptives.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
                             {% if maladaptive.image_path %}
                               <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if maladaptive in form.instance.user_maladaptives.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
-                                <img src="{% static maladaptive.image_path|thumbnail %}" alt="{{ maladaptive.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                                <img src="{% static maladaptive.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ maladaptive.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                               </div>
                             {% else %}
                               <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if maladaptive in form.instance.user_maladaptives.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
@@ -417,7 +418,7 @@
                             <input type="checkbox" name="user_metacrisis_facets" value="{{ metacrisis_facet.pk }}" id="id_user_metacrisis_facets_{{ metacrisis_facet.pk }}" {% if metacrisis_facet in form.instance.user_metacrisis_facets.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';" />
                             {% if metacrisis_facet.image_path %}
                               <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if metacrisis_facet in form.instance.user_metacrisis_facets.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
-                                <img src="{% static metacrisis_facet.image_path|thumbnail %}" alt="{{ metacrisis_facet.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                                <img src="{% static metacrisis_facet.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ metacrisis_facet.title }}" style="width: 80px; height: 80px; object-fit: contain;">
                               </div>
                             {% else %}
                               <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if metacrisis_facet in form.instance.user_metacrisis_facets.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
@@ -435,6 +436,26 @@
                       </div>
                       {% if form.user_metacrisis_facets.errors %}
                         <div class="mt-1 text-sm text-red-600">{{ form.user_metacrisis_facets.errors|join:', ' }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Deck Tab -->
+                <div class="tab-content hidden" id="deck">
+                  <div class="space-y-4">
+                    <div>
+                      <label for="{{ form.alternate_deck.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.alternate_deck.label }}
+                      </label>
+                      <div class="mt-1">
+                        {{ form.alternate_deck }}
+                      </div>
+                      {% if form.alternate_deck.help_text %}
+                        <p class="text-xs text-gray-500 mt-1">{{ form.alternate_deck.help_text }}</p>
+                      {% endif %}
+                      {% if form.alternate_deck.errors %}
+                        <div class="mt-1 text-sm text-red-600">{{ form.alternate_deck.errors|join:', ' }}</div>
                       {% endif %}
                     </div>
                   </div>
