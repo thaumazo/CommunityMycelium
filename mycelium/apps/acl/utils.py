@@ -51,7 +51,25 @@ def is_permitted(user, action, obj_or_string):
             return obj.view_public
         # Anonymous users cannot perform any other actions
         return False
-    
+
+    # Universal ownership rule: creators can always view/edit their own items,
+    # and owners/admins/members can always view/edit items where those roles exist.
+    # This takes precedence over any model-specific visibility gating below
+    # (e.g. pending community notes), matching the requirement that owners of
+    # content are never locked out of their own items.
+    if getattr(obj, "pk", None):
+        if action in ("view", "change") and hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        if action in ("view", "change"):
+            for relation_name in ("owners", "admins"):
+                relation = getattr(obj, relation_name, None)
+                if relation is not None and hasattr(relation, "all") and user in relation.all():
+                    return True
+        if action == "view":
+            relation = getattr(obj, "members", None)
+            if relation is not None and hasattr(relation, "all") and user in relation.all():
+                return True
+
     if isinstance(obj, Bioregion) and action == "view":
         # Any authenticated user can view bioregions
         if user.is_authenticated:
