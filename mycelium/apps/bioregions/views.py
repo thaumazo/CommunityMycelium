@@ -261,12 +261,28 @@ def bioregion_list_view(request):
     else:
         # Anonymous users can see all bioregions (title/description only in template)
         bioregions = Bioregion.objects.all()
-    
+
+    bioregions_list = list(bioregions)
+
+    # Bioregions listed in the user's connections float into their own "My Bioregions"
+    # area, sorted alphabetically, and are removed from the main list below.
+    # Being the creator does not count on its own (e.g. an admin creating on someone's behalf).
+    my_bioregions = []
+    if request.user.is_authenticated:
+        connected_ids = set(request.user.user_bioregions.values_list("pk", flat=True))
+        my_bioregions = sorted(
+            (b for b in bioregions_list if b.pk in connected_ids),
+            key=lambda b: b.title.lower(),
+        )
+        my_bioregion_ids = {b.pk for b in my_bioregions}
+        bioregions_list = [b for b in bioregions_list if b.pk not in my_bioregion_ids]
+
     # Pagination using helper function
-    bioregions_page, pagination_data = paginate_queryset(bioregions, request, per_page=10)
+    bioregions_page, pagination_data = paginate_queryset(bioregions_list, request, per_page=10)
     
     return render(request, "bioregions/bioregion_list.html", {
         "bioregions": bioregions_page,
+        "my_bioregions": my_bioregions,
         "pagination": pagination_data,
     })
 
