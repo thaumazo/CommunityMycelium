@@ -79,7 +79,16 @@ def is_permitted(user, action, obj_or_string):
         # Any authenticated user can view challenges that have a related bioregion
         if user.is_authenticated and obj.related_bioregion:
             return True
-    
+
+    # Reference/taxonomy content is visible to all authenticated members
+    from apps.capitals.models import Capital
+    from apps.socialroles.models import Socialrole
+    from apps.metacrisis_facets.models import Metacrisis_facet
+    from apps.maladaptives.models import Maladaptive
+    if isinstance(obj, (Capital, Socialrole, Metacrisis_facet, Maladaptive)) and action == "view":
+        if user.is_authenticated:
+            return True
+
     # Allow any authenticated user to create projects
     if isinstance(obj, Project) and action == "add":
         if user.is_authenticated:
@@ -499,6 +508,10 @@ def get_permitted_objects(user, action, model_class):
     from apps.communities.models import Community
     from apps.projects.models import Project
     from apps.locations.models import Location
+    from apps.capitals.models import Capital
+    from apps.socialroles.models import Socialrole
+    from apps.metacrisis_facets.models import Metacrisis_facet
+    from apps.maladaptives.models import Maladaptive
     
     # Public access rules
     if model_class == Bioregion and action == "view" and user.is_authenticated:
@@ -508,6 +521,10 @@ def get_permitted_objects(user, action, model_class):
     if model_class == Challenge and action == "view" and user.is_authenticated:
         # All authenticated users can view challenges with a related bioregion
         return list(model_class.objects.filter(related_bioregion__isnull=False))
+
+    if model_class in (Capital, Socialrole, Metacrisis_facet, Maladaptive) and action == "view" and user.is_authenticated:
+        # Reference/taxonomy content is visible to all authenticated members
+        return list(model_class.objects.all())
     
     # Visibility rules for users, communities, and projects
     if model_class == User and action == "view":
