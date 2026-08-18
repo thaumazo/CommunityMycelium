@@ -8,6 +8,7 @@ from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 
 @login_required
@@ -66,12 +67,15 @@ def challenge_edit_view(request, pk):
 
     if request.method == "POST":
         form = ChallengeForm(request.POST, instance=challenge)
+        attach_creator_field(form, request.user, challenge)
         if form.is_valid():
             form.save()
+            apply_creator_field(form, request.user, challenge)
             messages.success(request, "Challenge updated successfully!")
             return redirect("challenge_detail", pk=challenge.pk)
     else:
         form = ChallengeForm(instance=challenge)
+        attach_creator_field(form, request.user, challenge)
 
     return render(
         request,

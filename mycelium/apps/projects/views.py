@@ -18,6 +18,7 @@ from django.utils import timezone
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 
 PROJECT_STORY_IMPORT_SCHEMA = {
@@ -732,12 +733,15 @@ def project_edit_view(request, pk):
 
     if request.method == "POST":
         form = ProjectForm(request.POST, instance=project)
+        attach_creator_field(form, request.user, project)
         if form.is_valid():
             form.save()
+            apply_creator_field(form, request.user, project)
             messages.success(request, "Move updated successfully!")
             return redirect("project_detail", pk=project.pk)
     else:
         form = ProjectForm(instance=project)
+        attach_creator_field(form, request.user, project)
 
     return render(
         request,

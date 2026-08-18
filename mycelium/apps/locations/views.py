@@ -9,6 +9,7 @@ from .geocoding import GeocodingError, geocode_address
 from django.core.exceptions import PermissionDenied
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 
 def _request_ip(request):
@@ -103,12 +104,15 @@ def location_edit_view(request, pk):
 
     if request.method == "POST":
         form = LocationForm(request.POST, request.FILES, instance=location)
+        attach_creator_field(form, request.user, location)
         if form.is_valid():
             form.save()
+            apply_creator_field(form, request.user, location)
             messages.success(request, "Location updated successfully!")
             return redirect("location_detail", pk=location.pk)
     else:
         form = LocationForm(instance=location)
+        attach_creator_field(form, request.user, location)
 
     return render(
         request,

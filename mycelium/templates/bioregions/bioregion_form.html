@@ -21,6 +21,8 @@
               {% csrf_token %}
               <input type="hidden" name="form_token" value="{{ form_token }}">
 
+              {% include '_components/creator_field.html' %}
+
               <div>
                 <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.title.label }}</label>
                 <div class="mt-1">

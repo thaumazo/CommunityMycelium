@@ -7,6 +7,7 @@ from .forms import TaskForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 @login_required
 def task_list_view(request):
@@ -71,12 +72,15 @@ def task_edit_view(request, pk):
 
     if request.method == "POST":
         form = TaskForm(request.POST, instance=task)
+        attach_creator_field(form, request.user, task)
         if form.is_valid():
             form.save()
+            apply_creator_field(form, request.user, task)
             messages.success(request, "Task updated successfully!")
             return redirect("task_detail", pk=task.pk)
     else:
         form = TaskForm(instance=task)
+        attach_creator_field(form, request.user, task)
 
     return render(
         request,

@@ -7,6 +7,7 @@ from .forms import MeetingForm
 from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 
 @login_required
@@ -58,12 +59,15 @@ def meeting_edit_view(request, pk):
 
     if request.method == "POST":
         form = MeetingForm(request.POST, instance=meeting)
+        attach_creator_field(form, request.user, meeting)
         if form.is_valid():
             form.save()
+            apply_creator_field(form, request.user, meeting)
             messages.success(request, "Meeting updated successfully.")
             return redirect("meeting_detail", pk=meeting.pk)
     else:
         form = MeetingForm(instance=meeting)
+        attach_creator_field(form, request.user, meeting)
 
     return render(
         request,

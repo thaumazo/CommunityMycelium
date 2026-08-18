@@ -1,0 +1,16 @@
+{% if form.created_by %}
+  <div>
+    <label for="{{ form.created_by.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.created_by.label }}</label>
+    <div class="mt-1">
+      <select name="{{ form.created_by.html_name }}" id="{{ form.created_by.id_for_label }}" class="w-full">
+        {% for choice_value, choice_label in form.created_by.field.choices %}
+          <option value="{{ choice_value }}" {% if choice_value|stringformat:"s" == form.created_by.value|stringformat:"s" %}selected{% endif %}>{{ choice_label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <p class="mt-1 text-xs text-gray-500">{{ form.created_by.help_text }}</p>
+    {% if form.created_by.errors %}
+      <div class="mt-1 text-sm text-red-600">{{ form.created_by.errors|join:', ' }}</div>
+    {% endif %}
+  </div>
+{% endif %}

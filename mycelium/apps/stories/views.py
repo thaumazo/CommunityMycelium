@@ -9,6 +9,7 @@ from django.db.models import Q
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 from .models import Story, StoryMedia, StoryAttachment, StoryGeoPin, StoryLink
 from .forms import StoryForm, StoryMediaForm
 
@@ -545,8 +546,10 @@ def story_edit_view(request, pk):
     
     if request.method == "POST":
         form = StoryForm(request.POST, instance=story)
+        attach_creator_field(form, request.user, story)
         if form.is_valid():
             updated_story = form.save()
+            apply_creator_field(form, request.user, updated_story)
             try:
                 _sync_story_contexts(updated_story, form.cleaned_data, request.user)
             except (ValidationError, PermissionDenied) as exc:
@@ -561,6 +564,7 @@ def story_edit_view(request, pk):
             return redirect("story_detail", pk=story.pk)
     else:
         form = StoryForm(instance=story)
+        attach_creator_field(form, request.user, story)
     
     return render(request, "stories/story_form.html", {
         "form": form,

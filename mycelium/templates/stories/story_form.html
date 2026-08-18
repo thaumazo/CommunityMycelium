@@ -18,6 +18,8 @@
             {% csrf_token %}
             <input type="hidden" name="form_token" value="{{ form_token }}">
 
+            {% include '_components/creator_field.html' %}
+
             {% if is_community_note_submission %}
               <div class="bg-amber-50 p-4 rounded-lg border border-amber-200">
                 <p class="text-sm text-amber-800">

@@ -21,6 +21,8 @@
               {% csrf_token %}
               <input type="hidden" name="form_token" value="{{ form_token }}">
 
+              {% include '_components/creator_field.html' %}
+
               <div class="tabs-container">
                 <ul class="tab-list">
                   <li class="tab active" data-tab="details">Details</li>

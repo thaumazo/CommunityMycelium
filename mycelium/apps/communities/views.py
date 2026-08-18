@@ -10,6 +10,7 @@ from django.core.exceptions import PermissionDenied
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 
 @login_required
@@ -127,12 +128,15 @@ def community_edit_view(request, pk):
 
     if request.method == "POST":
         form = CommunityForm(request.POST, request.FILES, instance=community)
+        attach_creator_field(form, request.user, community)
         if form.is_valid():
             form.save()
+            apply_creator_field(form, request.user, community)
             messages.success(request, "Community updated successfully!")
             return redirect("community_detail", pk=community.pk)
     else:
         form = CommunityForm(instance=community)
+        attach_creator_field(form, request.user, community)
 
     return render(
         request,

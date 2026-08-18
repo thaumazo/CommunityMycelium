@@ -11,6 +11,7 @@ from apps.users.models import User
 from .models import Relationship, RelationshipProposal, RelationshipProposalResponse, RelationshipInstance
 from .forms import RelationshipForm, RelationshipProposalForm, RelationshipProposalResponseForm
 from apps.utils.form_tokens import get_form_token, validate_form_token
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 
 @login_required
@@ -69,12 +70,15 @@ def relationship_edit_view(request, pk):
 
     if request.method == "POST":
         form = RelationshipForm(request.POST, instance=relationship)
+        attach_creator_field(form, request.user, relationship)
         if form.is_valid():
             form.save()
+            apply_creator_field(form, request.user, relationship)
             messages.success(request, "Relationship updated successfully!")
             return redirect("relationship_detail", pk=relationship.pk)
     else:
         form = RelationshipForm(instance=relationship)
+        attach_creator_field(form, request.user, relationship)
 
     return render(
         request,

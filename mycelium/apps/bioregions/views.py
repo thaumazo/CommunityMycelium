@@ -20,6 +20,7 @@ from django.urls import reverse
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
+from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 
 TILE_PROVIDER_URLS = {
@@ -637,12 +638,15 @@ def bioregion_edit_view(request, pk):
 
     if request.method == "POST":
         form = BioregionForm(request.POST, request.FILES, instance=bioregion)
+        attach_creator_field(form, request.user, bioregion)
         if form.is_valid():
             form.save()
+            apply_creator_field(form, request.user, bioregion)
             messages.success(request, "Bioregion updated successfully!")
             return redirect("bioregion_detail", pk=bioregion.pk)
     else:
         form = BioregionForm(instance=bioregion)
+        attach_creator_field(form, request.user, bioregion)
 
     return render(
         request,
