@@ -11,7 +11,7 @@ from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permi
 from apps.bookmarks.models import Bookmark
 from .models import Project, ProjectCapitalIn, ProjectCapitalOut
 from .forms import ProjectForm
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -606,7 +606,7 @@ def project_story_import_view(request, pk):
                     if upsert_by_title:
                         existing_story_targets[dedupe_key] = attachment
                 created_count += 1
-    except ValueError as exc:
+    except (ValueError, ValidationError) as exc:
         messages.error(request, f"Import failed: {exc}")
         return redirect("project_detail", pk=project.pk)
 

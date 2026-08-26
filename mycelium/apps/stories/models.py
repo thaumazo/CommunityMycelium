@@ -175,6 +175,14 @@ class Story(models.Model):
 
         return tags
 
+    @property
+    def image_media(self):
+        return self.media.filter(media_type="image")
+
+    @property
+    def video_media(self):
+        return self.media.filter(media_type="video_url")
+
     def clean(self):
         if self.event_end_at and not self.event_start_at:
             raise ValidationError("event_start_at is required when event_end_at is set.")
@@ -392,6 +400,8 @@ class StoryAttachment(models.Model):
 
     ATTACHABLE_TARGETS = {
         ("projects", "project"),
+        ("projects", "projectcapitalin"),
+        ("projects", "projectcapitalout"),
         ("bioregions", "bioregion"),
         ("capitals", "capital"),
         ("metacrisis_facets", "metacrisis_facet"),

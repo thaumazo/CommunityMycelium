@@ -81,59 +81,73 @@
           {% if story.media.all %}
             <div class="mb-6">
               <h2 class="text-lg font-semibold text-gray-900 mb-4">Media</h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% for media in story.media.all %}
-                  <div class="border border-gray-200 rounded-lg overflow-hidden">
-                    {% if media.media_type == 'image' %}
-                      {% if media.file %}
-                        <img src="{{ media.file.url }}" alt="{{ media.caption }}" class="w-full h-64 object-cover" />
+
+              {% if story.image_media.all %}
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" id="story-media-gallery">
+                  {% for media in story.image_media.all %}
+                    <button type="button" class="group relative block aspect-square overflow-hidden rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            data-gallery-src="{{ media.file.url }}"
+                            data-gallery-caption="{{ media.caption|default:'' }}"
+                            onclick="openStoryGallery(this)">
+                      <img src="{{ media.file_thumbnail.url|default:media.file.url }}" alt="{{ media.caption }}" class="w-full h-full object-cover group-hover:opacity-90 transition" />
+                      {% can request.user 'change' story as check %}
+                      {% if check %}
+                        <a href="{% url 'story_delete_media' media.pk %}" onclick="event.stopPropagation()"
+                           class="absolute top-1 right-1 bg-black/60 text-white text-xs leading-none px-1.5 py-1 rounded hover:bg-red-600" title="Delete">✕</a>
                       {% endif %}
-                    {% elif media.media_type == 'video_url' %}
-                      {% if media.url %}
-                        <div class="bg-gray-900 rounded-lg overflow-hidden" style="width:500px;">
-                          <div class="relative" style="padding-bottom: 56.25%; height: 0;">
-                            <iframe 
-                              width="640" 
-                              height="360"
-                              src="{{ media.get_embed_url }}" 
-                              frameborder="0" 
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                              referrerpolicy="strict-origin-when-cross-origin"
-                              allowfullscreen
-                              class="absolute top-0 left-0 w-full h-full">
-                            </iframe>
-                          </div>
-                          <div class="bg-gray-800 px-4 py-3 text-center">
-                            <p class="text-xs text-gray-400 mb-2">If video doesn't play above:</p>
-                            <a href="{{ media.get_watch_url }}" target="_blank" rel="noopener noreferrer" 
-                               class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded transition">
-                              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                              </svg>
-                              {% if 'youtube.com' in media.url or 'youtu.be' in media.url %}
-                                Watch on YouTube
-                              {% else %}
-                                Watch Video
-                              {% endif %}
-                            </a>
-                          </div>
+                    </button>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              {% if story.video_media.all %}
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {% for media in story.video_media.all %}
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                      <div class="bg-gray-900 rounded-lg overflow-hidden" style="width:500px;">
+                        <div class="relative" style="padding-bottom: 56.25%; height: 0;">
+                          <iframe 
+                            width="640" 
+                            height="360"
+                            src="{{ media.get_embed_url }}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                            class="absolute top-0 left-0 w-full h-full">
+                          </iframe>
+                        </div>
+                        <div class="bg-gray-800 px-4 py-3 text-center">
+                          <p class="text-xs text-gray-400 mb-2">If video doesn't play above:</p>
+                          <a href="{{ media.get_watch_url }}" target="_blank" rel="noopener noreferrer" 
+                             class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded transition">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                            {% if 'youtube.com' in media.url or 'youtu.be' in media.url %}
+                              Watch on YouTube
+                            {% else %}
+                              Watch Video
+                            {% endif %}
+                          </a>
+                        </div>
+                      </div>
+                      {% if media.caption %}
+                        <div class="p-3 bg-gray-50">
+                          <p class="text-sm text-gray-700">{{ media.caption }}</p>
                         </div>
                       {% endif %}
-                    {% endif %}
-                    {% if media.caption %}
-                      <div class="p-3 bg-gray-50">
-                        <p class="text-sm text-gray-700">{{ media.caption }}</p>
-                      </div>
-                    {% endif %}
-                    {% can request.user 'change' story as check %}
-                    {% if check %}
-                      <div class="p-2 bg-gray-50 border-t border-gray-200">
-                        <a href="{% url 'story_delete_media' media.pk %}" class="text-xs text-red-600 hover:text-red-900">Delete</a>
-                      </div>
-                    {% endif %}
-                  </div>
-                {% endfor %}
-              </div>
+                      {% can request.user 'change' story as check %}
+                      {% if check %}
+                        <div class="p-2 bg-gray-50 border-t border-gray-200">
+                          <a href="{% url 'story_delete_media' media.pk %}" class="text-xs text-red-600 hover:text-red-900">Delete</a>
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
               {% can request.user 'change' story as check %}
               {% if check %}
                 <div class="mt-4">
@@ -243,4 +257,59 @@
       </div>
     </div>
   </div>
+
+  <!-- Rudimentary media gallery lightbox -->
+  <div id="story-gallery-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4" onclick="closeStoryGallery(event)">
+    <button type="button" onclick="closeStoryGallery(event)" class="absolute top-4 right-4 text-white text-3xl leading-none">&times;</button>
+    <button type="button" onclick="storyGalleryStep(event, -1)" class="absolute left-2 sm:left-4 text-white text-4xl px-2 select-none">&#8249;</button>
+    <div class="max-w-4xl max-h-full" onclick="event.stopPropagation()">
+      <img id="story-gallery-image" src="" alt="" class="max-h-[80vh] max-w-full mx-auto rounded" />
+      <p id="story-gallery-caption" class="text-white text-sm text-center mt-2"></p>
+    </div>
+    <button type="button" onclick="storyGalleryStep(event, 1)" class="absolute right-2 sm:right-4 text-white text-4xl px-2 select-none">&#8250;</button>
+  </div>
+
+  <script>
+    (function () {
+      var galleryItems = [];
+      var currentIndex = 0;
+
+      function showItem(index) {
+        var item = galleryItems[index];
+        if (!item) return;
+        document.getElementById('story-gallery-image').src = item.getAttribute('data-gallery-src');
+        document.getElementById('story-gallery-caption').textContent = item.getAttribute('data-gallery-caption') || '';
+      }
+
+      window.openStoryGallery = function (el) {
+        galleryItems = Array.from(document.querySelectorAll('#story-media-gallery [data-gallery-src]'));
+        currentIndex = galleryItems.indexOf(el);
+        showItem(currentIndex);
+        var modal = document.getElementById('story-gallery-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      };
+
+      window.closeStoryGallery = function () {
+        var modal = document.getElementById('story-gallery-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      };
+
+      window.storyGalleryStep = function (event, delta) {
+        event.stopPropagation();
+        if (!galleryItems.length) return;
+        currentIndex = (currentIndex + delta + galleryItems.length) % galleryItems.length;
+        showItem(currentIndex);
+      };
+
+      document.addEventListener('keydown', function (e) {
+        var modal = document.getElementById('story-gallery-modal');
+        if (modal.classList.contains('hidden')) return;
+        if (e.key === 'Escape') window.closeStoryGallery();
+        if (e.key === 'ArrowLeft') window.storyGalleryStep(e, -1);
+        if (e.key === 'ArrowRight') window.storyGalleryStep(e, 1);
+      });
+    })();
+  </script>
 {% endblock %}
