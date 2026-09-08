@@ -136,6 +136,13 @@ class User(AbstractUser):
         help_text="Indicates if the user can view public content.",
     )
 
+    visible_to_commons = models.ManyToManyField(
+        "commons.Commons",
+        related_name="visible_people",
+        blank=True,
+        help_text="Members of these commons can view this person's profile, regardless of view_members/view_public.",
+    )
+
     ai_transcript_processing = models.BooleanField(
         default=False,
         help_text="Allow AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.",
@@ -193,6 +200,12 @@ class UserInvite(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="invites",
+    )
+    requested_commons = models.ManyToManyField(
+        "commons.Commons",
+        blank=True,
+        related_name="signup_invites",
+        help_text="Commons the invited person will automatically apply to join upon registration.",
     )
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_PENDING)
     approved_by = models.ForeignKey(

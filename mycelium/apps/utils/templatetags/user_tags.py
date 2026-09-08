@@ -85,3 +85,26 @@ def get_pending_users_count(user):
     if user.is_superuser or user.is_admin():
         return pending_qs.count()
     return pending_qs.filter(invited_by=user).count()
+
+
+@register.filter
+def get_pending_commons_count(user):
+    """Count of pending commons invites received plus pending applications awaiting the user's review.
+    Usage: {{ request.user|get_pending_commons_count }}
+    """
+    if not user.is_authenticated:
+        return 0
+
+    from apps.commons.models import CommonsApplication, CommonsInvite
+    from apps.commons.utils import get_user_commons_queryset
+
+    invite_count = CommonsInvite.objects.filter(
+        invited_user=user, status=CommonsInvite.STATUS_PENDING
+    ).count()
+
+    my_commons = get_user_commons_queryset(user)
+    application_count = CommonsApplication.objects.filter(
+        commons__in=my_commons, status=CommonsApplication.STATUS_PENDING
+    ).count()
+
+    return invite_count + application_count

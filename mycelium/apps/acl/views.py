@@ -66,7 +66,7 @@ def acl_object_permission_form_step_1_view(request, content_type_id, object_id):
     object = get_permitted_object(request.user, "delegate", model_class, object_id)
 
     if request.method == "POST":
-        form = UserSelectForm(request.POST)
+        form = UserSelectForm(request.POST, current_user=request.user)
         if form.is_valid():
             return redirect(
                 "acl_object_permission_form_step_2",
@@ -75,7 +75,7 @@ def acl_object_permission_form_step_1_view(request, content_type_id, object_id):
                 user_id=form.cleaned_data["user"].id,
             )
     else:
-        form = UserSelectForm()
+        form = UserSelectForm(current_user=request.user)
 
     return render(
         request,

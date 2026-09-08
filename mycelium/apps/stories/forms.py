@@ -1,6 +1,7 @@
 from django import forms
 from .models import Story, StoryMedia, StoryLink
 from apps.locations.models import Location
+from apps.commons.utils import get_user_commons_queryset
 
 
 class StoryForm(forms.ModelForm):
@@ -16,6 +17,14 @@ class StoryForm(forms.ModelForm):
         initial=False,
         label="View Public",
         help_text="Check if public (unauthenticated) users can view this story.",
+    )
+
+    visible_to_commons = forms.ModelMultipleChoiceField(
+        queryset=None,
+        required=False,
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        label="Visible to Commons",
+        help_text="Members of these commons can view this story, regardless of the flags above.",
     )
 
     attachment_targets = forms.CharField(
@@ -71,6 +80,7 @@ class StoryForm(forms.ModelForm):
             "locations",
             "view_members",
             "view_public",
+            "visible_to_commons",
             "time_precision",
             "event_start_at",
             "event_end_at",
@@ -82,8 +92,13 @@ class StoryForm(forms.ModelForm):
             "event_end_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, current_user=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        visible_commons = get_user_commons_queryset(current_user)
+        if self.instance.pk:
+            visible_commons = visible_commons | self.instance.visible_to_commons.all()
+        self.fields["visible_to_commons"].queryset = visible_commons.distinct().order_by("title")
 
         instance = getattr(self, "instance", None)
         if instance and instance.pk:

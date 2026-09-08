@@ -1,0 +1,61 @@
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+  <div class="px-4 py-5 sm:px-6">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">My Commons</h3>
+      <a href="{% url 'commons_list' %}" class="text-sm text-indigo-600 hover:text-indigo-900">View all</a>
+    </div>
+    <p class="mt-1 max-w-2xl text-sm text-gray-500">Commons you own, admin, or belong to.</p>
+  </div>
+  <div class="border-t border-gray-200">
+    <ul class="divide-y divide-gray-200">
+      {% for invite in pending_commons_invites %}
+        <li class="px-4 py-4 sm:px-6 bg-indigo-50">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-indigo-700">Invited to {{ invite.commons.title }}</p>
+              <p class="text-xs text-gray-500">Invited by {{ invite.invited_by.username }}</p>
+            </div>
+            <form method="post" action="{% url 'commons_invite_respond' invite.commons.pk invite.pk %}" class="flex gap-2">
+              {% csrf_token %}
+              <button type="submit" name="decision" value="accept" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-3 rounded">Accept</button>
+              <button type="submit" name="decision" value="decline" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold py-1 px-3 rounded">Decline</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+      {% for application in pending_commons_applications %}
+        <li class="px-4 py-4 sm:px-6 bg-amber-50">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-amber-700">{{ application.applicant.username }} applied to {{ application.commons.title }}</p>
+            </div>
+            <form method="post" action="{% url 'commons_application_respond' application.commons.pk application.pk %}" class="flex gap-2">
+              {% csrf_token %}
+              <button type="submit" name="decision" value="approve" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-3 rounded">Approve</button>
+              <button type="submit" name="decision" value="decline" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold py-1 px-3 rounded">Decline</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+      {% for commons in my_commons %}
+        <li class="px-4 py-4 sm:px-6">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm font-medium text-indigo-600"><a href="{% url 'commons_detail' commons.pk %}" class="hover:underline">{{ commons.title }}</a></p>
+              {% if commons.bioregion %}
+                <p class="text-xs text-gray-400">{{ commons.bioregion.title }}</p>
+              {% endif %}
+            </div>
+            <a href="{% url 'commons_detail' commons.pk %}" class="text-sm text-gray-600 hover:text-gray-900">View</a>
+          </div>
+        </li>
+      {% empty %}
+        {% if not pending_commons_invites and not pending_commons_applications %}
+          <li class="px-4 py-4 sm:px-6 text-sm text-gray-500">
+            You're not part of any commons yet. <a href="{% url 'commons_create' %}" class="text-indigo-600 hover:underline">Start one</a>?
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>

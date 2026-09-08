@@ -465,7 +465,7 @@ def story_create_view(request):
     if request.method == "POST":
         if not validate_form_token(request, 'story_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
-            form = StoryForm()
+            form = StoryForm(current_user=request.user)
             form_token = get_form_token(request, 'story_create')
             context = {
                 "form": form,
@@ -479,7 +479,7 @@ def story_create_view(request):
             }
             return render(request, "stories/story_form.html", context)
         
-        form = StoryForm(request.POST)
+        form = StoryForm(request.POST, current_user=request.user)
         if form.is_valid():
             story = form.save(commit=False)
             story.created_by = request.user
@@ -518,7 +518,7 @@ def story_create_view(request):
             messages.success(request, "Story created successfully!")
             return redirect("story_detail", pk=story.pk)
     else:
-        form = StoryForm()
+        form = StoryForm(current_user=request.user)
 
         if default_connections:
             initial_tokens = "\n".join([item["token"] for item in default_connections])
@@ -545,7 +545,7 @@ def story_edit_view(request, pk):
     story = get_permitted_object(request.user, "change", Story, pk)
     
     if request.method == "POST":
-        form = StoryForm(request.POST, instance=story)
+        form = StoryForm(request.POST, instance=story, current_user=request.user)
         attach_creator_field(form, request.user, story)
         if form.is_valid():
             updated_story = form.save()
@@ -563,7 +563,7 @@ def story_edit_view(request, pk):
             messages.success(request, "Story updated successfully!")
             return redirect("story_detail", pk=story.pk)
     else:
-        form = StoryForm(instance=story)
+        form = StoryForm(instance=story, current_user=request.user)
         attach_creator_field(form, request.user, story)
     
     return render(request, "stories/story_form.html", {

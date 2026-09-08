@@ -4,6 +4,11 @@ from apps.capitals.models import Capital
 from apps.locations.models import Location
 from apps.bioregions.models import Bioregion
 from apps.bioregions.utils import get_visible_bioregion_queryset
+from apps.users.utils import get_visible_user_queryset
+from apps.commons.utils import get_user_commons_queryset
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class ProjectForm(forms.ModelForm):
@@ -43,6 +48,14 @@ class ProjectForm(forms.ModelForm):
         initial=False,
         label="View Public",
         help_text="Check if public (unauthenticated) users can view this move.",
+    )
+
+    visible_to_commons = forms.ModelMultipleChoiceField(
+        queryset=None,
+        required=False,
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        label="Visible to Commons",
+        help_text="Members of these commons can view this move, regardless of the flags above.",
     )
     
     capitals_in = forms.ModelMultipleChoiceField(
@@ -96,6 +109,7 @@ class ProjectForm(forms.ModelForm):
             "url",
             "view_members",
             "view_public",
+            "visible_to_commons",
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
@@ -117,6 +131,36 @@ class ProjectForm(forms.ModelForm):
                 pk__in=self.instance.bioregions.values_list("pk", flat=True)
             )
         self.fields["bioregions"].queryset = visible_bioregions.distinct()
+
+        visible_users = get_visible_user_queryset(current_user)
+        for field_name in ("members", "owners", "admins"):
+            field_users = visible_users
+            if self.instance.pk:
+                field_users = field_users | User.objects.filter(
+                    pk__in=getattr(self.instance, field_name).values_list("pk", flat=True)
+                )
+            self.fields[field_name].queryset = field_users.distinct()
+
+        visible_commons = get_user_commons_queryset(current_user)
+        if self.instance.pk:
+            visible_commons = visible_commons | self.instance.visible_to_commons.all()
+        self.fields["visible_to_commons"].queryset = visible_commons.distinct().order_by("title")
+
+        self.fields["parent"].required = False
+        self.fields["parent"].label = "Parent Move"
+        self.fields["parent"].help_text = "Optional parent move. Leave blank for a top-level move."
+        self.fields["parent"].queryset = Project.objects.order_by("title")
+        if self.instance.pk:
+            self.fields["parent"].queryset = self.fields["parent"].queryset.exclude(pk=self.instance.pk)
+
+        # Set initial values for capitals from through models
+        if self.instance.pk:
+            self.fields['capitals_in'].initial = [
+                pc.capital.id for pc in self.instance.project_capital_in_relationships.all()
+            ]
+            self.fields['capitals_out'].initial = [
+                pc.capital.id for pc in self.instance.project_capital_out_relationships.all()
+            ]
 
     def clean(self):
         cleaned = super().clean()
@@ -153,25 +197,6 @@ class ProjectForm(forms.ModelForm):
             cleaned["locations"] = locations | Location.objects.filter(pk=primary_location.pk)
 
         return cleaned
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["parent"].required = False
-        self.fields["parent"].label = "Parent Move"
-        self.fields["parent"].help_text = "Optional parent move. Leave blank for a top-level move."
-        self.fields["parent"].queryset = Project.objects.order_by("title")
-        if self.instance.pk:
-            self.fields["parent"].queryset = self.fields["parent"].queryset.exclude(pk=self.instance.pk)
-        
-        # Set initial values for capitals from through models
-        if self.instance.pk:
-            self.fields['capitals_in'].initial = [
-                pc.capital.id for pc in self.instance.project_capital_in_relationships.all()
-            ]
-            self.fields['capitals_out'].initial = [
-                pc.capital.id for pc in self.instance.project_capital_out_relationships.all()
-            ]
 
     def save(self, commit=True):
         project = super().save(commit=False)

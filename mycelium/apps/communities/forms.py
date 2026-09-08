@@ -1,8 +1,12 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from .models import Community
 from apps.locations.models import Location
 from apps.bioregions.models import Bioregion
 from apps.bioregions.utils import get_visible_bioregion_queryset
+from apps.users.utils import get_visible_user_queryset
+
+User = get_user_model()
 
 
 class CommunityForm(forms.ModelForm):
@@ -75,6 +79,15 @@ class CommunityForm(forms.ModelForm):
                 pk__in=self.instance.bioregions.values_list("pk", flat=True)
             )
         self.fields["bioregions"].queryset = visible_bioregions.distinct()
+
+        visible_users = get_visible_user_queryset(current_user)
+        for field_name in ("owners", "admins", "members"):
+            field_users = visible_users
+            if self.instance.pk:
+                field_users = field_users | User.objects.filter(
+                    pk__in=getattr(self.instance, field_name).values_list("pk", flat=True)
+                )
+            self.fields[field_name].queryset = field_users.distinct()
 
     def clean(self):
         cleaned = super().clean()

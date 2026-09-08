@@ -8,7 +8,10 @@ def get_visible_bioregion_queryset(user):
         return Bioregion.objects.filter(view_public=True)
     if user.is_superuser:
         return Bioregion.objects.all()
+    # Callers combine this with other querysets via `|`, which requires matching
+    # `distinct` flags; leave undistinct here and let callers dedupe afterwards.
     return Bioregion.objects.filter(
         Q(created_by=user) | Q(owners=user) | Q(admins=user) | Q(members=user)
         | Q(users=user) | Q(view_members=True) | Q(view_public=True)
-    ).distinct()
+        | Q(visible_to_commons__owners=user) | Q(visible_to_commons__admins=user) | Q(visible_to_commons__members=user)
+    )

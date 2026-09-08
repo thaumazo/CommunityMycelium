@@ -88,6 +88,13 @@ class Bioregion(models.Model):
         help_text="Public (unauthenticated) users can view this bioregion.",
     )
 
+    visible_to_commons = models.ManyToManyField(
+        "commons.Commons",
+        related_name="visible_bioregions",
+        blank=True,
+        help_text="Members of these commons can view this bioregion, regardless of view_members/view_public.",
+    )
+
     permissions = GenericRelation(ObjectPermission)
 
     def __str__(self):

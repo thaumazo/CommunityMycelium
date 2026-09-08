@@ -283,6 +283,7 @@
                         <div class="mt-1 text-sm text-red-600">{{ form.ai_transcript_processing.errors|join:", " }}</div>
                       {% endif %}
                     </div>
+                    {% include '_components/visible_to_commons_field.html' %}
                     {% if form.ai_transcript_processing.help_text %}
                       <p class="text-xs text-gray-500">{{ form.ai_transcript_processing.help_text }}</p>
                     {% endif %}

@@ -75,6 +75,13 @@ class Story(models.Model):
         help_text="Public (unauthenticated) users can view this story.",
     )
 
+    visible_to_commons = models.ManyToManyField(
+        "commons.Commons",
+        related_name="visible_stories",
+        blank=True,
+        help_text="Members of these commons can view this story, regardless of view_members/view_public.",
+    )
+
     is_community_note = models.BooleanField(
         default=False,
         help_text="Whether this story was submitted as a project community note.",

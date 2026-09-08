@@ -12,6 +12,14 @@
       {% if inviter %}
         <div class="mb-4 rounded-md border border-indigo-200 bg-indigo-50 p-3 text-sm text-indigo-900">
           You are registering with an invitation from <strong>{{ inviter.full_name|default:inviter.username }}</strong>.
+          {% if invite.requested_commons.all %}
+            <p class="mt-2">Registering will also submit an application to join:</p>
+            <ul class="list-disc pl-5 mt-1">
+              {% for commons in invite.requested_commons.all %}
+                <li>{{ commons.title }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </div>
       {% endif %}
 

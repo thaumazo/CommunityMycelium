@@ -1,6 +1,7 @@
 from django import forms
 from apps.bioregions.models import Bioregion
 from apps.bioregions.utils import get_visible_bioregion_queryset
+from apps.users.utils import get_visible_user_queryset
 from apps.communities.models import Community
 from apps.relationships.models import Relationship
 from apps.socialroles.models import Socialrole
@@ -240,6 +241,14 @@ class UserForm(forms.ModelForm):
         help_text="Allow AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.",
     )
 
+    visible_to_commons = forms.ModelMultipleChoiceField(
+        queryset=None,
+        required=False,
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        label="Visible to Commons",
+        help_text="Members of these commons can view this profile, regardless of the flags above.",
+    )
+
     class Meta:
         model = User
         fields = [
@@ -261,6 +270,7 @@ class UserForm(forms.ModelForm):
             "alternate_deck",
             "bio",
             "picture",
+            "visible_to_commons",
             # password fields are not model fields; they're above
         ]
         widgets = {
@@ -279,8 +289,10 @@ class UserForm(forms.ModelForm):
         self.fields["user_bioregions"].queryset = visible_bioregions.distinct()
 
         # If editing, don't allow "invited_by" to be self
+        invited_by_queryset = get_visible_user_queryset(self.current_user)
         if self.instance and self.instance.pk:
-            self.fields["invited_by"].queryset = User.objects.exclude(pk=self.instance.pk)
+            invited_by_queryset = invited_by_queryset.exclude(pk=self.instance.pk)
+        self.fields["invited_by"].queryset = invited_by_queryset.distinct().order_by("full_name")
 
         is_admin_editor = bool(
             self.current_user and (
@@ -291,6 +303,12 @@ class UserForm(forms.ModelForm):
         if not is_admin_editor:
             self.fields.pop("invited_by", None)
             self.fields.pop("invite_role", None)
+
+        from apps.commons.utils import get_user_commons_queryset
+        visible_commons = get_user_commons_queryset(self.current_user)
+        if self.instance.pk:
+            visible_commons = visible_commons | self.instance.visible_to_commons.all()
+        self.fields["visible_to_commons"].queryset = visible_commons.distinct().order_by("title")
 
     def clean(self):
         cleaned = super().clean()

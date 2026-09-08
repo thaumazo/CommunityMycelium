@@ -204,6 +204,17 @@
                 </a>
               </li>
               <li>
+                <a href="{% url 'commons_list' %}" class="{% active_class 'commons_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                  {% include '_icons/puzzle-piece.html' %}
+                  <span class="flex-1 ms-3 whitespace-nowrap">Commons</span>
+                  {% with pending_commons_count=request.user|get_pending_commons_count %}
+                    {% if pending_commons_count > 0 %}
+                      <span class="inline-flex items-center justify-center w-5 h-5 ms-2 text-xs font-semibold text-white bg-red-500 rounded-full">{{ pending_commons_count }}</span>
+                    {% endif %}
+                  {% endwith %}
+                </a>
+              </li>
+              <li>
                 <a href="{% url 'bioregion_list' %}" class="{% active_class 'bioregion_*' 'bg-gray-200' %} flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
                   {% include '_icons/bioregion.html' %}
                   <span class="flex-1 ms-3 whitespace-nowrap">Bioregions</span>

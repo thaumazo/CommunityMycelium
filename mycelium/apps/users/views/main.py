@@ -108,6 +108,15 @@ def register_view(request, token=None):
                 invite.invited_user = user
                 invite.status = UserInvite.STATUS_REGISTERED
                 invite.save(update_fields=["invited_user", "status"])
+
+                from apps.commons.models import CommonsApplication
+                for commons in invite.requested_commons.all():
+                    CommonsApplication.objects.get_or_create(
+                        commons=commons,
+                        applicant=user,
+                        status=CommonsApplication.STATUS_PENDING,
+                        defaults={"note": f"Requested at signup via invite from {invite.inviter.username}."},
+                    )
             
             if registration_mode == "approval" or invite is not None:
                 messages.success(
@@ -242,22 +251,28 @@ def user_detail_view(request, pk):
     invite_url = None
     invite_qr_b64 = None
     pending_invite_bioregion_title = None
+    pending_invite_commons_titles = []
+    invite_commons_choices = []
 
     if can_invite:
         from apps.users.models import UserInvite
         from apps.bioregions.models import Bioregion
+        from apps.commons.utils import get_user_commons_queryset
 
         if request.user.is_superuser or request.user.is_admin():
             invite_bioregions = Bioregion.objects.all().order_by("title")
         else:
             invite_bioregions = request.user.user_bioregions.all().order_by("title")
 
+        invite_commons_choices = get_user_commons_queryset(request.user).order_by("title").distinct()
+
         pending_invite = UserInvite.objects.filter(
             inviter=request.user,
             status=UserInvite.STATUS_PENDING,
-        ).select_related("bioregion").order_by("-created_at").first()
+        ).select_related("bioregion").prefetch_related("requested_commons").order_by("-created_at").first()
         if pending_invite:
             pending_invite_bioregion_title = pending_invite.bioregion.title if pending_invite.bioregion else None
+            pending_invite_commons_titles = [c.title for c in pending_invite.requested_commons.all()]
             invite_url = request.build_absolute_uri(reverse("register_with_token", kwargs={"token": pending_invite.token}))
             qr = qrcode.QRCode(box_size=6, border=2)
             qr.add_data(invite_url)
@@ -280,7 +295,9 @@ def user_detail_view(request, pk):
         "invite_url": invite_url,
         "invite_qr_b64": invite_qr_b64,
         "invite_bioregions": invite_bioregions,
+        "invite_commons_choices": invite_commons_choices,
         "pending_invite_bioregion_title": pending_invite_bioregion_title,
+        "pending_invite_commons_titles": pending_invite_commons_titles,
     })
 
 
@@ -562,6 +579,13 @@ def create_invite_view(request):
         bioregion=bioregion,
         invited_email=(request.POST.get("invited_email") or "").strip() or None,
     )
+
+    from apps.commons.utils import get_user_commons_queryset
+    requested_commons_ids = request.POST.getlist("commons")
+    if requested_commons_ids:
+        allowed_commons = get_user_commons_queryset(request.user).filter(pk__in=requested_commons_ids)
+        invite.requested_commons.set(allowed_commons)
+
     invite_url = request.build_absolute_uri(reverse("register_with_token", kwargs={"token": invite.token}))
     messages.success(request, f"Invite created for bioregion '{bioregion.title}'. Share this link: {invite_url}")
     return redirect("user_detail", pk=request.user.pk)

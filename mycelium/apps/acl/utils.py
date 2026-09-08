@@ -7,6 +7,18 @@ from apps.utils.dump import dump
 from apps.users.models import User
 
 
+def _visible_via_commons(user, obj):
+    """True if `obj` has a visible_to_commons M2M and `user` belongs to any of those commons."""
+    from django.db.models import Q
+
+    if not (user and user.is_authenticated):
+        return False
+    relation = getattr(obj, "visible_to_commons", None)
+    if relation is None or not hasattr(obj, "pk") or not obj.pk:
+        return False
+    return relation.filter(Q(owners=user) | Q(admins=user) | Q(members=user)).exists()
+
+
 def is_permitted(user, action, obj_or_string):
     """
     Check if a user has permission to perform `action` on `obj`.
@@ -32,6 +44,7 @@ def is_permitted(user, action, obj_or_string):
     from apps.bioregions.models import Bioregion
     from apps.challenges.models import Challenge
     from apps.communities.models import Community
+    from apps.commons.models import Commons
     from apps.projects.models import Project
     from apps.locations.models import Location
     
@@ -42,6 +55,8 @@ def is_permitted(user, action, obj_or_string):
         if isinstance(obj, User) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
         if isinstance(obj, Bioregion) and action == "view" and hasattr(obj, 'view_public'):
+            return obj.view_public
+        if isinstance(obj, Commons) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
         if isinstance(obj, Community) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
@@ -91,10 +106,39 @@ def is_permitted(user, action, obj_or_string):
         # Public users can see bioregions with view_public=True
         if obj.view_public:
             return True
+        # Members of a commons this bioregion is shared with can view it
+        if _visible_via_commons(user, obj):
+            return True
     
     if isinstance(obj, Challenge) and action == "view":
         # Any authenticated user can view challenges that have a related bioregion
         if user.is_authenticated and obj.related_bioregion:
+            return True
+
+    # Visibility rules for commons
+    if isinstance(obj, Commons) and action == "view":
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        if user.is_superuser:
+            return True
+        if user.is_authenticated and obj.view_members:
+            return True
+        if obj.view_public:
+            return True
+
+    # Any authenticated user can start a commons
+    if isinstance(obj, Commons) and action == "add":
+        if user.is_authenticated:
+            return True
+
+    # Delete permissions for commons
+    if isinstance(obj, Commons) and action == "delete":
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        if hasattr(obj, "pk") and obj.pk:
+            if user in obj.owners.all() or user in obj.admins.all():
+                return True
+        if user.is_superuser:
             return True
 
     # Reference/taxonomy content is visible to all authenticated members
@@ -131,6 +175,9 @@ def is_permitted(user, action, obj_or_string):
         # Public users can see users with view_public=True
         if obj.view_public:
             return True
+        # Members of a commons this person is shared with can view their profile
+        if _visible_via_commons(user, obj):
+            return True
     
     # Visibility rules for communities
     if isinstance(obj, Community) and action == "view":
@@ -164,6 +211,9 @@ def is_permitted(user, action, obj_or_string):
             return True
         # Public users can see projects with view_public=True
         if obj.view_public:
+            return True
+        # Members of a commons this move is shared with can view it
+        if _visible_via_commons(user, obj):
             return True
     
     # Edit permissions for projects
@@ -295,6 +345,9 @@ def is_permitted(user, action, obj_or_string):
             return True
         # Public users can see stories with view_public=True
         if obj.view_public:
+            return True
+        # Members of a commons this story is shared with can view it
+        if _visible_via_commons(user, obj):
             return True
     
     # Edit permissions for stories
@@ -523,6 +576,7 @@ def get_permitted_objects(user, action, model_class):
     from apps.bioregions.models import Bioregion
     from apps.challenges.models import Challenge
     from apps.communities.models import Community
+    from apps.commons.models import Commons
     from apps.projects.models import Project
     from apps.locations.models import Location
     from apps.capitals.models import Capital
@@ -533,7 +587,11 @@ def get_permitted_objects(user, action, model_class):
     # Public access rules
     if model_class == Bioregion and action == "view":
         from apps.bioregions.utils import get_visible_bioregion_queryset
-        return list(get_visible_bioregion_queryset(user))
+        return list(get_visible_bioregion_queryset(user).distinct())
+    
+    if model_class == Commons and action == "view":
+        from apps.commons.utils import get_visible_commons_queryset
+        return list(get_visible_commons_queryset(user).distinct())
     
     if model_class == Challenge and action == "view" and user.is_authenticated:
         # All authenticated users can view challenges with a related bioregion
@@ -545,18 +603,8 @@ def get_permitted_objects(user, action, model_class):
     
     # Visibility rules for users, communities, and projects
     if model_class == User and action == "view":
-        if user.is_superuser:
-            # Superusers can see everyone
-            return list(model_class.objects.all())
-        elif user.is_authenticated:
-            # Authenticated users can see themselves + view_members users + view_public users
-            from django.db.models import Q
-            return list(model_class.objects.filter(
-                Q(id=user.id) | Q(view_members=True) | Q(view_public=True)
-            ).distinct())
-        else:
-            # Unauthenticated users can only see view_public users
-            return list(model_class.objects.filter(view_public=True))
+        from apps.users.utils import get_visible_user_queryset
+        return list(get_visible_user_queryset(user).distinct())
     
     if model_class == Community and action == "view":
         if user.is_superuser:
@@ -578,9 +626,12 @@ def get_permitted_objects(user, action, model_class):
             return list(model_class.objects.all())
         elif user.is_authenticated:
             # Authenticated users can see their own + view_members projects + view_public projects
+            # + projects shared with a commons they belong to
             from django.db.models import Q
             return list(model_class.objects.filter(
-                Q(created_by=user) | Q(view_members=True) | Q(view_public=True)
+                Q(created_by=user) | Q(owners=user) | Q(admins=user) | Q(members=user)
+                | Q(view_members=True) | Q(view_public=True)
+                | Q(visible_to_commons__owners=user) | Q(visible_to_commons__admins=user) | Q(visible_to_commons__members=user)
             ).distinct())
         else:
             # Unauthenticated users can only see view_public projects
@@ -604,9 +655,11 @@ def get_permitted_objects(user, action, model_class):
             return list(model_class.objects.all())
         elif user.is_authenticated:
             # Authenticated users can see their own + view_members stories + view_public stories
+            # + stories shared with a commons they belong to
             from django.db.models import Q
             return list(model_class.objects.filter(
                 Q(created_by=user) | Q(view_members=True) | Q(view_public=True)
+                | Q(visible_to_commons__owners=user) | Q(visible_to_commons__admins=user) | Q(visible_to_commons__members=user)
             ).distinct())
         else:
             # Unauthenticated users can only see view_public stories

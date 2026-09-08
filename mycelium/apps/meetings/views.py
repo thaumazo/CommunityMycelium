@@ -35,7 +35,7 @@ def meeting_create_view(request):
         raise PermissionDenied("You do not have permission to add a meeting.")
 
     if request.method == "POST":
-        form = MeetingForm(request.POST)
+        form = MeetingForm(request.POST, current_user=request.user)
         if form.is_valid():
             meeting = form.save(commit=False)
             meeting.created_by = request.user
@@ -44,7 +44,7 @@ def meeting_create_view(request):
             messages.success(request, "Meeting created successfully.")
             return redirect("meeting_detail", pk=meeting.pk)
     else:
-        form = MeetingForm()
+        form = MeetingForm(current_user=request.user)
 
     return render(
         request,
@@ -58,7 +58,7 @@ def meeting_edit_view(request, pk):
     meeting = get_permitted_object(request.user, "change", Meeting, pk)
 
     if request.method == "POST":
-        form = MeetingForm(request.POST, instance=meeting)
+        form = MeetingForm(request.POST, instance=meeting, current_user=request.user)
         attach_creator_field(form, request.user, meeting)
         if form.is_valid():
             form.save()
@@ -66,7 +66,7 @@ def meeting_edit_view(request, pk):
             messages.success(request, "Meeting updated successfully.")
             return redirect("meeting_detail", pk=meeting.pk)
     else:
-        form = MeetingForm(instance=meeting)
+        form = MeetingForm(instance=meeting, current_user=request.user)
         attach_creator_field(form, request.user, meeting)
 
     return render(

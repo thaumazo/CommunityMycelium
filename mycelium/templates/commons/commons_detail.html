@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load user_tags %}
+{% load markdown_filters %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      {% include '_components/object_nav.html' with object=commons %}
+
+      <div class="max-w-3xl mx-auto">
+        {% include '_components/messages.html' %}
+
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="flex justify-between items-start">
+              <div>
+                <h1 class="text-2xl font-semibold text-gray-900">{{ commons.title }}</h1>
+                {% if commons.bioregion %}
+                  <p class="text-base text-gray-500">Bioregion: <a href="{% url 'bioregion_detail' commons.bioregion.pk %}" class="text-indigo-600 hover:underline">{{ commons.bioregion.title }}</a></p>
+                {% else %}
+                  <p class="text-base text-gray-500">Non-regional commons</p>
+                {% endif %}
+              </div>
+              <div class="flex items-center space-x-2">
+                {% can request.user 'change' commons as check %}
+                {% if check %}
+                  <a href="{% url 'commons_edit' commons.pk %}"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
+                  <a href="{% url 'commons_delete' commons.pk %}"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 text-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if can_apply %}
+              <div class="mt-4">
+                <a href="{% url 'commons_apply' commons.pk %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded inline-block">Apply to Join</a>
+              </div>
+            {% elif pending_application %}
+              <p class="mt-4 text-sm text-gray-500">Your application is pending review.</p>
+            {% elif pending_invite %}
+              <div class="mt-4 bg-indigo-50 border border-indigo-200 rounded-md p-4">
+                <p class="text-sm text-gray-700 mb-2">You've been invited to join this commons.</p>
+                <form method="post" action="{% url 'commons_invite_respond' commons.pk pending_invite.pk %}" class="inline">
+                  {% csrf_token %}
+                  <button type="submit" name="decision" value="accept" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-3 rounded">Accept</button>
+                  <button type="submit" name="decision" value="decline" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold py-1 px-3 rounded">Decline</button>
+                </form>
+              </div>
+            {% endif %}
+
+            <div class="mt-6">
+              <div class="tabs-container">
+                <ul class="tab-list">
+                  <li class="tab active" data-tab="details">Details</li>
+                  <li class="tab" data-tab="people">People</li>
+                  {% if is_admin %}
+                    <li class="tab" data-tab="applications">Applications <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ applications|length }}</span></li>
+                  {% endif %}
+                  <li class="tab" data-tab="visibility">Visibility</li>
+                </ul>
+              </div>
+
+              <div class="tab-content" id="details">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Created by</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ commons.created_by.username }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Description</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 prose prose-sm">{{ commons.description|markdown_to_html }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Agreements</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% if commons.agreements_url %}
+                        <a href="{{ commons.agreements_url }}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">View membership agreements</a>
+                      {% else %}
+                        <span class="text-gray-400">Not provided</span>
+                      {% endif %}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="tab-content hidden" id="people">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Owners</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for owner in commons.owners.all %}<span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">{{ owner.username }}</span>{% empty %}<span class="text-gray-400">None</span>{% endfor %}
+                    </dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Admins</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for admin in commons.admins.all %}<span class="px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">{{ admin.username }}</span>{% empty %}<span class="text-gray-400">None</span>{% endfor %}
+                    </dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Members</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {% for member in commons.members.all %}<span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ member.username }}</span>{% empty %}<span class="text-gray-400">None</span>{% endfor %}
+                    </dd>
+                  </div>
+                </dl>
+
+                {% if is_admin %}
+                  <div class="mt-6 border-t border-gray-200 pt-6">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Invite someone</h3>
+                    <form method="post" action="{% url 'commons_invite_create' commons.pk %}" class="flex items-center gap-2">
+                      {% csrf_token %}
+                      <select name="invited_user" class="w-full">
+                        {% for value, label in invite_form.invited_user.field.choices %}
+                          {% if value %}<option value="{{ value }}">{{ label }}</option>{% endif %}
+                        {% endfor %}
+                      </select>
+                      <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded whitespace-nowrap">Send Invite</button>
+                    </form>
+
+                    {% if invites %}
+                      <h4 class="text-xs font-semibold text-gray-500 uppercase mt-4 mb-2">Pending Invites</h4>
+                      <ul class="text-sm text-gray-700 space-y-1">
+                        {% for invite in invites %}
+                          <li>{{ invite.invited_user.username }} &middot; invited {{ invite.created_at|date:"M j, Y" }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+
+              {% if is_admin %}
+                <div class="tab-content hidden" id="applications">
+                  <ul class="divide-y divide-gray-200">
+                    {% for application in applications %}
+                      <li class="py-4 flex items-center justify-between">
+                        <div>
+                          <p class="text-sm font-medium text-gray-900">{{ application.applicant.username }}</p>
+                          {% if application.note %}<p class="text-sm text-gray-500">{{ application.note }}</p>{% endif %}
+                        </div>
+                        <form method="post" action="{% url 'commons_application_respond' commons.pk application.pk %}" class="flex gap-2">
+                          {% csrf_token %}
+                          <button type="submit" name="decision" value="approve" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-3 rounded">Approve</button>
+                          <button type="submit" name="decision" value="decline" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold py-1 px-3 rounded">Decline</button>
+                        </form>
+                      </li>
+                    {% empty %}
+                      <li class="py-4 text-center text-gray-500">No pending applications.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+
+              <div class="tab-content hidden" id="visibility">
+                <dl class="divide-y divide-gray-200">
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">View Members</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ commons.view_members|yesno:"Yes,No" }}</dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">View Public</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ commons.view_public|yesno:"Yes,No" }}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+              <a href="{% url 'commons_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Back to Commons</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

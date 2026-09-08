@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.users",
     "apps.communities",
+    "apps.commons",
     "apps.projects",
     "apps.locations",
     "apps.socialroles",

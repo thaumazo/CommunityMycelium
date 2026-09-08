@@ -1,5 +1,6 @@
 from django import forms
 from .models import Meeting
+from apps.users.utils import get_visible_user_queryset
 
 
 class MeetingForm(forms.ModelForm):
@@ -21,3 +22,13 @@ class MeetingForm(forms.ModelForm):
             "transcript_gdrive_folder_id": forms.TextInput(attrs={"placeholder": "Google Drive folder ID"}),
             "transcript": forms.Textarea(attrs={"rows": 6, "placeholder": "Enter meeting transcript here..."}),
         }
+
+    def __init__(self, *args, current_user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        visible_users = get_visible_user_queryset(current_user)
+        if self.instance.pk:
+            visible_users = visible_users | self.instance.attending.model.objects.filter(
+                pk__in=self.instance.attending.values_list("pk", flat=True)
+            )
+        self.fields["attending"].queryset = visible_users.distinct()
