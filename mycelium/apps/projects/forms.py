@@ -2,6 +2,8 @@ from django import forms
 from .models import Project, ProjectCapitalIn, ProjectCapitalOut
 from apps.capitals.models import Capital
 from apps.locations.models import Location
+from apps.bioregions.models import Bioregion
+from apps.bioregions.utils import get_visible_bioregion_queryset
 
 
 class ProjectForm(forms.ModelForm):
@@ -105,6 +107,16 @@ class ProjectForm(forms.ModelForm):
             "bioregions": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
             "url": forms.Textarea(attrs={"rows": 1}),
         }
+
+    def __init__(self, *args, current_user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        visible_bioregions = get_visible_bioregion_queryset(current_user)
+        if self.instance.pk:
+            visible_bioregions = visible_bioregions | Bioregion.objects.filter(
+                pk__in=self.instance.bioregions.values_list("pk", flat=True)
+            )
+        self.fields["bioregions"].queryset = visible_bioregions.distinct()
 
     def clean(self):
         cleaned = super().clean()

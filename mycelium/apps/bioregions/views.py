@@ -20,7 +20,6 @@ from django.urls import reverse
 from apps.utils.dump import dump
 from apps.utils.pagination import paginate_queryset
 from apps.utils.form_tokens import get_form_token, validate_form_token
-from apps.utils.superuser_fields import attach_creator_field, apply_creator_field
 
 
 TILE_PROVIDER_URLS = {
@@ -260,8 +259,8 @@ def bioregion_list_view(request):
     if request.user.is_authenticated:
         bioregions = get_permitted_objects(request.user, "view", Bioregion)
     else:
-        # Anonymous users can see all bioregions (title/description only in template)
-        bioregions = Bioregion.objects.all()
+        # Anonymous users can only see bioregions with view_public enabled
+        bioregions = Bioregion.objects.filter(view_public=True)
 
     bioregions_list = list(bioregions)
 
@@ -292,9 +291,9 @@ def bioregion_detail_view(request, pk):
     if request.user.is_authenticated:
         bioregion = get_permitted_object(request.user, "view", Bioregion, pk)
     else:
-        # Anonymous users can see bioregion title/description
+        # Anonymous users can only see bioregions with view_public enabled
         try:
-            bioregion = Bioregion.objects.get(pk=pk)
+            bioregion = Bioregion.objects.get(pk=pk, view_public=True)
         except Bioregion.DoesNotExist:
             from django.http import Http404
             raise Http404
@@ -613,7 +612,7 @@ def bioregion_create_view(request):
             form_token = get_form_token(request, 'bioregion_create')
             return render(request, "bioregions/bioregion_form.html", {"form": form, "form_token": form_token})
         
-        form = BioregionForm(request.POST, request.FILES)
+        form = BioregionForm(request.POST, request.FILES, current_user=request.user)
         if form.is_valid():
             bioregion = form.save(commit=False)
             bioregion.created_by = request.user
@@ -622,7 +621,7 @@ def bioregion_create_view(request):
             messages.success(request, "Bioregion created successfully!")
             return redirect("bioregion_detail", pk=bioregion.pk)
     else:
-        form = BioregionForm()
+        form = BioregionForm(current_user=request.user)
 
     form_token = get_form_token(request, 'bioregion_create')
     return render(
@@ -637,16 +636,16 @@ def bioregion_edit_view(request, pk):
     bioregion = get_permitted_object(request.user, "change", Bioregion, pk)
 
     if request.method == "POST":
-        form = BioregionForm(request.POST, request.FILES, instance=bioregion)
-        attach_creator_field(form, request.user, bioregion)
+        form = BioregionForm(
+            request.POST, request.FILES, instance=bioregion,
+            current_user=request.user,
+        )
         if form.is_valid():
             form.save()
-            apply_creator_field(form, request.user, bioregion)
             messages.success(request, "Bioregion updated successfully!")
             return redirect("bioregion_detail", pk=bioregion.pk)
     else:
-        form = BioregionForm(instance=bioregion)
-        attach_creator_field(form, request.user, bioregion)
+        form = BioregionForm(instance=bioregion, current_user=request.user)
 
     return render(
         request,

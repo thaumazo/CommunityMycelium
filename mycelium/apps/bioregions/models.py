@@ -59,6 +59,35 @@ class Bioregion(models.Model):
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name="bioregions"
     )
+
+    admins = models.ManyToManyField(
+        User,
+        related_name="admin_bioregions",
+        blank=True,
+        help_text="Users who can manage this bioregion's members and visibility settings",
+    )
+    owners = models.ManyToManyField(
+        User,
+        related_name="owned_bioregions",
+        blank=True,
+        help_text="Superadmin-assigned users who can manage this bioregion's admins",
+    )
+    members = models.ManyToManyField(
+        User,
+        related_name="member_bioregions",
+        blank=True,
+        help_text="Users who are members of this bioregion",
+    )
+
+    view_members = models.BooleanField(
+        default=False,
+        help_text="Any authenticated member can view this bioregion. Users connected to the bioregion can always view it regardless of this setting.",
+    )
+    view_public = models.BooleanField(
+        default=False,
+        help_text="Public (unauthenticated) users can view this bioregion.",
+    )
+
     permissions = GenericRelation(ObjectPermission)
 
     def __str__(self):

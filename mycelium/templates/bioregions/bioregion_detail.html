@@ -48,6 +48,9 @@
                   <li class="tab" data-tab="organizations">Orgs</li>
                   <li class="tab" data-tab="projects">Moves</li>
                   <li class="tab" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ locations_count }}</span></li>
+                  {% if check %}
+                    <li class="tab" data-tab="permissions">Permissions</li>
+                  {% endif %}
                 </ul>
               </div>
 
@@ -474,6 +477,55 @@
                   </ul>
                 </div>
               </div>
+
+              {% if check %}
+                <div class="tab-content hidden" id="permissions">
+                  <h2 class="text-lg leading-6 font-medium text-gray-900">Permissions</h2>
+                  <dl class="divide-y divide-gray-200 mt-4">
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm font-medium text-gray-500">View Members</dt>
+                      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ bioregion.view_members|yesno:"Yes,No" }}</dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm font-medium text-gray-500">View Public</dt>
+                      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ bioregion.view_public|yesno:"Yes,No" }}</dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm font-medium text-gray-500">Owners</dt>
+                      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {% for owner in bioregion.owners.all %}
+                          <a href="{% url 'user_detail' owner.pk %}" class="text-indigo-600 hover:underline">{{ owner.get_full_name|default:owner.username }}</a>{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                          <span class="text-gray-500">No owners assigned.</span>
+                        {% endfor %}
+                      </dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm font-medium text-gray-500">Admins</dt>
+                      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {% for admin in bioregion.admins.all %}
+                          <a href="{% url 'user_detail' admin.pk %}" class="text-indigo-600 hover:underline">{{ admin.get_full_name|default:admin.username }}</a>{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                          <span class="text-gray-500">No admins assigned.</span>
+                        {% endfor %}
+                      </dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm font-medium text-gray-500">Members</dt>
+                      <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {% for member in bioregion.members.all %}
+                          <a href="{% url 'user_detail' member.pk %}" class="text-indigo-600 hover:underline">{{ member.get_full_name|default:member.username }}</a>{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                          <span class="text-gray-500">No members assigned.</span>
+                        {% endfor %}
+                      </dd>
+                    </div>
+                  </dl>
+                  <p class="mt-4 text-sm text-gray-500">
+                    <a href="{% url 'bioregion_edit' bioregion.pk %}" class="text-indigo-600 hover:text-indigo-900 underline">Edit permissions</a>
+                  </p>
+                </div>
+              {% endif %}
               {% endif %}
 
                 {% can request.user 'change' bioregion as can_import_challenges %}

@@ -705,11 +705,11 @@ def project_create_view(request):
     if request.method == "POST":
         if not validate_form_token(request, 'project_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
-            form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None)
+            form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None, current_user=request.user)
             form_token = get_form_token(request, 'project_create')
             return render(request, "projects/project_form.html", {"form": form, "form_token": form_token})
         
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.POST, current_user=request.user)
         if form.is_valid():
             project = form.save(commit=False)
             project.created_by = request.user
@@ -717,7 +717,7 @@ def project_create_view(request):
             messages.success(request, "Move created successfully!")
             return redirect("project_detail", pk=project.pk)
     else:
-        form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None)
+        form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None, current_user=request.user)
 
     form_token = get_form_token(request, 'project_create')
     return render(
@@ -732,7 +732,7 @@ def project_edit_view(request, pk):
     project = get_permitted_object(request.user, "change", Project, pk)
 
     if request.method == "POST":
-        form = ProjectForm(request.POST, instance=project)
+        form = ProjectForm(request.POST, instance=project, current_user=request.user)
         attach_creator_field(form, request.user, project)
         if form.is_valid():
             form.save()
@@ -740,7 +740,7 @@ def project_edit_view(request, pk):
             messages.success(request, "Move updated successfully!")
             return redirect("project_detail", pk=project.pk)
     else:
-        form = ProjectForm(instance=project)
+        form = ProjectForm(instance=project, current_user=request.user)
         attach_creator_field(form, request.user, project)
 
     return render(

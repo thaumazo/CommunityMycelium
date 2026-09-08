@@ -38,11 +38,11 @@ def challenge_create_view(request):
     if request.method == "POST":
         if not validate_form_token(request, 'challenge_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
-            form = ChallengeForm()
+            form = ChallengeForm(current_user=request.user)
             form_token = get_form_token(request, 'challenge_create')
             return render(request, "challenges/challenge_form.html", {"form": form, "form_token": form_token})
         
-        form = ChallengeForm(request.POST)
+        form = ChallengeForm(request.POST, current_user=request.user)
         if form.is_valid():
             challenge = form.save(commit=False)
             challenge.created_by = request.user
@@ -51,7 +51,7 @@ def challenge_create_view(request):
             messages.success(request, "Challenge created successfully!")
             return redirect("challenge_detail", pk=challenge.pk)
     else:
-        form = ChallengeForm()
+        form = ChallengeForm(current_user=request.user)
 
     form_token = get_form_token(request, 'challenge_create')
     return render(
@@ -66,7 +66,7 @@ def challenge_edit_view(request, pk):
     challenge = get_permitted_object(request.user, "change", Challenge, pk)
 
     if request.method == "POST":
-        form = ChallengeForm(request.POST, instance=challenge)
+        form = ChallengeForm(request.POST, instance=challenge, current_user=request.user)
         attach_creator_field(form, request.user, challenge)
         if form.is_valid():
             form.save()
@@ -74,7 +74,7 @@ def challenge_edit_view(request, pk):
             messages.success(request, "Challenge updated successfully!")
             return redirect("challenge_detail", pk=challenge.pk)
     else:
-        form = ChallengeForm(instance=challenge)
+        form = ChallengeForm(instance=challenge, current_user=request.user)
         attach_creator_field(form, request.user, challenge)
 
     return render(

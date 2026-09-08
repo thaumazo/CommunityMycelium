@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from apps.bioregions.models import Bioregion
+from apps.bioregions.utils import get_visible_bioregion_queryset
 from apps.challenges.models import Challenge
 from apps.communities.models import Community
 from apps.projects.models import Project
@@ -39,6 +40,18 @@ class UserSerializer(serializers.ModelSerializer):
     invited_by = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), required=False, allow_null=True
     )
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request")
+        requesting_user = getattr(request, "user", None)
+        visible_bioregions = get_visible_bioregion_queryset(requesting_user)
+        if isinstance(self.instance, User):
+            visible_bioregions = visible_bioregions | Bioregion.objects.filter(
+                pk__in=self.instance.user_bioregions.values_list("pk", flat=True)
+            )
+        fields["user_bioregions"].queryset = visible_bioregions.distinct()
+        return fields
 
     class Meta:
         model = User
@@ -148,8 +161,25 @@ class BioregionSerializer(serializers.ModelSerializer):
             "radius_km",
             "created_by",
             "created_by_detail",
+            "owners",
+            "admins",
+            "members",
+            "view_members",
+            "view_public",
         ]
         read_only_fields = ["id", "picture_thumbnail"]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request")
+        requesting_user = getattr(request, "user", None)
+        visible_bioregions = get_visible_bioregion_queryset(requesting_user)
+        if isinstance(self.instance, Bioregion) and self.instance.parent_region_id:
+            visible_bioregions = visible_bioregions | Bioregion.objects.filter(
+                pk=self.instance.parent_region_id
+            )
+        fields["parent_region"].queryset = visible_bioregions.distinct()
+        return fields
 
     def get_created_by_detail(self, obj):
         if obj.created_by:
@@ -196,6 +226,18 @@ class CommunitySerializer(serializers.ModelSerializer):
             "view_public",
         ]
         read_only_fields = ["id", "picture_thumbnail"]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request")
+        requesting_user = getattr(request, "user", None)
+        visible_bioregions = get_visible_bioregion_queryset(requesting_user)
+        if isinstance(self.instance, Community):
+            visible_bioregions = visible_bioregions | Bioregion.objects.filter(
+                pk__in=self.instance.bioregions.values_list("pk", flat=True)
+            )
+        fields["bioregions"].queryset = visible_bioregions.distinct()
+        return fields
 
     def get_created_by_detail(self, obj):
         if obj.created_by:
@@ -249,6 +291,18 @@ class ProjectSerializer(serializers.ModelSerializer):
             "view_public",
         ]
         read_only_fields = ["id"]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request")
+        requesting_user = getattr(request, "user", None)
+        visible_bioregions = get_visible_bioregion_queryset(requesting_user)
+        if isinstance(self.instance, Project):
+            visible_bioregions = visible_bioregions | Bioregion.objects.filter(
+                pk__in=self.instance.bioregions.values_list("pk", flat=True)
+            )
+        fields["bioregions"].queryset = visible_bioregions.distinct()
+        return fields
 
     def get_created_by_detail(self, obj):
         if obj.created_by:
@@ -373,6 +427,18 @@ class ChallengeSerializer(serializers.ModelSerializer):
             "created_by_detail",
         ]
         read_only_fields = ["id"]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request")
+        requesting_user = getattr(request, "user", None)
+        visible_bioregions = get_visible_bioregion_queryset(requesting_user)
+        if isinstance(self.instance, Challenge) and self.instance.related_bioregion_id:
+            visible_bioregions = visible_bioregions | Bioregion.objects.filter(
+                pk=self.instance.related_bioregion_id
+            )
+        fields["related_bioregion"].queryset = visible_bioregions.distinct()
+        return fields
 
     def get_created_by_detail(self, obj):
         if obj.created_by:

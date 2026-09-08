@@ -41,6 +41,8 @@ def is_permitted(user, action, obj_or_string):
         # Anonymous users can only view objects with view_public=True
         if isinstance(obj, User) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
+        if isinstance(obj, Bioregion) and action == "view" and hasattr(obj, 'view_public'):
+            return obj.view_public
         if isinstance(obj, Community) and action == "view" and hasattr(obj, 'view_public'):
             return obj.view_public
         if isinstance(obj, Project) and action == "view" and hasattr(obj, 'view_public'):
@@ -71,8 +73,23 @@ def is_permitted(user, action, obj_or_string):
                 return True
 
     if isinstance(obj, Bioregion) and action == "view":
-        # Any authenticated user can view bioregions
-        if user.is_authenticated:
+        # Creator can always see their own bioregion
+        if hasattr(obj, "created_by") and obj.created_by == user:
+            return True
+        # Bioregion admins can always view
+        if hasattr(obj, "pk") and obj.pk and user in obj.admins.all():
+            return True
+        # Superusers can see all bioregions
+        if user.is_superuser:
+            return True
+        # Users connected to the bioregion can always view it
+        if hasattr(obj, "pk") and obj.pk and user in obj.users.all():
+            return True
+        # Authenticated members can see bioregions with view_members=True
+        if user.is_authenticated and obj.view_members:
+            return True
+        # Public users can see bioregions with view_public=True
+        if obj.view_public:
             return True
     
     if isinstance(obj, Challenge) and action == "view":
@@ -514,9 +531,9 @@ def get_permitted_objects(user, action, model_class):
     from apps.maladaptives.models import Maladaptive
     
     # Public access rules
-    if model_class == Bioregion and action == "view" and user.is_authenticated:
-        # All authenticated users can view all bioregions
-        return list(model_class.objects.all())
+    if model_class == Bioregion and action == "view":
+        from apps.bioregions.utils import get_visible_bioregion_queryset
+        return list(get_visible_bioregion_queryset(user))
     
     if model_class == Challenge and action == "view" and user.is_authenticated:
         # All authenticated users can view challenges with a related bioregion

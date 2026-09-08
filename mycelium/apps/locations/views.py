@@ -76,11 +76,11 @@ def location_create_view(request):
     if request.method == "POST":
         if not validate_form_token(request, 'location_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
-            form = LocationForm()
+            form = LocationForm(current_user=request.user)
             form_token = get_form_token(request, 'location_create')
             return render(request, "locations/location_form.html", {"form": form, "form_token": form_token})
         
-        form = LocationForm(request.POST, request.FILES)
+        form = LocationForm(request.POST, request.FILES, current_user=request.user)
         if form.is_valid():
             location = form.save(commit=False)
             location.created_by = request.user
@@ -88,7 +88,7 @@ def location_create_view(request):
             messages.success(request, "Location created successfully!")
             return redirect("location_detail", pk=location.pk)
     else:
-        form = LocationForm()
+        form = LocationForm(current_user=request.user)
 
     form_token = get_form_token(request, 'location_create')
     return render(
@@ -103,7 +103,7 @@ def location_edit_view(request, pk):
     location = get_permitted_object(request.user, "change", Location, pk)
 
     if request.method == "POST":
-        form = LocationForm(request.POST, request.FILES, instance=location)
+        form = LocationForm(request.POST, request.FILES, instance=location, current_user=request.user)
         attach_creator_field(form, request.user, location)
         if form.is_valid():
             form.save()
@@ -111,7 +111,7 @@ def location_edit_view(request, pk):
             messages.success(request, "Location updated successfully!")
             return redirect("location_detail", pk=location.pk)
     else:
-        form = LocationForm(instance=location)
+        form = LocationForm(instance=location, current_user=request.user)
         attach_creator_field(form, request.user, location)
 
     return render(

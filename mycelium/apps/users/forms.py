@@ -1,5 +1,6 @@
 from django import forms
 from apps.bioregions.models import Bioregion
+from apps.bioregions.utils import get_visible_bioregion_queryset
 from apps.communities.models import Community
 from apps.relationships.models import Relationship
 from apps.socialroles.models import Socialrole
@@ -269,6 +270,13 @@ class UserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.current_user = kwargs.pop("current_user", None)
         super().__init__(*args, **kwargs)
+
+        visible_bioregions = get_visible_bioregion_queryset(self.current_user)
+        if self.instance.pk:
+            visible_bioregions = visible_bioregions | Bioregion.objects.filter(
+                pk__in=self.instance.user_bioregions.values_list("pk", flat=True)
+            )
+        self.fields["user_bioregions"].queryset = visible_bioregions.distinct()
 
         # If editing, don't allow "invited_by" to be self
         if self.instance and self.instance.pk:

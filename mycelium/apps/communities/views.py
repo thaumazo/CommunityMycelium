@@ -99,11 +99,11 @@ def community_create_view(request):
     if request.method == "POST":
         if not validate_form_token(request, 'community_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
-            form = CommunityForm()
+            form = CommunityForm(current_user=request.user)
             form_token = get_form_token(request, 'community_create')
             return render(request, "communities/community_form.html", {"form": form, "form_token": form_token})
         
-        form = CommunityForm(request.POST, request.FILES)
+        form = CommunityForm(request.POST, request.FILES, current_user=request.user)
         if form.is_valid():
             community = form.save(commit=False)
             community.created_by = request.user
@@ -112,7 +112,7 @@ def community_create_view(request):
             messages.success(request, "Community created successfully!")
             return redirect("community_detail", pk=community.pk)
     else:
-        form = CommunityForm()
+        form = CommunityForm(current_user=request.user)
 
     form_token = get_form_token(request, 'community_create')
     return render(
@@ -127,7 +127,7 @@ def community_edit_view(request, pk):
     community = get_permitted_object(request.user, "change", Community, pk)
 
     if request.method == "POST":
-        form = CommunityForm(request.POST, request.FILES, instance=community)
+        form = CommunityForm(request.POST, request.FILES, instance=community, current_user=request.user)
         attach_creator_field(form, request.user, community)
         if form.is_valid():
             form.save()
@@ -135,7 +135,7 @@ def community_edit_view(request, pk):
             messages.success(request, "Community updated successfully!")
             return redirect("community_detail", pk=community.pk)
     else:
-        form = CommunityForm(instance=community)
+        form = CommunityForm(instance=community, current_user=request.user)
         attach_creator_field(form, request.user, community)
 
     return render(

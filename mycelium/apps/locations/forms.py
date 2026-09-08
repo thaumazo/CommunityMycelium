@@ -2,6 +2,7 @@ from django import forms
 from .models import Location, LocationCapital
 from apps.capitals.models import Capital
 from apps.bioregions.models import Bioregion
+from apps.bioregions.utils import get_visible_bioregion_queryset
 
 
 class LocationForm(forms.ModelForm):
@@ -61,8 +62,15 @@ class LocationForm(forms.ModelForm):
             "longitude": forms.NumberInput(attrs={"step": "0.000001"}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, current_user=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        visible_bioregions = get_visible_bioregion_queryset(current_user)
+        if self.instance.pk:
+            visible_bioregions = visible_bioregions | Bioregion.objects.filter(
+                pk__in=self.instance.bioregions.values_list("pk", flat=True)
+            )
+        self.fields["bioregions"].queryset = visible_bioregions.distinct()
 
         if self.instance.pk:
             self.fields["capitals"].initial = [
