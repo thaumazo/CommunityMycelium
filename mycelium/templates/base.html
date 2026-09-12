@@ -6,7 +6,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mycelium</title>
+    <title>{% block title %}Metachrysalis{% endblock %}</title>
     
     {% if GOOGLE_ANALYTICS_ID %}
     <!-- Google Analytics -->
@@ -42,7 +42,7 @@
                 </svg>
               </button>
             {% endif %}
-            <a href="{% url 'core:home' %}" class="flex ms-2 md:me-24"><span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Mycelium</span></a>
+            <a href="{% url 'core:home' %}" class="flex ms-2 md:me-24" aria-label="Metachrysalis home"><span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Metachrysalis</span></a>
           </div>
           <!-- Mobile menu toggle button -->
           <button id="topnav-toggle" type="button" class="sm:hidden inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">

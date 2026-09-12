@@ -1,12 +1,16 @@
 # Community Mycelium
 
-A Django-based community platform that facilitates user management, meetings, and access control. The project uses modern web technologies including Django REST Framework, PostgreSQL, and Tailwind CSS.
+Community Mycelium is an open-source Django platform for place-based communities, collaborative projects, shared governance, and collective learning.
+
+**Metachrysalis** is the primary experience built on Community Mycelium. It helps people find collaborators, organize real-world Moves, and learn from local action. Participation can be solo, community-based, in person, online, or any combination of those modes. People retain control over what they share and who can see it.
 
 ## Features
 
-- **User Management**: Complete user authentication and authorization system
+- **People and communities**: Profiles, Commons, invitations, memberships, and relationships
+- **Moves and coordination**: Real-world projects, meetings, tasks, stories, and place-based activity
 - **Meetings**: Schedule and manage community meetings
 - **Access Control (ACL)**: Granular permission management for different user roles
+- **Composable participation**: The website supports an active in-person game and community process without requiring every participant to work in the same mode
 - **Modern UI**: Styled with Tailwind CSS for a responsive and beautiful interface
 
 ## Prerequisites

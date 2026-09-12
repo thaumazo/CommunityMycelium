@@ -3,7 +3,8 @@
 {% block content %}
   <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
+      <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to Metachrysalis</h2>
+      <p class="mt-2 text-center text-sm text-gray-500">Continue your work with people, places, and possibilities that matter to you.</p>
     </div>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -35,9 +36,6 @@
         <div>
           <div class="flex items-center justify-between">
             <label for="{{ form.password.id_for_label }}" class="block text-sm/6 font-medium text-gray-900">{{ form.password.label }}</label>
-            <div class="text-sm">
-              <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
-            </div>
           </div>
           <div class="mt-1">
             <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" value="{{ form.password.value|default:'' }}" class="w-full" />
@@ -54,7 +52,7 @@
 
       {% if REGISTRATION_MODE != 'closed' %}
         <p class="mt-10 text-center text-sm/6 text-gray-500">
-          Not a member?
+          New to Metachrysalis?
           <a href="{% url 'register' %}" class="font-semibold text-indigo-600 hover:text-indigo-500">Create an account</a>
         </p>
       {% endif %}
