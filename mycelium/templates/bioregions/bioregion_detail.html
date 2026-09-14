@@ -40,21 +40,21 @@
               {% if user.is_authenticated %}
               <div class="tabs-container">
                 <ul class="tab-list">
-                  <li class="tab active" data-tab="details">Details</li>
-                  <li class="tab" data-tab="stories">Stories <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ bioregion_story_count }}</span></li>
-                  <li class="tab" data-tab="challenges">Challenges</li>
-                  <li class="tab" data-tab="doughnut">Doughnuts</li>
-                  <li class="tab" data-tab="people">People</li>
-                  <li class="tab" data-tab="organizations">Orgs</li>
-                  <li class="tab" data-tab="projects">Moves</li>
-                  <li class="tab" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ locations_count }}</span></li>
+                  <li class="tab {% if active_tab == 'details' or not active_tab %}active{% endif %}" data-tab="details">Details</li>
+                  <li class="tab {% if active_tab == 'stories' %}active{% endif %}" data-tab="stories">Stories <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ bioregion_story_count }}</span></li>
+                  <li class="tab {% if active_tab == 'challenges' %}active{% endif %}" data-tab="challenges">Challenges</li>
+                  <li class="tab {% if active_tab == 'doughnut' %}active{% endif %}" data-tab="doughnut">Doughnuts</li>
+                  <li class="tab {% if active_tab == 'people' %}active{% endif %}" data-tab="people">People</li>
+                  <li class="tab {% if active_tab == 'organizations' %}active{% endif %}" data-tab="organizations">Orgs</li>
+                  <li class="tab {% if active_tab == 'projects' %}active{% endif %}" data-tab="projects">Moves</li>
+                  <li class="tab {% if active_tab == 'locations' %}active{% endif %}" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ locations_count }}</span></li>
                   {% if check %}
-                    <li class="tab" data-tab="permissions">Permissions</li>
+                    <li class="tab {% if active_tab == 'permissions' %}active{% endif %}" data-tab="permissions">Permissions</li>
                   {% endif %}
                 </ul>
               </div>
 
-              <div class="tab-content" id="details">
+              <div class="tab-content {% if active_tab and active_tab != 'details' %}hidden{% endif %}" id="details">
                 <dl class="divide-y divide-gray-200">
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Created by</dt>

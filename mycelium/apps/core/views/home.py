@@ -7,6 +7,10 @@ from apps.commons.utils import get_user_commons_queryset
 
 @login_required
 def home_view(request):
+    if request.user.onboarding_status == request.user.ONBOARDING_IN_PROGRESS:
+        from django.shortcuts import redirect
+        return redirect("onboarding")
+
     proposals = (
         RelationshipProposal.objects.filter(
             status=RelationshipProposal.Status.PENDING

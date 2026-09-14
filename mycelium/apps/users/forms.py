@@ -90,6 +90,61 @@ class RegisterForm(forms.ModelForm):
 
         return user
 
+class OnboardingForm(forms.ModelForm):
+    requested_bioregion_title = forms.CharField(
+        required=False,
+        label="Request a new bioregion",
+        help_text="An administrator will review this request before creating the bioregion.",
+    )
+    requested_bioregion_description = forms.CharField(
+        required=False,
+        label="Why this bioregion?",
+        widget=forms.Textarea(attrs={"rows": 3}),
+        help_text="Optional context to help an administrator understand the request.",
+    )
+    home_location_title = forms.CharField(
+        required=False,
+        label="Home location",
+        help_text="A place name or description. This stays private during orientation.",
+    )
+    home_location_description = forms.CharField(
+        required=False,
+        label="Home location details",
+        widget=forms.Textarea(attrs={"rows": 3}),
+    )
+    visible_to_commons = forms.ModelMultipleChoiceField(
+        queryset=None,
+        required=False,
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        label="Share this orientation with Commons",
+        help_text="Optional. You can choose a Commons after joining it as well.",
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            "user_bioregions",
+            "user_socialroles",
+            "user_metacrisis_facets",
+            "user_maladaptives",
+        ]
+        widgets = {
+            "user_bioregions": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+            "user_socialroles": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+            "user_metacrisis_facets": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+            "user_maladaptives": forms.CheckboxSelectMultiple(attrs={"class": "w-full"}),
+        }
+
+    def __init__(self, *args, current_user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["user_bioregions"].queryset = get_visible_bioregion_queryset(current_user).distinct().order_by("title")
+        self.fields["user_socialroles"].queryset = Socialrole.objects.all().order_by("title")
+        self.fields["user_metacrisis_facets"].queryset = Metacrisis_facet.objects.all().order_by("title")
+        self.fields["user_maladaptives"].queryset = Maladaptive.objects.all().order_by("title")
+
+        from apps.commons.utils import get_user_commons_queryset
+        self.fields["visible_to_commons"].queryset = get_user_commons_queryset(current_user)
+
 
 class UserForm(forms.ModelForm):
     full_name = forms.CharField(

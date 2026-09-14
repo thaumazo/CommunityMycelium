@@ -18,7 +18,9 @@ from .main import (
     approve_user_view,
     reject_user_view,
     create_invite_view,
+    reset_onboarding_view,
 )
+from .onboarding import onboarding_view, onboarding_complete_view
 
 # Make them available when importing from apps.users.views
 __all__ = [
@@ -36,4 +38,7 @@ __all__ = [
     'approve_user_view',
     'reject_user_view',
     'create_invite_view',
+    'reset_onboarding_view',
+    'onboarding_view',
+    'onboarding_complete_view',
 ]

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -78,6 +79,8 @@ def community_detail_view(request, pk):
         community_story_count = len(community_stories)
         community_stories_preview = community_stories[:3]
 
+    active_tab = (request.GET.get("tab") or request.POST.get("active_tab") or "details").strip().lower()
+
     return render(
         request,
         "communities/community_detail.html",
@@ -87,6 +90,7 @@ def community_detail_view(request, pk):
             "community_stories_preview": community_stories_preview,
             "community_locations": community_locations,
             "community_location_count": community_location_count,
+            "active_tab": active_tab,
         },
     )
 
@@ -96,12 +100,13 @@ def community_create_view(request):
     if not is_permitted(request.user, "add", "communities.community"):
         raise PermissionDenied
 
+    active_tab = (request.POST.get("active_tab") or request.GET.get("tab") or "").strip()
     if request.method == "POST":
         if not validate_form_token(request, 'community_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
             form = CommunityForm(current_user=request.user)
             form_token = get_form_token(request, 'community_create')
-            return render(request, "communities/community_form.html", {"form": form, "form_token": form_token})
+            return render(request, "communities/community_form.html", {"form": form, "form_token": form_token, "active_tab": active_tab})
         
         form = CommunityForm(request.POST, request.FILES, current_user=request.user)
         if form.is_valid():
@@ -110,7 +115,10 @@ def community_create_view(request):
             community.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Community created successfully!")
-            return redirect("community_detail", pk=community.pk)
+            redirect_url = reverse("community_detail", kwargs={"pk": community.pk})
+            if active_tab:
+                redirect_url += f"?tab={active_tab}"
+            return redirect(redirect_url)
     else:
         form = CommunityForm(current_user=request.user)
 
@@ -118,13 +126,14 @@ def community_create_view(request):
     return render(
         request,
         "communities/community_form.html",
-        {"form": form, "form_token": form_token},
+        {"form": form, "form_token": form_token, "active_tab": active_tab},
     )
 
 
 @login_required
 def community_edit_view(request, pk):
     community = get_permitted_object(request.user, "change", Community, pk)
+    active_tab = (request.POST.get("active_tab") or request.GET.get("tab") or "").strip()
 
     if request.method == "POST":
         form = CommunityForm(request.POST, request.FILES, instance=community, current_user=request.user)
@@ -133,7 +142,10 @@ def community_edit_view(request, pk):
             form.save()
             apply_creator_field(form, request.user, community)
             messages.success(request, "Community updated successfully!")
-            return redirect("community_detail", pk=community.pk)
+            redirect_url = reverse("community_detail", kwargs={"pk": community.pk})
+            if active_tab:
+                redirect_url += f"?tab={active_tab}"
+            return redirect(redirect_url)
     else:
         form = CommunityForm(instance=community, current_user=request.user)
         attach_creator_field(form, request.user, community)
@@ -141,7 +153,7 @@ def community_edit_view(request, pk):
     return render(
         request,
         "communities/community_form.html",
-        {"form": form, "community": community},
+        {"form": form, "community": community, "active_tab": active_tab},
     )
 
 

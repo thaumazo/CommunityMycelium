@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project, ProjectCapitalIn, ProjectCapitalOut
+from .models import MoveStep, Project, ProjectCapitalIn, ProjectCapitalOut
 from apps.capitals.models import Capital
 from apps.locations.models import Location
 from apps.bioregions.models import Bioregion
@@ -9,6 +9,16 @@ from apps.commons.utils import get_user_commons_queryset
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+
+class MoveStepForm(forms.ModelForm):
+    class Meta:
+        model = MoveStep
+        fields = ["title", "description", "order", "requires_review"]
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 3}),
+            "order": forms.NumberInput(attrs={"min": 0}),
+        }
 
 
 class ProjectForm(forms.ModelForm):

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Orientation complete | Metachrysalis{% endblock %}
+
+{% block content %}
+  <div class="min-h-screen bg-gray-100 px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl rounded-lg bg-white px-4 py-6 text-center shadow sm:p-6">
+      <p class="text-sm font-semibold uppercase tracking-wide text-green-600">Orientation complete</p>
+      <h1 class="mt-2 text-3xl font-semibold text-gray-900">Your first Move is ready</h1>
+      <p class="mt-4 text-gray-600">You have chosen what to explore and how much to share. Your orientation Move is private, and you can change its visibility whenever you are ready.</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="{% url 'move_detail' orientation_move.pk %}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Open your Orientation Move</a>
+        <a href="{% url 'story_create' %}?attach_to_type=projects.project&amp;attach_to_id={{ orientation_move.pk }}" class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Add a Story about it</a>
+        <a href="{% url 'core:home' %}" class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Go to your dashboard</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

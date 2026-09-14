@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load image_filters %}
+
+{% block title %}Orientation | Metachrysalis{% endblock %}
+
+{% block content %}
+  <div class="min-h-screen bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-6 sm:p-6">
+          <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Your first Move</p>
+          <h1 class="mt-2 text-3xl font-semibold text-gray-900">Welcome to Metachrysalis</h1>
+          <p class="mt-3 max-w-3xl text-gray-600">Orientation is a private first Move: a chance to choose a place, explore what matters to you, and decide how you want to participate. You can work solo, join a Commons, or combine online and in-person play.</p>
+          <p class="mt-2 max-w-3xl text-sm text-gray-500">Your profile selections are private by default. You choose what to share and with whom.</p>
+
+          {% include '_components/messages.html' %}
+
+          {% if invited_commons %}
+            <div class="mt-6 rounded-md border border-indigo-200 bg-indigo-50 p-4">
+              <h2 class="font-semibold text-indigo-950">You have an invitation</h2>
+              {% for invite in invited_commons %}
+                <p class="mt-1 text-sm text-indigo-900">{{ invite.invited_by|default:'Someone' }} invited you to {{ invite.commons.title }}.</p>
+                <a href="{% url 'commons_detail' invite.commons.pk %}" class="mt-3 inline-block text-sm font-semibold text-indigo-700 hover:underline">Go to {{ invite.commons.title }}</a>
+              {% endfor %}
+              <p class="mt-2 text-xs text-indigo-800">You can visit the Commons now or continue orientation first. Accepting an invitation is always your choice.</p>
+            </div>
+          {% endif %}
+
+          <div class="mt-8 px-4 tabs-container">
+            <ul class="tab-list" role="tablist">
+              {% for key, label in sections %}
+                <li class="tab {% if current_section == key %}active{% endif %}" data-tab="{{ key }}" role="tab">
+                  {{ label }}
+                  {% if key in skipped_sections %}<span class="ml-1 text-xs text-gray-500">Skipped</span>{% endif %}
+                  {% if key in completed_sections %}<span class="ml-1 text-xs text-green-700">Complete</span>{% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <form method="post" class="mt-6 space-y-8">
+            {% csrf_token %}
+            {% if form.errors %}
+              <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                Please correct the highlighted fields before continuing.
+                {{ form.non_field_errors }}
+                <ul class="mt-2 list-disc pl-5">
+                  {% for field in form %}
+                    {% for error in field.errors %}
+                      <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="tab-content {% if current_section != 'place' %}hidden{% endif %}" id="place">
+              <h2 class="text-xl font-semibold text-gray-900">Choose your place</h2>
+              <p class="mt-1 text-sm text-gray-600">Choose an existing bioregion, or request one for an administrator to review.</p>
+              <div class="mt-5 space-y-5">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Bioregions</label>
+                  <div class="mt-2 space-y-2">
+                    {% for choice in form.user_bioregions %}
+                      <div class="flex items-center gap-2">
+                        <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}"{% if choice.data.selected %} checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        <label for="{{ choice.id_for_label }}" class="text-sm text-gray-900">{{ choice.choice_label }}</label>
+                      </div>
+                    {% empty %}
+                      <p class="text-sm text-gray-500">No visible bioregions are available yet.</p>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="border-t border-gray-200 pt-5">
+                  <label for="{{ form.requested_bioregion_title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.requested_bioregion_title.label }}</label>
+                  {{ form.requested_bioregion_title }}
+                  <p class="mt-1 text-xs text-gray-500">{{ form.requested_bioregion_title.help_text }}</p>
+                  <label for="{{ form.requested_bioregion_description.id_for_label }}" class="mt-4 block text-sm font-medium text-gray-700">{{ form.requested_bioregion_description.label }}</label>
+                  {{ form.requested_bioregion_description }}
+                </div>
+                <div class="border-t border-gray-200 pt-5">
+                  <label for="{{ form.home_location_title.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.home_location_title.label }}</label>
+                  {{ form.home_location_title }}
+                  <p class="mt-1 text-xs text-gray-500">{{ form.home_location_title.help_text }}</p>
+                  <label for="{{ form.home_location_description.id_for_label }}" class="mt-4 block text-sm font-medium text-gray-700">{{ form.home_location_description.label }}</label>
+                  {{ form.home_location_description }}
+                </div>
+              </div>
+              {% include 'users/_onboarding_actions.html' with section='place' %}
+            </div>
+
+            <div class="tab-content {% if current_section != 'character' %}hidden{% endif %}" id="character">
+              <h2 class="text-xl font-semibold text-gray-900">Choose your Character Class</h2>
+              <p class="mt-1 text-sm text-gray-600">Select one or more roles that describe how you tend to contribute. Choose at least one, or mark this section as skipped.</p>
+              <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                {% for socialrole in form.fields.user_socialroles.queryset %}
+                    <label for="id_user_socialroles_{{ socialrole.pk }}" class="flex items-start cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <input type="checkbox" name="user_socialroles" value="{{ socialrole.pk }}" id="id_user_socialroles_{{ socialrole.pk }}" {% if socialrole in form.instance.user_socialroles.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';">
+                      {% if socialrole.image_path %}
+                        <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if socialrole in form.instance.user_socialroles.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                          <img src="{% static socialrole.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ socialrole.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                        </div>
+                      {% else %}
+                        <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if socialrole in form.instance.user_socialroles.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                          <span class="text-2xl text-gray-600 font-bold">{{ socialrole.title|first|upper }}</span>
+                        </div>
+                      {% endif %}
+                      <div class="ml-4 flex-1">
+                        <div class="font-semibold text-gray-900">{{ socialrole.title }}</div>
+                        {% if socialrole.description %}<div class="text-sm text-gray-600 mt-1">{{ socialrole.description }}</div>{% endif %}
+                      </div>
+                    </label>
+                {% empty %}
+                  <p class="text-sm text-gray-500">No Character Classes are available yet.</p>
+                {% endfor %}
+              </div>
+              {% if form.user_socialroles.errors %}<div class="mt-1 text-sm text-red-600">{{ form.user_socialroles.errors|join:', ' }}</div>{% endif %}
+              {% include 'users/_onboarding_actions.html' with section='character' %}
+            </div>
+
+            <div class="tab-content {% if current_section != 'pitfalls' %}hidden{% endif %}" id="pitfalls">
+              <h2 class="text-xl font-semibold text-gray-900">Notice your Pitfalls</h2>
+              <p class="mt-1 text-sm text-gray-600">These are optional reflection prompts, not labels. Select any that feel useful to notice during play.</p>
+              <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                {% for maladaptive in form.fields.user_maladaptives.queryset %}
+                  <label for="id_user_maladaptives_{{ maladaptive.pk }}" class="flex items-start cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="user_maladaptives" value="{{ maladaptive.pk }}" id="id_user_maladaptives_{{ maladaptive.pk }}" {% if maladaptive in form.instance.user_maladaptives.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';">
+                    {% if maladaptive.image_path %}
+                      <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if maladaptive in form.instance.user_maladaptives.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                        <img src="{% static maladaptive.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ maladaptive.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                      </div>
+                    {% else %}
+                      <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if maladaptive in form.instance.user_maladaptives.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                        <span class="text-2xl text-gray-600 font-bold">{{ maladaptive.title|first|upper }}</span>
+                      </div>
+                    {% endif %}
+                    <div class="ml-4 flex-1">
+                      <div class="font-semibold text-gray-900">{{ maladaptive.title }}</div>
+                      {% if maladaptive.description %}<div class="text-sm text-gray-600 mt-1">{{ maladaptive.description }}</div>{% endif %}
+                    </div>
+                  </label>
+                {% empty %}
+                  <p class="text-sm text-gray-500">No Pitfalls are available yet.</p>
+                {% endfor %}
+              </div>
+              {% if form.user_maladaptives.errors %}<div class="mt-1 text-sm text-red-600">{{ form.user_maladaptives.errors|join:', ' }}</div>{% endif %}
+              {% include 'users/_onboarding_actions.html' with section='pitfalls' %}
+            </div>
+
+            <div class="tab-content {% if current_section != 'metacrisis' %}hidden{% endif %}" id="metacrisis">
+              <h2 class="text-xl font-semibold text-gray-900">Choose your Metacrisis focus</h2>
+              <p class="mt-1 text-sm text-gray-600">Select one or more facets that you feel drawn to understand or work on. Choose at least one, or mark this section as skipped.</p>
+              <div class="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                {% for facet in form.fields.user_metacrisis_facets.queryset %}
+                  <label for="id_user_metacrisis_facets_{{ facet.pk }}" class="flex items-start cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="user_metacrisis_facets" value="{{ facet.pk }}" id="id_user_metacrisis_facets_{{ facet.pk }}" {% if facet in form.instance.user_metacrisis_facets.all %}checked{% endif %} class="sr-only" onchange="this.parentElement.querySelector('.icon-border').style.borderColor = this.checked ? '#4f46e5' : '#d1d5db'; this.parentElement.querySelector('.icon-border').style.borderWidth = this.checked ? '3px' : '2px';">
+                    {% if facet.image_path %}
+                      <div class="icon-border overflow-hidden rounded-lg border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if facet in form.instance.user_metacrisis_facets.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                        <img src="{% static facet.image_path|thumbnail|alternate_deck:request.user %}" alt="{{ facet.title }}" style="width: 80px; height: 80px; object-fit: contain;">
+                      </div>
+                    {% else %}
+                      <div class="icon-border bg-gray-100 rounded-lg flex items-center justify-center border-2 hover:border-indigo-400 transition-all flex-shrink-0" style="width: 80px; height: 80px; border-color: {% if facet in form.instance.user_metacrisis_facets.all %}#4f46e5; border-width: 3px{% else %}#d1d5db{% endif %};">
+                        <span class="text-2xl text-gray-600 font-bold">{{ facet.title|first|upper }}</span>
+                      </div>
+                    {% endif %}
+                    <div class="ml-4 flex-1">
+                      <div class="font-semibold text-gray-900">{{ facet.title }}</div>
+                      {% if facet.description %}<div class="text-sm text-gray-600 mt-1">{{ facet.description }}</div>{% endif %}
+                    </div>
+                  </label>
+                {% empty %}
+                  <p class="text-sm text-gray-500">No Metacrisis facets are available yet.</p>
+                {% endfor %}
+              </div>
+              {% if form.user_metacrisis_facets.errors %}<div class="mt-1 text-sm text-red-600">{{ form.user_metacrisis_facets.errors|join:', ' }}</div>{% endif %}
+              {% include 'users/_onboarding_actions.html' with section='metacrisis' %}
+            </div>
+
+            <div class="tab-content {% if current_section != 'commons' %}hidden{% endif %}" id="commons">
+              <h2 class="text-xl font-semibold text-gray-900">Find a Commons</h2>
+              <p class="mt-1 text-sm text-gray-600">A Commons is a group with shared purpose, place, or agreements. Joining is always a request or an invitation; it is never automatic.</p>
+              {% if requested_commons %}
+                <div class="mt-4 rounded-md bg-gray-50 p-4 text-sm text-gray-700">You have pending requests to join:
+                  {% for application in requested_commons %}<a href="{% url 'commons_detail' application.commons.pk %}" class="ml-1 text-indigo-600 hover:underline">{{ application.commons.title }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+                </div>
+              {% endif %}
+              {% if available_commons %}
+                <div class="mt-5 rounded-md border border-gray-200 p-4">
+                  <h3 class="font-semibold text-gray-900">Commons near your selected place</h3>
+                  <div class="mt-2 space-y-2">
+                    {% for commons in available_commons|slice:':6' %}
+                      <div class="border-t border-gray-200 pt-3 first:border-t-0 first:pt-0">
+                        <h4 class="font-semibold text-gray-900">{{ commons.title }}</h4>
+                        {% if commons.description %}<p class="mt-1 text-sm text-gray-600">{{ commons.description|striptags|truncatewords:35 }}</p>{% endif %}
+                        {% if commons.bioregion %}<p class="mt-1 text-xs text-gray-500">Bioregion: {{ commons.bioregion.title }}</p>{% endif %}
+                        <a href="{% url 'commons_detail' commons.pk %}" class="mt-2 inline-block text-sm font-semibold text-indigo-600 hover:underline">View and request to join</a>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+              <div class="mt-5">
+                <label class="block text-sm font-medium text-gray-700">Share your orientation with Commons you belong to</label>
+                <div class="mt-2 space-y-2">
+                  {% for choice in form.visible_to_commons %}
+                    <div class="flex items-center gap-2">
+                      <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}"{% if choice.data.selected %} checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                      <label for="{{ choice.id_for_label }}" class="text-sm text-gray-900">{{ choice.choice_label }}</label>
+                    </div>
+                  {% empty %}
+                    <p class="text-sm text-gray-500">Join a Commons first to choose it as an audience for your orientation.</p>
+                  {% endfor %}
+                </div>
+                <p class="mt-1 text-xs text-gray-500">This is optional and can be changed later from your profile visibility settings.</p>
+              </div>
+              <div class="mt-5"><a href="{% url 'commons_list' %}" class="text-sm font-semibold text-indigo-600 hover:underline">Explore available Commons</a></div>
+              {% include 'users/_onboarding_actions.html' with section='commons' %}
+            </div>
+
+            <div class="tab-content {% if current_section != 'activity' %}hidden{% endif %}" id="activity">
+              <h2 class="text-xl font-semibold text-gray-900">Choose your starting Move</h2>
+              <p class="mt-1 text-sm text-gray-600">Select one of the following Moves as your starting quest to complete orientation and head to your dashboard.</p>
+
+              <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+                <!-- Explore Card -->
+                <div class="rounded-lg border-2 border-indigo-200 bg-white p-5 shadow-sm flex flex-col justify-between hover:border-indigo-500 transition-colors">
+                  <div>
+                    <div class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-700 font-bold mb-3">1</div>
+                    <h3 class="text-lg font-bold text-gray-900">Explore</h3>
+                    <p class="mt-2 text-sm text-gray-600">A Move where you favourite (bookmark) at least one person, one community, and one Move.</p>
+                    <ul class="mt-3 space-y-1.5 text-xs text-gray-600 list-disc list-inside">
+                      <li>Favourite 1 person</li>
+                      <li>Favourite 1 community</li>
+                      <li>Favourite 1 Move</li>
+                    </ul>
+                  </div>
+                  <button type="submit" name="action_finish" value="explore" class="mt-5 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer">Choose "Explore" &amp; Complete</button>
+                </div>
+
+                <!-- Reflect Card -->
+                <div class="rounded-lg border-2 border-indigo-200 bg-white p-5 shadow-sm flex flex-col justify-between hover:border-indigo-500 transition-colors">
+                  <div>
+                    <div class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-700 font-bold mb-3">2</div>
+                    <h3 class="text-lg font-bold text-gray-900">Reflect</h3>
+                    <p class="mt-2 text-sm text-gray-600">Write at least three stories tagged to your Metacrisis facets, pitfalls, or social roles.</p>
+                    <ul class="mt-3 space-y-1.5 text-xs text-gray-600 list-disc list-inside">
+                      <li>Story for Metacrisis facet</li>
+                      <li>Story for Social Role</li>
+                      <li>Story for Pitfall</li>
+                    </ul>
+                  </div>
+                  <button type="submit" name="action_finish" value="reflect" class="mt-5 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer">Choose "Reflect" &amp; Complete</button>
+                </div>
+
+                <!-- Connect Card -->
+                <div class="rounded-lg border-2 border-indigo-200 bg-white p-5 shadow-sm flex flex-col justify-between hover:border-indigo-500 transition-colors">
+                  <div>
+                    <div class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-700 font-bold mb-3">3</div>
+                    <h3 class="text-lg font-bold text-gray-900">Connect</h3>
+                    <p class="mt-2 text-sm text-gray-600">Find a Commons operating in your area or focus and submit a request to join.</p>
+                    <ul class="mt-3 space-y-1.5 text-xs text-gray-600 list-disc list-inside">
+                      <li>Browse Commons</li>
+                      <li>Submit join request</li>
+                    </ul>
+                  </div>
+                  <button type="submit" name="action_finish" value="connect" class="mt-5 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer">Choose "Connect" &amp; Complete</button>
+                </div>
+              </div>
+
+              <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 pt-5">
+                <button type="submit" name="action_skip" value="activity" class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 cursor-pointer">Skip starter Move choice</button>
+                <button type="submit" name="action_finish" value="explore" class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 cursor-pointer">Complete orientation &amp; Go to Dashboard</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

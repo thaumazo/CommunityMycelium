@@ -3,6 +3,14 @@ from django.db import models
 
 
 class User(AbstractUser):
+    ONBOARDING_COMPLETED = "completed"
+    ONBOARDING_IN_PROGRESS = "in_progress"
+
+    ONBOARDING_STATUS_CHOICES = [
+        (ONBOARDING_COMPLETED, "Completed"),
+        (ONBOARDING_IN_PROGRESS, "In progress"),
+    ]
+
     INVITE_ROLE_NONE = "none"
     INVITE_ROLE_INVITE = "invite"
     INVITE_ROLE_APPROVE = "approve"
@@ -14,6 +22,18 @@ class User(AbstractUser):
     ]
 
     full_name = models.CharField(max_length=255, blank=True)
+
+    onboarding_status = models.CharField(
+        max_length=20,
+        choices=ONBOARDING_STATUS_CHOICES,
+        default=ONBOARDING_COMPLETED,
+        help_text="Whether this person has completed Metachrysalis orientation.",
+    )
+    onboarding_step = models.CharField(max_length=40, blank=True, default="")
+    onboarding_skipped_sections = models.JSONField(default=list, blank=True)
+    onboarding_completed_sections = models.JSONField(default=list, blank=True)
+    onboarding_started_at = models.DateTimeField(null=True, blank=True)
+    onboarding_completed_at = models.DateTimeField(null=True, blank=True)
 
     user_location = models.CharField(max_length=255, blank=True, null=True)
 
@@ -255,3 +275,59 @@ class UserGoogleAuth(models.Model):
     class Meta:
         verbose_name = "User Google Authentication"
         verbose_name_plural = "User Google Authentications"
+
+
+class BioregionRequest(models.Model):
+    STATUS_PENDING = "pending"
+    STATUS_APPROVED = "approved"
+    STATUS_DECLINED = "declined"
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending"),
+        (STATUS_APPROVED, "Approved"),
+        (STATUS_DECLINED, "Declined"),
+    ]
+
+    requested_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="bioregion_requests"
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    created_bioregion = models.ForeignKey(
+        "bioregions.Bioregion",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="originating_requests",
+    )
+    reviewed_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="reviewed_bioregion_requests",
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.title} ({self.status})"
+
+
+class OnboardingHomeLocation(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="onboarding_home_location"
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title

@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -55,6 +55,8 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+                if user.onboarding_status == User.ONBOARDING_IN_PROGRESS:
+                    return redirect("onboarding")
                 next_url = request.GET.get("next", "core:home")
                 return redirect(next_url)
     else:
@@ -98,6 +100,8 @@ def register_view(request, token=None):
                 user.is_approved = True
                 user.is_active = True
             
+            user.onboarding_status = User.ONBOARDING_IN_PROGRESS
+            user.onboarding_started_at = timezone.now()
             user.save()
             form.save_m2m()
 
@@ -185,17 +189,21 @@ def user_create_view(request):
     if not is_permitted(request.user, "add", "users.user"):
         raise PermissionDenied
 
+    active_tab = (request.POST.get("active_tab") or request.GET.get("tab") or "").strip()
     if request.method == "POST":
         # ✅ was RegisterForm
         form = UserForm(request.POST, request.FILES, current_user=request.user)
         if form.is_valid():
             user = form.save()  # commit=True, so M2M will save
             messages.success(request, "Person created successfully.")
-            return redirect("user_detail", pk=user.pk)
+            redirect_url = reverse("user_detail", kwargs={"pk": user.pk})
+            if active_tab:
+                redirect_url += f"?tab={active_tab}"
+            return redirect(redirect_url)
     else:
         form = UserForm(current_user=request.user)
 
-    return render(request, "users/user_form.html", {"form": form, "user": None})
+    return render(request, "users/user_form.html", {"form": form, "user": None, "active_tab": active_tab})
 
 
 def logout_view(request):
@@ -284,6 +292,8 @@ def user_detail_view(request, pk):
     else:
         invite_bioregions = []
 
+    active_tab = (request.GET.get("tab") or request.POST.get("active_tab") or "account").strip().lower()
+
     return render(request, "users/user_detail.html", {
         "user": user,
         "user_all_projects": user_all_projects,
@@ -298,6 +308,7 @@ def user_detail_view(request, pk):
         "invite_commons_choices": invite_commons_choices,
         "pending_invite_bioregion_title": pending_invite_bioregion_title,
         "pending_invite_commons_titles": pending_invite_commons_titles,
+        "active_tab": active_tab,
     })
 
 
@@ -306,6 +317,7 @@ def user_edit_view(request, pk):
     """Edit a user's details."""
     # Get the user to edit
     user = get_permitted_object(request.user, "change", User, pk)
+    active_tab = (request.POST.get("active_tab") or request.GET.get("tab") or "").strip()
     # If the request method is POST, update the user's details
     if request.method == "POST":
         # Update the user's details
@@ -313,15 +325,42 @@ def user_edit_view(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Person updated successfully.")
-            return redirect("user_detail", pk=user.pk)
+            redirect_url = reverse("user_detail", kwargs={"pk": user.pk})
+            if active_tab:
+                redirect_url += f"?tab={active_tab}"
+            return redirect(redirect_url)
     else:
         form = UserForm(instance=user, current_user=request.user)
     # Render the user form
     return render(
         request,
         "users/user_form.html",
-        {"form": form, "user": user},
+        {"form": form, "user": user, "active_tab": active_tab},
     )
+
+
+@login_required
+def reset_onboarding_view(request, pk):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+    user = get_object_or_404(User, pk=pk)
+    if request.method == "POST":
+        user.onboarding_status = User.ONBOARDING_IN_PROGRESS
+        user.onboarding_step = "place"
+        user.onboarding_skipped_sections = []
+        user.onboarding_completed_sections = []
+        user.onboarding_started_at = timezone.now()
+        user.onboarding_completed_at = None
+        user.save(update_fields=[
+            "onboarding_status",
+            "onboarding_step",
+            "onboarding_skipped_sections",
+            "onboarding_completed_sections",
+            "onboarding_started_at",
+            "onboarding_completed_at",
+        ])
+        messages.success(request, f"Orientation reset for {user.get_full_name() or user.username}.")
+    return redirect("user_detail", pk=user.pk)
 
 
 @login_required

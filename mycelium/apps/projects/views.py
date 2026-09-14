@@ -3,14 +3,15 @@ import re
 import unicodedata
 from copy import deepcopy
 
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from apps.acl.utils import get_permitted_objects, get_permitted_object, is_permitted
 from apps.bookmarks.models import Bookmark
-from .models import Project, ProjectCapitalIn, ProjectCapitalOut
-from .forms import ProjectForm
+from .models import MoveStep, Project, ProjectCapitalIn, ProjectCapitalOut
+from .forms import MoveStepForm, ProjectForm
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.db.models import Q
@@ -297,6 +298,7 @@ def project_detail_view(request, pk):
     is_project_admin_or_owner = _is_project_admin_or_owner(request.user, project)
     can_submit_community_notes = _can_submit_project_community_notes(request.user, project)
     show_promoted_only = (request.GET.get("promoted_only") or "").strip().lower() in {"1", "true", "yes", "on"}
+    active_tab = (request.GET.get("tab") or request.POST.get("active_tab") or "details").strip().lower()
     
     # Helper function to filter stories by visibility for capital story sections
     def get_visible_capital_attachments(attachments):
@@ -380,11 +382,59 @@ def project_detail_view(request, pk):
         "project_capitals_out": project_capitals_out,
         "project_locations": project_locations,
         "project_location_count": project_location_count,
+        "move_steps": project.steps.all(),
         "is_project_admin_or_owner": is_project_admin_or_owner,
         "can_submit_community_notes": can_submit_community_notes,
         "show_promoted_only": show_promoted_only,
+        "active_tab": active_tab,
         "story_import_schema": json.dumps(_project_story_import_schema_for(project), indent=2),
     })
+
+
+@login_required
+def move_step_create_view(request, pk):
+    project = get_permitted_object(request.user, "change", Project, pk)
+    if request.method == "POST":
+        form = MoveStepForm(request.POST)
+        if form.is_valid():
+            step = form.save(commit=False)
+            step.project = project
+            step.save()
+            messages.success(request, "Move step added.")
+    return redirect(reverse("move_detail", kwargs={"pk": project.pk}) + "?tab=steps")
+
+
+@login_required
+def move_step_toggle_view(request, pk, step_pk):
+    project = get_permitted_object(request.user, "view", Project, pk)
+    step = get_object_or_404(MoveStep, pk=step_pk, project=project)
+    can_participate = (
+        request.user == project.created_by
+        or request.user in project.owners.all()
+        or request.user in project.admins.all()
+        or request.user in project.members.all()
+    )
+    if not can_participate:
+        raise PermissionDenied
+    if request.method == "POST":
+        if request.user in step.completed_by.all():
+            step.completed_by.remove(request.user)
+        else:
+            step.completed_by.add(request.user)
+        messages.success(request, "Move step updated.")
+    return redirect(reverse("move_detail", kwargs={"pk": project.pk}) + "?tab=steps")
+
+
+@login_required
+def move_step_review_view(request, pk, step_pk):
+    project = get_permitted_object(request.user, "change", Project, pk)
+    step = get_object_or_404(MoveStep, pk=step_pk, project=project)
+    if request.method == "POST":
+        step.reviewed_by = request.user
+        step.reviewed_at = timezone.now()
+        step.save(update_fields=["reviewed_by", "reviewed_at", "updated_at"])
+        messages.success(request, "Move step marked as reviewed.")
+    return redirect(reverse("move_detail", kwargs={"pk": project.pk}) + "?tab=steps")
 
 
 @login_required
@@ -699,6 +749,7 @@ def project_story_visibility_bulk_update_view(request, pk):
 def project_create_view(request):
     initial_parent = None
     parent_id = (request.GET.get("parent") or "").strip()
+    active_tab = (request.POST.get("active_tab") or request.GET.get("tab") or "").strip()
     if parent_id.isdigit():
         initial_parent = get_permitted_object(request.user, "view", Project, int(parent_id))
 
@@ -707,7 +758,7 @@ def project_create_view(request):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
             form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None, current_user=request.user)
             form_token = get_form_token(request, 'project_create')
-            return render(request, "projects/project_form.html", {"form": form, "form_token": form_token})
+            return render(request, "projects/project_form.html", {"form": form, "form_token": form_token, "active_tab": active_tab})
         
         form = ProjectForm(request.POST, current_user=request.user)
         if form.is_valid():
@@ -715,7 +766,10 @@ def project_create_view(request):
             project.created_by = request.user
             form.save()  # This will save the project and m2m fields
             messages.success(request, "Move created successfully!")
-            return redirect("project_detail", pk=project.pk)
+            redirect_url = reverse("project_detail", kwargs={"pk": project.pk})
+            if active_tab:
+                redirect_url += f"?tab={active_tab}"
+            return redirect(redirect_url)
     else:
         form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None, current_user=request.user)
 
@@ -723,13 +777,14 @@ def project_create_view(request):
     return render(
         request,
         "projects/project_form.html",
-        {"form": form, "form_token": form_token},
+        {"form": form, "form_token": form_token, "active_tab": active_tab},
     )
 
 
 @login_required
 def project_edit_view(request, pk):
     project = get_permitted_object(request.user, "change", Project, pk)
+    active_tab = (request.POST.get("active_tab") or request.GET.get("tab") or "").strip()
 
     if request.method == "POST":
         form = ProjectForm(request.POST, instance=project, current_user=request.user)
@@ -738,7 +793,10 @@ def project_edit_view(request, pk):
             form.save()
             apply_creator_field(form, request.user, project)
             messages.success(request, "Move updated successfully!")
-            return redirect("project_detail", pk=project.pk)
+            redirect_url = reverse("project_detail", kwargs={"pk": project.pk})
+            if active_tab:
+                redirect_url += f"?tab={active_tab}"
+            return redirect(redirect_url)
     else:
         form = ProjectForm(instance=project, current_user=request.user)
         attach_creator_field(form, request.user, project)
@@ -746,7 +804,7 @@ def project_edit_view(request, pk):
     return render(
         request,
         "projects/project_form.html",
-        {"form": form, "project": project},
+        {"form": form, "project": project, "active_tab": active_tab},
     )
 
 

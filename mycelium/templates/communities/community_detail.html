@@ -42,16 +42,16 @@
             <div class="mt-6">
               <div class="tabs-container">
                 <ul class="tab-list">
-                  <li class="tab active" data-tab="details">Details</li>
-                  <li class="tab" data-tab="stories">Stories <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ community_story_count }}</span></li>
-                  <li class="tab" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ community_location_count }}</span></li>
-                  <li class="tab" data-tab="visibility">Visibility</li>
-                  <li class="tab" data-tab="connections">Connections</li>
+                  <li class="tab {% if active_tab == 'details' or not active_tab %}active{% endif %}" data-tab="details">Details</li>
+                  <li class="tab {% if active_tab == 'stories' %}active{% endif %}" data-tab="stories">Stories <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ community_story_count }}</span></li>
+                  <li class="tab {% if active_tab == 'locations' %}active{% endif %}" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ community_location_count }}</span></li>
+                  <li class="tab {% if active_tab == 'visibility' %}active{% endif %}" data-tab="visibility">Visibility</li>
+                  <li class="tab {% if active_tab == 'connections' %}active{% endif %}" data-tab="connections">Connections</li>
                 </ul>
               </div>
 
               <!-- Details Tab -->
-              <div class="tab-content" id="details">
+              <div class="tab-content {% if active_tab and active_tab != 'details' %}hidden{% endif %}" id="details">
                 <dl class="divide-y divide-gray-200">
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Created by</dt>

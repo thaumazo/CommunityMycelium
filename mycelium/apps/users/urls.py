@@ -19,6 +19,9 @@ from .views import (
     approve_user_view,
     reject_user_view,
     create_invite_view,
+    onboarding_view,
+    onboarding_complete_view,
+    reset_onboarding_view,
 )
 from .views.google_auth import (
     google_auth_start,
@@ -32,6 +35,7 @@ urlpatterns = [
     path("create/", user_create_view, name="user_create"),
     path("<int:pk>/", user_detail_view, name="user_detail"),
     path("<int:pk>/edit/", user_edit_view, name="user_edit"),
+    path("<int:pk>/reset-onboarding/", reset_onboarding_view, name="reset_onboarding"),
     path(
         "<int:pk>/permission_edit/",
         user_permission_edit_view,
@@ -42,6 +46,8 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("register/", register_view, name="register"),
     path("register/<str:token>/", register_view, name="register_with_token"),
+    path("onboarding/", onboarding_view, name="onboarding"),
+    path("onboarding/complete/", onboarding_complete_view, name="onboarding_complete"),
     path("invite/create/", create_invite_view, name="invite_create"),
     path("<int:pk>/character/", user_character_view, name="user_character"),
     path("pending/", pending_users_view, name="pending_users"),

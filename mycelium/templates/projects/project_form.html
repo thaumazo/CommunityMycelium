@@ -226,7 +226,12 @@
                       <label class="block text-sm font-medium text-gray-700">{{ form.locations.label }}</label>
                       <div class="mt-1 space-y-2 max-h-56 overflow-y-auto border border-gray-200 rounded-md p-3">
                         {% if form.fields.locations.queryset.exists %}
-                          {{ form.locations }}
+                          {% for choice in form.locations %}
+                            <div class="flex items-center">
+                              <input type="checkbox" name="{{ choice.data.name }}" value="{{ choice.data.value }}" id="{{ choice.id_for_label }}" {{ choice.data.selected|yesno:'checked,' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                              <label for="{{ choice.id_for_label }}" class="ml-2 block text-sm text-gray-900">{{ choice.choice_label }}</label>
+                            </div>
+                          {% endfor %}
                         {% else %}
                           <p class="text-sm text-gray-500">
                             No locations available yet.

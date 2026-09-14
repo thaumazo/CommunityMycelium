@@ -18,6 +18,9 @@ from .views import (
     project_story_visibility_update_view,
     project_story_visibility_bulk_update_view,
     project_community_note_decision_view,
+    move_step_create_view,
+    move_step_toggle_view,
+    move_step_review_view,
 )
 
 urlpatterns = [
@@ -30,6 +33,9 @@ urlpatterns = [
     path("<int:pk>/community-notes/<int:story_pk>/decision/", move_community_note_decision_view, name="move_community_note_decision"),
     path("<int:pk>/edit/", move_edit_view, name="move_edit"),
     path("<int:pk>/delete/", move_delete_view, name="move_delete"),
+    path("<int:pk>/steps/create/", move_step_create_view, name="move_step_create"),
+    path("<int:pk>/steps/<int:step_pk>/toggle/", move_step_toggle_view, name="move_step_toggle"),
+    path("<int:pk>/steps/<int:step_pk>/review/", move_step_review_view, name="move_step_review"),
 
     # Legacy aliases kept temporarily for backward compatibility.
     path("", project_list_view, name="project_list"),

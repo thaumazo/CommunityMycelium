@@ -477,6 +477,8 @@ def bioregion_detail_view(request, pk):
             "relevant_tags": story.relevant_tags,
         })
 
+    active_tab = (request.GET.get("tab") or request.POST.get("active_tab") or "details").strip().lower()
+
     return render(request, "bioregions/bioregion_detail.html", {
         "bioregion": bioregion,
         "communities": communities,
@@ -488,6 +490,7 @@ def bioregion_detail_view(request, pk):
         "bioregion_stories_preview": bioregion_stories_preview,
         "challenge_import_schema": challenge_import_schema,
         "map_locations_json": map_locations,
+        "active_tab": active_tab,
         "map_projects_json": map_projects,
         "map_communities_json": map_communities,
         "map_people_json": map_people,
@@ -605,12 +608,13 @@ def bioregion_create_view(request):
     if not is_permitted(request.user, "add", "bioregions.bioregion"):
         raise PermissionDenied
 
+    active_tab = (request.POST.get("active_tab") or request.GET.get("tab") or "").strip()
     if request.method == "POST":
         if not validate_form_token(request, 'bioregion_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
             form = BioregionForm()
             form_token = get_form_token(request, 'bioregion_create')
-            return render(request, "bioregions/bioregion_form.html", {"form": form, "form_token": form_token})
+            return render(request, "bioregions/bioregion_form.html", {"form": form, "form_token": form_token, "active_tab": active_tab})
         
         form = BioregionForm(request.POST, request.FILES, current_user=request.user)
         if form.is_valid():
@@ -619,7 +623,10 @@ def bioregion_create_view(request):
             bioregion.save()
             form.save_m2m()  # Save many-to-many relationships
             messages.success(request, "Bioregion created successfully!")
-            return redirect("bioregion_detail", pk=bioregion.pk)
+            redirect_url = reverse("bioregion_detail", kwargs={"pk": bioregion.pk})
+            if active_tab:
+                redirect_url += f"?tab={active_tab}"
+            return redirect(redirect_url)
     else:
         form = BioregionForm(current_user=request.user)
 
@@ -627,13 +634,14 @@ def bioregion_create_view(request):
     return render(
         request,
         "bioregions/bioregion_form.html",
-        {"form": form, "form_token": form_token},
+        {"form": form, "form_token": form_token, "active_tab": active_tab},
     )
 
 
 @login_required
 def bioregion_edit_view(request, pk):
     bioregion = get_permitted_object(request.user, "change", Bioregion, pk)
+    active_tab = (request.POST.get("active_tab") or request.GET.get("tab") or "").strip()
 
     if request.method == "POST":
         form = BioregionForm(
@@ -643,14 +651,17 @@ def bioregion_edit_view(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Bioregion updated successfully!")
-            return redirect("bioregion_detail", pk=bioregion.pk)
+            redirect_url = reverse("bioregion_detail", kwargs={"pk": bioregion.pk})
+            if active_tab:
+                redirect_url += f"?tab={active_tab}"
+            return redirect(redirect_url)
     else:
         form = BioregionForm(instance=bioregion, current_user=request.user)
 
     return render(
         request,
         "bioregions/bioregion_form.html",
-        {"form": form, "bioregion": bioregion},
+        {"form": form, "bioregion": bioregion, "active_tab": active_tab},
     )
 
 

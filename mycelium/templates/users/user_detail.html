@@ -23,6 +23,12 @@
                 <div class="flex items-center space-x-2">
                   <a href="{% url 'user_edit' user.pk %}" class="text-indigo-600 hover:text-indigo-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-indigo-600 hover:bg-indigo-600 hover:text-white">Edit</span></a>
                   <a href="{% url 'user_delete' user.pk %}" class="text-red-600 hover:text-red-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-red-600 hover:bg-red-600 hover:text-white">Delete</span></a>
+                  {% if request.user.is_superuser %}
+                    <form method="post" action="{% url 'reset_onboarding' user.pk %}">
+                      {% csrf_token %}
+                      <button type="submit" class="text-amber-700 hover:text-amber-900"><span class="px-2 py-1 text-xs font-semibold rounded border border-amber-600 hover:bg-amber-50">{% if user.onboarding_status == 'completed' %}Reset orientation{% else %}Start orientation{% endif %}</span></button>
+                    </form>
+                  {% endif %}
                 </div>
               {% endif %}
             </div>
@@ -30,21 +36,21 @@
             <div class="mt-6">
               <div class="tabs-container">
                 <ul class="tab-list">
-                  <li class="tab active" data-tab="account">Account</li>
-                  <li class="tab" data-tab="stories">Stories <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ user_story_count }}</span></li>
-                  <li class="tab" data-tab="visibility">Visibility</li>
-                  <li class="tab" data-tab="connections">Connections</li>
-                  <li class="tab" data-tab="projects">Moves</li>
-                  <li class="tab" data-tab="organizations">Organizations</li>
-                  <li class="tab" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ user_location_count }}</span></li>
-                  <li class="tab" data-tab="character">Character Class</li>
-                  <li class="tab" data-tab="pitfalls">Pitfalls</li>
-                  <li class="tab" data-tab="metacrisis">Metacrisis</li>
+                  <li class="tab {% if active_tab == 'account' or not active_tab %}active{% endif %}" data-tab="account">Account</li>
+                  <li class="tab {% if active_tab == 'stories' %}active{% endif %}" data-tab="stories">Stories <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ user_story_count }}</span></li>
+                  <li class="tab {% if active_tab == 'visibility' %}active{% endif %}" data-tab="visibility">Visibility</li>
+                  <li class="tab {% if active_tab == 'connections' %}active{% endif %}" data-tab="connections">Connections</li>
+                  <li class="tab {% if active_tab == 'projects' %}active{% endif %}" data-tab="projects">Moves</li>
+                  <li class="tab {% if active_tab == 'organizations' %}active{% endif %}" data-tab="organizations">Organizations</li>
+                  <li class="tab {% if active_tab == 'locations' %}active{% endif %}" data-tab="locations">Locations <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ user_location_count }}</span></li>
+                  <li class="tab {% if active_tab == 'character' %}active{% endif %}" data-tab="character">Character Class</li>
+                  <li class="tab {% if active_tab == 'pitfalls' %}active{% endif %}" data-tab="pitfalls">Pitfalls</li>
+                  <li class="tab {% if active_tab == 'metacrisis' %}active{% endif %}" data-tab="metacrisis">Metacrisis</li>
                 </ul>
               </div>
 
               <!-- Account Tab -->
-              <div class="tab-content" id="account">
+              <div class="tab-content {% if active_tab and active_tab != 'account' %}hidden{% endif %}" id="account">
                 <dl class="divide-y divide-gray-200">
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">Username</dt>

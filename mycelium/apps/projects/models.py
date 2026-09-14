@@ -51,6 +51,18 @@ class Project(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
+    is_orientation = models.BooleanField(
+        default=False,
+        help_text="This is the private orientation Move created for one player.",
+    )
+    orientation_user = models.OneToOneField(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="orientation_move",
+        help_text="The player this orientation Move belongs to.",
+    )
     parent = models.ForeignKey(
         "self",
         null=True,
@@ -239,3 +251,34 @@ class ProjectCapitalOut(models.Model):
     
     def __str__(self):
         return f"{self.project.title} - {self.capital.title} (Out)"
+
+
+class MoveStep(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="steps")
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+    requires_review = models.BooleanField(
+        default=False,
+        help_text="Ask a move owner to review completion when the player is not an owner.",
+    )
+    completed_by = models.ManyToManyField(
+        User, blank=True, related_name="completed_move_steps"
+    )
+    reviewed_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="reviewed_move_steps",
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+        indexes = [models.Index(fields=["project", "order"])]
+
+    def __str__(self):
+        return f"{self.project.title}: {self.title}"
