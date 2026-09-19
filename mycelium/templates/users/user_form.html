@@ -26,7 +26,7 @@
                 <div class="tabs-container">
                   <ul class="tab-list">
                     <li class="tab active" data-tab="account">Account</li>
-                    <li class="tab" data-tab="visibility">Visibility</li>
+                    <li class="tab" data-tab="settings">Settings</li>
                     <li class="tab" data-tab="connections">Connections</li>
                     <li class="tab" data-tab="character">Character Class</li>
                     <li class="tab" data-tab="pitfalls">Pitfalls</li>
@@ -245,9 +245,10 @@
                   </div>
                 </div>
 
-                <!-- Visibility Tab -->
-                <div class="tab-content hidden" id="visibility">
+                <!-- Settings Tab -->
+                <div class="tab-content hidden" id="settings">
                   <div class="space-y-4">
+                    <h3 class="text-lg font-medium text-gray-900">Visibility</h3>
                     <div class="flex items-center">
                       <input type="checkbox" name="view_members" id="{{ form.view_members.id_for_label }}" {% if form.instance.view_members %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
                       <label for="{{ form.view_members.id_for_label }}" class="ml-2 block text-sm text-gray-900">
@@ -274,19 +275,44 @@
                       <p class="text-xs text-gray-500">{{ form.view_public.help_text }}</p>
                     {% endif %}
 
-                    <div class="flex items-center">
-                      <input type="checkbox" name="ai_transcript_processing" id="{{ form.ai_transcript_processing.id_for_label }}" {% if form.instance.ai_transcript_processing %}checked{% endif %} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                      <label for="{{ form.ai_transcript_processing.id_for_label }}" class="ml-2 block text-sm text-gray-900">
-                        {{ form.ai_transcript_processing.label }}
-                      </label>
-                      {% if form.ai_transcript_processing.errors %}
-                        <div class="mt-1 text-sm text-red-600">{{ form.ai_transcript_processing.errors|join:", " }}</div>
-                      {% endif %}
-                    </div>
                     {% include '_components/visible_to_commons_field.html' %}
-                    {% if form.ai_transcript_processing.help_text %}
-                      <p class="text-xs text-gray-500">{{ form.ai_transcript_processing.help_text }}</p>
-                    {% endif %}
+
+                    <div class="pt-4 border-t border-gray-200">
+                      <h3 class="text-lg font-medium text-gray-900">AI</h3>
+                      <p class="mt-1 text-sm text-gray-500">AI use is off by default. Choose where processing may happen before enabling any AI features.</p>
+                      <div class="mt-3 space-y-3">
+                        {% for choice in form.ai_processing_mode %}
+                          <div class="flex items-start">
+                            {{ choice.tag }}
+                            <div class="ml-2 text-sm">
+                              <label for="{{ choice.id_for_label }}" class="font-medium text-gray-900">{{ choice.choice_label }}</label>
+                              <p class="text-gray-500">
+                                {% if choice.data.value == 'none' %}Do not use AI to process your information.{% elif choice.data.value == 'local' %}Process information with an AI model running within the site's own environment.{% else %}Use a third-party AI service that does not train on submitted information.{% endif %}
+                              </p>
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <div class="mt-4 space-y-3">
+                        <label class="flex items-start">
+                          <input type="checkbox" name="ai_transcript_processing" id="{{ form.ai_transcript_processing.id_for_label }}" {% if form.instance.ai_transcript_processing %}checked{% endif %} class="mt-1 h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                          <span class="ml-2 text-sm"><span class="font-medium text-gray-900">AI Transcript Processing</span><span class="block text-gray-500">Allow AI to analyze meeting transcripts to make connections and extract useful tasks.</span></span>
+                        </label>
+                        <label class="flex items-start">
+                          <input type="checkbox" name="ai_pollination" id="{{ form.ai_pollination.id_for_label }}" {% if form.instance.ai_pollination %}checked{% endif %} class="mt-1 h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                          <span class="ml-2 text-sm"><span class="font-medium text-gray-900">AI Pollination</span><span class="block text-gray-500">Allow AI to find connections between people and other people's moves, profiles, regional metacrisis facets, and related information.</span></span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-200">
+                      <h3 class="text-lg font-medium text-gray-900">Website theme</h3>
+                      <div class="mt-3 flex gap-6">
+                        {% for choice in form.website_theme %}
+                          <label class="flex items-center text-sm text-gray-900">{{ choice.tag }}<span class="ml-2">{{ choice.choice_label }}</span></label>
+                        {% endfor %}
+                      </div>
+                    </div>
                   </div>
                 </div>
 

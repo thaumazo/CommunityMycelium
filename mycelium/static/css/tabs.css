@@ -51,6 +51,24 @@
     border-bottom: 1px solid #fff;
 }
 
+.theme-dark .tab-list .tab {
+    color: #d6e0e4;
+    background-color: #2b3940;
+    border-color: #465862;
+}
+
+.theme-dark .tab-list .tab:hover {
+    color: #ffffff;
+    background-color: #3a4b53;
+}
+
+.theme-dark .tab-list .tab.active {
+    color: #ffffff;
+    background-color: #253139;
+    border-color: #607681;
+    border-bottom-color: #253139;
+}
+
 /* Style the tab content */
 .tab-content {
     display: none;

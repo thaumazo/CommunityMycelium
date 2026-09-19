@@ -38,7 +38,7 @@
                 <ul class="tab-list">
                   <li class="tab {% if active_tab == 'account' or not active_tab %}active{% endif %}" data-tab="account">Account</li>
                   <li class="tab {% if active_tab == 'stories' %}active{% endif %}" data-tab="stories">Stories <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 text-xs">{{ user_story_count }}</span></li>
-                  <li class="tab {% if active_tab == 'visibility' %}active{% endif %}" data-tab="visibility">Visibility</li>
+                  <li class="tab {% if active_tab == 'settings' or active_tab == 'visibility' %}active{% endif %}" data-tab="settings">Settings</li>
                   <li class="tab {% if active_tab == 'connections' %}active{% endif %}" data-tab="connections">Connections</li>
                   <li class="tab {% if active_tab == 'projects' %}active{% endif %}" data-tab="projects">Moves</li>
                   <li class="tab {% if active_tab == 'organizations' %}active{% endif %}" data-tab="organizations">Organizations</li>
@@ -211,8 +211,9 @@
                 {% endif %}
               </div>
 
-              <!-- Visibility Tab -->
-              <div class="tab-content hidden" id="visibility">
+              <!-- Settings Tab -->
+              <div class="tab-content {% if active_tab and active_tab != 'settings' and active_tab != 'visibility' %}hidden{% endif %}" id="settings">
+                <h2 class="text-lg leading-6 font-medium text-gray-900 mb-4">Visibility</h2>
                 <dl class="divide-y divide-gray-200">
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm font-medium text-gray-500">View Members</dt>
@@ -223,13 +224,15 @@
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.view_public|yesno:"Yes,No" }}</dd>
                   </div>
                   <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm font-medium text-gray-500">AI Transcript Processing</dt>
+                    <dt class="text-sm font-medium text-gray-500">AI</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      <div class="flex items-start space-x-2">
-                        <span>{{ user.ai_transcript_processing|yesno:"Yes,No" }}</span>
-                      </div>
-                      <p class="text-xs text-gray-500 mt-1">Allows AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.</p>
+                      <p>{{ user.get_ai_processing_mode_display }}</p>
+                      <p class="text-xs text-gray-500 mt-1">Transcript processing: {{ user.ai_transcript_processing|yesno:"On,Off" }}. AI pollination: {{ user.ai_pollination|yesno:"On,Off" }}.</p>
                     </dd>
+                  </div>
+                  <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Website theme</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.get_website_theme_display }}</dd>
                   </div>
                 </dl>
               </div>

@@ -296,6 +296,29 @@ class UserForm(forms.ModelForm):
         help_text="Allow AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.",
     )
 
+    ai_processing_mode = forms.ChoiceField(
+        choices=User.AI_PROCESSING_MODE_CHOICES,
+        required=False,
+        initial=User.AI_MODE_NONE,
+        widget=forms.RadioSelect,
+        label="AI processing",
+    )
+
+    ai_pollination = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="AI Pollination",
+        help_text="Allow AI to find connections between this person's information and other people's moves, profiles, and regional metacrisis facets.",
+    )
+
+    website_theme = forms.ChoiceField(
+        choices=User.WEBSITE_THEME_CHOICES,
+        required=False,
+        initial=User.WEBSITE_THEME_LIGHT,
+        widget=forms.RadioSelect,
+        label="Website theme",
+    )
+
     visible_to_commons = forms.ModelMultipleChoiceField(
         queryset=None,
         required=False,
@@ -335,6 +358,12 @@ class UserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.current_user = kwargs.pop("current_user", None)
         super().__init__(*args, **kwargs)
+
+        if self.instance.pk:
+            self.fields["ai_processing_mode"].initial = self.instance.ai_processing_mode
+            self.fields["ai_transcript_processing"].initial = self.instance.ai_transcript_processing
+            self.fields["ai_pollination"].initial = self.instance.ai_pollination
+            self.fields["website_theme"].initial = self.instance.website_theme
 
         visible_bioregions = get_visible_bioregion_queryset(self.current_user)
         if self.instance.pk:
@@ -393,10 +422,19 @@ class UserForm(forms.ModelForm):
         if pwd:
             user.set_password(pwd)
 
-        # Explicitly handle view_members, view_public, and ai_transcript_processing fields
+        # Explicitly handle fields rendered outside the ModelForm field list.
         user.view_members = self.cleaned_data.get("view_members", user.view_members)
         user.view_public = self.cleaned_data.get("view_public", user.view_public)
-        user.ai_transcript_processing = self.cleaned_data.get("ai_transcript_processing", user.ai_transcript_processing)
+        user.ai_processing_mode = self.cleaned_data.get("ai_processing_mode", user.ai_processing_mode)
+        user.ai_transcript_processing = (
+            user.ai_processing_mode != User.AI_MODE_NONE
+            and self.cleaned_data.get("ai_transcript_processing", False)
+        )
+        user.ai_pollination = (
+            user.ai_processing_mode != User.AI_MODE_NONE
+            and self.cleaned_data.get("ai_pollination", False)
+        )
+        user.website_theme = self.cleaned_data.get("website_theme", user.website_theme)
 
         if "invite_role" in self.cleaned_data:
             user.invite_role = self.cleaned_data.get("invite_role", user.invite_role)

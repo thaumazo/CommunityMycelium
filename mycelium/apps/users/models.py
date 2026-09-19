@@ -168,6 +168,40 @@ class User(AbstractUser):
         help_text="Allow AI (like GPT in temporary mode) to analyze meeting transcripts to make connections between people and extract useful tasks.",
     )
 
+    AI_MODE_NONE = "none"
+    AI_MODE_LOCAL = "local"
+    AI_MODE_THIRD_PARTY = "third_party"
+    AI_PROCESSING_MODE_CHOICES = [
+        (AI_MODE_NONE, "No AI"),
+        (AI_MODE_LOCAL, "Local AI Processing"),
+        (AI_MODE_THIRD_PARTY, "Third Party AI (no training)"),
+    ]
+
+    ai_processing_mode = models.CharField(
+        max_length=16,
+        choices=AI_PROCESSING_MODE_CHOICES,
+        default=AI_MODE_NONE,
+        help_text="Controls whether and where AI processing may occur.",
+    )
+
+    ai_pollination = models.BooleanField(
+        default=False,
+        help_text="Allow AI to find connections between this person's information and other people's moves, profiles, and regional metacrisis facets.",
+    )
+
+    WEBSITE_THEME_LIGHT = "light"
+    WEBSITE_THEME_DARK = "dark"
+    WEBSITE_THEME_CHOICES = [
+        (WEBSITE_THEME_LIGHT, "Light"),
+        (WEBSITE_THEME_DARK, "Dark"),
+    ]
+
+    website_theme = models.CharField(
+        max_length=8,
+        choices=WEBSITE_THEME_CHOICES,
+        default=WEBSITE_THEME_LIGHT,
+    )
+
     is_approved = models.BooleanField(
         default=True,
         help_text="Indicates if the user has been approved by a superuser.",
