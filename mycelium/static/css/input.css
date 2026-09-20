@@ -74,6 +74,10 @@ body {
 	background-color: #263b55;
 }
 
+.theme-dark .bg-indigo-100 {
+	background-color: #304c70;
+}
+
 .theme-dark .border-indigo-100 {
 	border-color: #466789;
 }

@@ -4,6 +4,7 @@ import unicodedata
 from copy import deepcopy
 
 from django.shortcuts import get_object_or_404, render, redirect
+from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -222,7 +223,7 @@ def _normalize_story_import_payload(raw_payload):
 def project_list_view(request):
     projects = get_permitted_objects(request.user, "view", Project)
     if hasattr(projects, "select_related"):
-        projects = projects.select_related("parent").order_by("parent_id", "title")
+        projects = projects.order_by("title")
     
     # Float bookmarked projects to the top
     if request.user.is_authenticated:
@@ -247,6 +248,40 @@ def project_list_view(request):
     return render(request, "projects/project_list.html", {
         "projects": projects_page,
         "pagination": pagination_data,
+    })
+
+
+@login_required
+def project_parent_search_view(request):
+    query = (request.GET.get("q") or "").strip()
+    if len(query) < 2:
+        return JsonResponse({"results": []})
+
+    if request.user.is_superuser:
+        projects = Project.objects.all()
+    else:
+        projects = Project.objects.filter(
+            Q(created_by=request.user)
+            | Q(owners=request.user)
+            | Q(admins=request.user)
+            | Q(members=request.user)
+            | Q(view_members=True)
+            | Q(view_public=True)
+            | Q(visible_to_commons__owners=request.user)
+            | Q(visible_to_commons__admins=request.user)
+            | Q(visible_to_commons__members=request.user)
+        ).distinct()
+    projects = projects.filter(title__icontains=query).order_by("title")[:20]
+    return JsonResponse({
+        "results": [
+            {
+                "id": project.pk,
+                "title": project.title,
+                "phase": project.get_phase_display(),
+                "state": project.get_state_display(),
+            }
+            for project in projects
+        ]
     })
 
 
@@ -756,7 +791,7 @@ def project_create_view(request):
     if request.method == "POST":
         if not validate_form_token(request, 'project_create'):
             messages.error(request, "This form has already been submitted. Please don't use the back button after submitting.")
-            form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None, current_user=request.user)
+            form = ProjectForm(initial={"parent": [initial_parent.pk]} if initial_parent else None, current_user=request.user)
             form_token = get_form_token(request, 'project_create')
             return render(request, "projects/project_form.html", {"form": form, "form_token": form_token, "active_tab": active_tab})
         
@@ -771,7 +806,7 @@ def project_create_view(request):
                 redirect_url += f"?tab={active_tab}"
             return redirect(redirect_url)
     else:
-        form = ProjectForm(initial={"parent": initial_parent.pk} if initial_parent else None, current_user=request.user)
+        form = ProjectForm(initial={"parent": [initial_parent.pk]} if initial_parent else None, current_user=request.user)
 
     form_token = get_form_token(request, 'project_create')
     return render(

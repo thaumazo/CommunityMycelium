@@ -63,13 +63,12 @@ class Project(models.Model):
         related_name="orientation_move",
         help_text="The player this orientation Move belongs to.",
     )
-    parent = models.ForeignKey(
+    parents = models.ManyToManyField(
         "self",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        symmetrical=False,
         related_name="children",
-        help_text="Optional parent move for creating nested sub-moves.",
+        blank=True,
+        help_text="Optional parent moves for creating nested sub-moves.",
     )
     time_precision = models.CharField(
         max_length=20,
@@ -166,14 +165,16 @@ class Project(models.Model):
     def clean(self):
         from django.core.exceptions import ValidationError
 
-        if self.parent_id and self.pk and self.parent_id == self.pk:
-            raise ValidationError("A move cannot be its own parent.")
-
-        ancestor = self.parent
-        while ancestor is not None:
-            if self.pk and ancestor.pk == self.pk:
-                raise ValidationError("Parent relationship creates a cycle.")
-            ancestor = ancestor.parent
+        if self.pk:
+            visited = set()
+            pending = list(self.parents.all())
+            while pending:
+                ancestor = pending.pop()
+                if ancestor.pk == self.pk:
+                    raise ValidationError("Parent relationship creates a cycle.")
+                if ancestor.pk not in visited:
+                    visited.add(ancestor.pk)
+                    pending.extend(ancestor.parents.all())
 
         if self.project_end_at and not self.project_start_at:
             raise ValidationError("project_start_at is required when project_end_at is set.")

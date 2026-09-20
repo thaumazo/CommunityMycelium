@@ -51,11 +51,22 @@
                       {% endif %}
                     </div>
 
-                    <div>
-                      <label for="{{ form.parent.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.parent.label }}</label>
-                      <div class="mt-1">
-                        {{ form.parent }}
+                    <div data-module="ParentPicker" data-parent-picker data-search-url="{% url 'project_parent_search' %}">
+                      <label for="parent-search" class="block text-sm font-medium text-gray-700">{{ form.parent.label }}</label>
+                      <p class="mt-1 text-xs text-gray-500">Choose the broader Moves this Move contributes to. You can select more than one.</p>
+                      <div class="mt-2 flex flex-wrap gap-2" data-parent-chips>
+                        {% for parent in form.parent.field.queryset %}
+                          <span class="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-3 py-1 text-sm text-indigo-900" data-parent-chip data-parent-id="{{ parent.pk }}">
+                            {{ parent.title }}
+                            <button type="button" class="text-indigo-700 hover:text-indigo-950" data-remove-parent="{{ parent.pk }}" aria-label="Remove {{ parent.title }}">&times;</button>
+                          </span>
+                        {% endfor %}
                       </div>
+                      <div class="relative mt-2">
+                        <input type="search" id="parent-search" class="w-full" placeholder="Search Moves by title" autocomplete="off" data-parent-search />
+                        <div class="absolute z-10 mt-1 hidden w-full overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg" data-parent-results></div>
+                      </div>
+                      <div class="hidden" data-parent-hidden-inputs>{{ form.parent }}</div>
                       {% if form.parent.help_text %}
                         <p class="mt-1 text-xs text-gray-500">{{ form.parent.help_text }}</p>
                       {% endif %}

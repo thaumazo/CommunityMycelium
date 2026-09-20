@@ -22,6 +22,14 @@ class MoveStepForm(forms.ModelForm):
 
 
 class ProjectForm(forms.ModelForm):
+    parent = forms.ModelMultipleChoiceField(
+        queryset=Project.objects.none(),
+        required=False,
+        label="Parent Move",
+        help_text="Optional parent moves. Leave blank for a top-level move.",
+        widget=forms.MultipleHiddenInput,
+    )
+
     time_precision = forms.ChoiceField(
         choices=Project.TIME_PRECISION_CHOICES,
         required=False,
@@ -156,12 +164,18 @@ class ProjectForm(forms.ModelForm):
             visible_commons = visible_commons | self.instance.visible_to_commons.all()
         self.fields["visible_to_commons"].queryset = visible_commons.distinct().order_by("title")
 
-        self.fields["parent"].required = False
-        self.fields["parent"].label = "Parent Move"
-        self.fields["parent"].help_text = "Optional parent move. Leave blank for a top-level move."
-        self.fields["parent"].queryset = Project.objects.order_by("title")
+        selected_parent_ids = (
+            self.data.getlist("parent")
+            if self.is_bound
+            else self.initial.get("parent", [])
+        )
         if self.instance.pk:
-            self.fields["parent"].queryset = self.fields["parent"].queryset.exclude(pk=self.instance.pk)
+            selected_parent_ids = list(self.instance.parents.values_list("pk", flat=True)) or selected_parent_ids
+        parent_queryset = Project.objects.filter(pk__in=selected_parent_ids).order_by("title")
+        if self.instance.pk:
+            parent_queryset = parent_queryset.exclude(pk=self.instance.pk)
+            self.fields["parent"].initial = self.instance.parents.all()
+        self.fields["parent"].queryset = parent_queryset
 
         # Set initial values for capitals from through models
         if self.instance.pk:
@@ -177,19 +191,20 @@ class ProjectForm(forms.ModelForm):
         project_start_at = cleaned.get("project_start_at")
         project_end_at = cleaned.get("project_end_at")
         time_precision = cleaned.get("time_precision") or Project.TIME_PRECISION_NONE
-        parent = cleaned.get("parent")
+        parents = cleaned.get("parent") or []
         primary_location = cleaned.get("primary_location")
         locations = cleaned.get("locations")
 
-        if self.instance.pk and parent and parent.pk == self.instance.pk:
-            self.add_error("parent", "A move cannot be its own parent.")
-
-        ancestor = parent
-        while ancestor is not None and self.instance.pk:
+        visited = set()
+        pending = list(parents)
+        while pending and self.instance.pk:
+            ancestor = pending.pop()
             if ancestor.pk == self.instance.pk:
                 self.add_error("parent", "Parent relationship creates a cycle.")
                 break
-            ancestor = ancestor.parent
+            if ancestor.pk not in visited:
+                visited.add(ancestor.pk)
+                pending.extend(ancestor.parents.all())
 
         if project_end_at and not project_start_at:
             self.add_error("project_start_at", "Project start is required when project end is set.")
@@ -218,6 +233,7 @@ class ProjectForm(forms.ModelForm):
         if commit:
             project.save()
             self.save_m2m()
+            project.parents.set(self.cleaned_data.get("parent", []))
 
             primary_location = self.cleaned_data.get("primary_location")
             if primary_location:

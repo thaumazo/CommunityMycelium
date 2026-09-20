@@ -10,6 +10,7 @@ from .views import (
     move_story_visibility_bulk_update_view,
     move_community_note_decision_view,
     project_list_view,
+    project_parent_search_view,
     project_create_view,
     project_detail_view,
     project_edit_view,
@@ -40,6 +41,7 @@ urlpatterns = [
     # Legacy aliases kept temporarily for backward compatibility.
     path("", project_list_view, name="project_list"),
     path("create/", project_create_view, name="project_create"),
+    path("parent-search/", project_parent_search_view, name="project_parent_search"),
     path("<int:pk>/", project_detail_view, name="project_detail"),
     path("<int:pk>/import-stories/", project_story_import_view, name="project_story_import"),
     path("<int:pk>/stories/<int:story_pk>/visibility/", project_story_visibility_update_view, name="project_story_visibility_update"),

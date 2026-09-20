@@ -4,10 +4,12 @@
 // Our modules / classes
 import Navigation from "./modules/Navigation.js";
 import UserMenu from "./modules/UserMenu.js";
+import ParentPicker from "./modules/ParentPicker.js";
 
 const manifest = {
 	Navigation,
 	UserMenu,
+	ParentPicker,
 };
 
 const app = {
