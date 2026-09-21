@@ -11,7 +11,7 @@ def get_visible_commons_queryset(user):
     return Commons.objects.filter(
         Q(created_by=user) | Q(owners=user) | Q(admins=user) | Q(members=user)
         | Q(view_members=True) | Q(view_public=True)
-    )
+    ).distinct()
 
 
 def get_user_commons_queryset(user):
@@ -22,4 +22,4 @@ def get_user_commons_queryset(user):
         return Commons.objects.all()
     return Commons.objects.filter(
         Q(owners=user) | Q(admins=user) | Q(members=user)
-    )
+    ).distinct()

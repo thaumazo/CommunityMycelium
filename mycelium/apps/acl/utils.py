@@ -3,6 +3,7 @@ from django.contrib.auth.models import Permission
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from .models import ObjectPermission, ModelPermission
+from .view_simulation import get_simulation_for
 from apps.utils.dump import dump
 from apps.users.models import User
 
@@ -11,12 +12,91 @@ def _visible_via_commons(user, obj):
     """True if `obj` has a visible_to_commons M2M and `user` belongs to any of those commons."""
     from django.db.models import Q
 
-    if not (user and user.is_authenticated):
+    if not (user and user.is_authenticated) or not getattr(user, "pk", None):
         return False
     relation = getattr(obj, "visible_to_commons", None)
     if relation is None or not hasattr(obj, "pk") or not obj.pk:
         return False
     return relation.filter(Q(owners=user) | Q(admins=user) | Q(members=user)).exists()
+
+
+def _simulated_view_permitted(obj, mode, commons_id):
+    """
+    Evaluate "view" access using only public/authenticated visibility flags
+    (and, for commons mode, the one selected commons), ignoring ownership,
+    admin/owner roles, and superuser status entirely. This is what powers a
+    user's own 'preview as Public/Member/a Commons' feature and can never
+    grant more access than the object's own visibility flags allow.
+    """
+    from apps.bioregions.models import Bioregion
+    from apps.challenges.models import Challenge
+    from apps.communities.models import Community
+    from apps.commons.models import Commons
+    from apps.projects.models import Project
+    from apps.locations.models import Location
+    from apps.capitals.models import Capital
+    from apps.socialroles.models import Socialrole
+    from apps.metacrisis_facets.models import Metacrisis_facet
+    from apps.maladaptives.models import Maladaptive
+    from apps.stories.models import Story
+
+    authenticated = mode in ("member", "commons")
+
+    if isinstance(obj, (Capital, Socialrole, Metacrisis_facet, Maladaptive)):
+        return authenticated
+
+    if isinstance(obj, Challenge):
+        return authenticated and bool(obj.related_bioregion_id)
+
+    if isinstance(obj, (Bioregion, Commons, Community, Project, Location, Story, User)):
+        if getattr(obj, "view_public", False):
+            return True
+        if authenticated and getattr(obj, "view_members", False):
+            return True
+        if mode == "commons" and commons_id:
+            relation = getattr(obj, "visible_to_commons", None)
+            if relation is not None and getattr(obj, "pk", None):
+                return relation.filter(pk=commons_id).exists()
+        return False
+
+    # Anything not explicitly modeled above is not exposed during simulation.
+    return False
+
+
+def _simulated_permitted_objects(model_class, mode, commons_id):
+    """Queryset-level equivalent of `_simulated_view_permitted`, for object listings."""
+    from django.db.models import Q
+    from apps.bioregions.models import Bioregion
+    from apps.challenges.models import Challenge
+    from apps.communities.models import Community
+    from apps.commons.models import Commons
+    from apps.projects.models import Project
+    from apps.locations.models import Location
+    from apps.capitals.models import Capital
+    from apps.socialroles.models import Socialrole
+    from apps.metacrisis_facets.models import Metacrisis_facet
+    from apps.maladaptives.models import Maladaptive
+    from apps.stories.models import Story
+
+    authenticated = mode in ("member", "commons")
+
+    if model_class in (Capital, Socialrole, Metacrisis_facet, Maladaptive):
+        return list(model_class.objects.all()) if authenticated else []
+
+    if model_class == Challenge:
+        if not authenticated:
+            return []
+        return list(model_class.objects.filter(related_bioregion__isnull=False))
+
+    if model_class in (Bioregion, Commons, Community, Project, Location, Story, User):
+        query = Q(view_public=True)
+        if authenticated:
+            query |= Q(view_members=True)
+        if mode == "commons" and commons_id and hasattr(model_class, "visible_to_commons"):
+            query |= Q(visible_to_commons__id=commons_id)
+        return list(model_class.objects.filter(query).distinct())
+
+    return []
 
 
 def is_permitted(user, action, obj_or_string):
@@ -39,6 +119,14 @@ def is_permitted(user, action, obj_or_string):
         ).model_class()()
     else:
         obj = obj_or_string
+
+    # A user's own "preview as a lower privilege level" setting only ever
+    # narrows what "view" returns for their own requests; every other action
+    # always uses their real, full permissions below.
+    simulation = get_simulation_for(user)
+    if action == "view" and simulation:
+        mode, commons_id, _label = simulation
+        return _simulated_view_permitted(obj, mode, commons_id)
 
     # Public access rules for bioregions
     from apps.bioregions.models import Bioregion
@@ -583,7 +671,12 @@ def get_permitted_objects(user, action, model_class):
     from apps.socialroles.models import Socialrole
     from apps.metacrisis_facets.models import Metacrisis_facet
     from apps.maladaptives.models import Maladaptive
-    
+
+    simulation = get_simulation_for(user)
+    if action == "view" and simulation:
+        mode, commons_id, _label = simulation
+        return _simulated_permitted_objects(model_class, mode, commons_id)
+
     # Public access rules
     if model_class == Bioregion and action == "view":
         from apps.bioregions.utils import get_visible_bioregion_queryset

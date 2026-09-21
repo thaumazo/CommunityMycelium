@@ -4,9 +4,11 @@ from .views import (
     acl_object_list_view,
     acl_object_permission_form_step_1_view,
     acl_object_permission_form_step_2_view,
+    set_view_simulation_view,
 )
 
 urlpatterns = [
+    path("visibility/set/", set_view_simulation_view, name="set_view_simulation"),
     path("", acl_content_type_list_view, name="acl_content_type_list"),
     path("<int:content_type_id>/", acl_object_list_view, name="acl_object_list"),
     path(

@@ -87,6 +87,11 @@ body {
 	background-color: #4b3b21;
 }
 
+.theme-dark .bg-amber-400 {
+	background-color: #7a5b12;
+	color: #fef3c7;
+}
+
 .theme-dark .bg-green-100 {
 	background-color: #1f4938;
 }

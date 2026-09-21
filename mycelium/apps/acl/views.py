@@ -3,8 +3,10 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
+from django.utils.http import url_has_allowed_host_and_scheme
 from .models import ObjectPermission, ModelPermission
 from .forms import ObjectPermissionForm, UserSelectForm
+from .view_simulation import SESSION_KEY, VALID_MODES
 from .utils import (
     get_permitted_content_types,
     get_permitted_objects,
@@ -12,6 +14,55 @@ from .utils import (
 )
 
 User = get_user_model()
+
+
+def _safe_redirect_back(request):
+    next_url = request.POST.get("next") or request.META.get("HTTP_REFERER")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}
+    ):
+        return redirect(next_url)
+    return redirect("core:home")
+
+
+@login_required
+def set_view_simulation_view(request):
+    """
+    Let a user preview the site as if they had a lower/different visibility
+    level (Public, Member, or one Commons they belong to). Stored only in
+    their own session; re-validated against real data on every request by
+    apps.acl.view_simulation, so this can never grant extra access.
+    """
+    if request.method != "POST":
+        return _safe_redirect_back(request)
+
+    mode = (request.POST.get("mode") or "").strip()
+
+    if mode == "self":
+        request.session.pop(SESSION_KEY, None)
+        messages.success(request, "Viewing as yourself again.")
+        return _safe_redirect_back(request)
+
+    if mode not in VALID_MODES:
+        messages.error(request, "Unrecognized visibility option.")
+        return _safe_redirect_back(request)
+
+    session_value = {"mode": mode}
+    if mode == "commons":
+        commons_id = request.POST.get("commons_id")
+        if not commons_id or not commons_id.isdigit():
+            messages.error(request, "Choose a valid Commons to preview.")
+            return _safe_redirect_back(request)
+        from apps.commons.utils import get_user_commons_queryset
+
+        if not get_user_commons_queryset(request.user).filter(pk=commons_id).exists():
+            messages.error(request, "You can only preview a Commons you belong to.")
+            return _safe_redirect_back(request)
+        session_value["commons_id"] = int(commons_id)
+
+    request.session[SESSION_KEY] = session_value
+    messages.success(request, "Visibility preview updated.")
+    return _safe_redirect_back(request)
 
 
 @login_required

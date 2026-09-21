@@ -102,6 +102,48 @@
                       <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
                     </li>
                   </ul>
+                  <div class="border-t border-gray-200 py-1" role="none">
+                    <p class="px-4 pt-2 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">Visibility</p>
+                    <form method="post" action="{% url 'set_view_simulation' %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <input type="hidden" name="mode" value="self">
+                      <button type="submit" class="flex w-full items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if not view_simulation %}font-semibold text-indigo-700{% endif %}" role="menuitem">
+                        <span class="truncate">{{ request.user.full_name|default:request.user.username }}</span>
+                        {% if not view_simulation %}<span aria-hidden="true">&check;</span>{% endif %}
+                      </button>
+                    </form>
+                    <form method="post" action="{% url 'set_view_simulation' %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <input type="hidden" name="mode" value="member">
+                      <button type="submit" class="flex w-full items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if view_simulation.0 == 'member' %}font-semibold text-indigo-700{% endif %}" role="menuitem">
+                        <span>Member</span>
+                        {% if view_simulation.0 == 'member' %}<span aria-hidden="true">&check;</span>{% endif %}
+                      </button>
+                    </form>
+                    <form method="post" action="{% url 'set_view_simulation' %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <input type="hidden" name="mode" value="public">
+                      <button type="submit" class="flex w-full items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if view_simulation.0 == 'public' %}font-semibold text-indigo-700{% endif %}" role="menuitem">
+                        <span>Public</span>
+                        {% if view_simulation.0 == 'public' %}<span aria-hidden="true">&check;</span>{% endif %}
+                      </button>
+                    </form>
+                    {% for commons in view_simulation_commons_choices %}
+                      <form method="post" action="{% url 'set_view_simulation' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <input type="hidden" name="mode" value="commons">
+                        <input type="hidden" name="commons_id" value="{{ commons.pk }}">
+                        <button type="submit" class="flex w-full items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {% if view_simulation.0 == 'commons' and view_simulation.1 == commons.pk %}font-semibold text-indigo-700{% endif %}" role="menuitem">
+                          <span class="truncate">{{ commons.title }}</span>
+                          {% if view_simulation.0 == 'commons' and view_simulation.1 == commons.pk %}<span aria-hidden="true">&check;</span>{% endif %}
+                        </button>
+                      </form>
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
             {% else %}
@@ -306,6 +348,23 @@
 
     </div>
     <div class="mt-16 {% if request.user.is_authenticated %}sm:ml-64{% endif %}">
+      {% if view_simulation %}
+        <div class="bg-amber-400 text-amber-950">
+          <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2 text-sm sm:px-6 lg:px-8">
+            <span>
+              👁️ Previewing as
+              <strong>{% if view_simulation.0 == 'commons' %}a member of {{ view_simulation.2 }}{% else %}{{ view_simulation.2 }}{% endif %}</strong>
+              — you're seeing only what this visibility level can see.
+            </span>
+            <form method="post" action="{% url 'set_view_simulation' %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <input type="hidden" name="mode" value="self">
+              <button type="submit" class="font-semibold underline hover:no-underline">Return to my view</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
       {% block content %}
 
       {% endblock %}

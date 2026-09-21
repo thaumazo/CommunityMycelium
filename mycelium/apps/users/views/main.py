@@ -146,15 +146,7 @@ def user_list_view(request):
     permitted_users = get_permitted_objects(request.user, "view", User)
 
     # Ensure permitted_users contains a list of IDs
-    permitted_users = User.objects.filter(pk__in=[user.pk for user in permitted_users])
-
-    # Include users with view_members or view_public set to True
-    additional_users = User.objects.filter(
-        Q(view_members=True) | Q(view_public=True)
-    )
-
-    # Combine both querysets and ensure no duplicates
-    users = permitted_users | additional_users
+    users = User.objects.filter(pk__in=[user.pk for user in permitted_users])
     users = users.distinct().order_by('full_name')
 
     # Float bookmarked users to the top
