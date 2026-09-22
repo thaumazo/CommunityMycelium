@@ -18,6 +18,10 @@ sdist/
 var/
 wheels/
 *.egg-info/
+
+# JS bundle is intentionally tracked (production has no Node/npm to build it)
+!mycelium/static/js/dist/
+!mycelium/static/js/dist/main.js
 .installed.cfg
 *.egg
 
